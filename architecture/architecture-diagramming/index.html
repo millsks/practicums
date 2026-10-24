@@ -1,0 +1,1625 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Architecture Diagramming Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a drafting-office set of "sheets" — each module is a drawing sheet with an engineering title block; diagrams sit on light canvas paper in both themes. */
+:root{
+  --paper:#EEF2F1; --sheet:#FFFFFF; --ink:#172125; --muted:#56656C; --rule:#D3DCDA; --rule-strong:#A9B7B6;
+  --accent:#0A6A7E; --accent-ink:#FFFFFF; --accent-soft:#DDEDEF;
+  --redline:#C2331F; --redline-soft:#FBE7E3; --ok:#23744A; --ok-soft:#DFF1E6; --warn:#9A6512; --warn-soft:#FAEFD9;
+  --canvas:#FBFCFB; --canvas-dot:#D8E0DF; --canvas-ink:#172125;
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0E1517; --sheet:#152024; --ink:#E2EAEB; --muted:#93A5AA; --rule:#27363A; --rule-strong:#3D5257;
+  --accent:#55B9CC; --accent-ink:#06262D; --accent-soft:#12343B;
+  --redline:#F0765D; --redline-soft:#3A1D17; --ok:#62C792; --ok-soft:#143424; --warn:#E2B556; --warn-soft:#352A12;
+  --canvas:#E8EDEC; --canvas-dot:#C9D3D2; --canvas-ink:#172125; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0E1517; --sheet:#152024; --ink:#E2EAEB; --muted:#93A5AA; --rule:#27363A; --rule-strong:#3D5257;
+  --accent:#55B9CC; --accent-ink:#06262D; --accent-soft:#12343B;
+  --redline:#F0765D; --redline-soft:#3A1D17; --ok:#62C792; --ok-soft:#143424; --warn:#E2B556; --warn-soft:#352A12;
+  --canvas:#E8EDEC; --canvas-dot:#C9D3D2; --canvas-ink:#172125; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sheet)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:600;line-height:1.1;text-wrap:balance;margin:0;letter-spacing:.005em}
+h1{font-size:clamp(2.4rem,7vw,4rem);font-weight:700}
+h2{font-size:clamp(1.7rem,4.5vw,2.3rem)}
+h3{font-size:1.45rem;margin-top:.4rem}
+h4{font-size:1.15rem}
+p{margin:0}
+code,kbd,pre{font-family:var(--f-mono);font-size:.86em}
+:not(pre)>code{background:var(--accent-soft);padding:.05em .35em;border-radius:3px}
+.wrap{max-width:1000px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.eyebrow{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:1rem}
+.prose{display:flex;flex-direction:column;gap:.85rem;max-width:68ch}
+.prose ul,.prose ol{margin:0;padding-left:1.25rem;display:flex;flex-direction:column;gap:.35rem}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--sheet);border-bottom:1px solid var(--rule)}
+.top .wrap{display:flex;flex-direction:column;gap:.35rem;padding-block:.6rem .5rem}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:1rem}
+.brand b{font-family:var(--f-display);font-size:1.25rem;font-weight:700;letter-spacing:.02em}
+.brand .meter{font-family:var(--f-mono);font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.navscroll{overflow-x:auto;scrollbar-width:none;margin-inline:-4px}
+.navscroll::-webkit-scrollbar{display:none}
+nav.tabs{display:flex;gap:4px;padding:2px 4px;width:max-content}
+nav.tabs button{font:600 .82rem/1 var(--f-body);color:var(--muted);background:none;border:1px solid transparent;border-radius:999px;padding:.5rem .75rem;cursor:pointer;white-space:nowrap;display:flex;gap:.4rem;align-items:center}
+nav.tabs button:hover{color:var(--ink);border-color:var(--rule)}
+nav.tabs button[aria-current="true"]{background:var(--ink);color:var(--sheet)}
+nav.tabs .dot{width:7px;height:7px;border-radius:50%;background:var(--rule-strong)}
+nav.tabs .dot.ok{background:var(--ok)}
+nav.tabs button[aria-current="true"] .dot.ok{background:var(--ok)}
+nav.tabs .sep{width:1px;background:var(--rule);margin:4px 2px}
+
+main{padding-block:1.5rem 4rem}
+
+/* sheets */
+.sheet{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);padding:clamp(16px,3.5vw,32px)}
+.section{display:flex;flex-direction:column;gap:1.1rem}
+.section+.section{margin-top:2.2rem;padding-top:2rem;border-top:1px dashed var(--rule-strong)}
+.sec-head{display:flex;align-items:baseline;gap:.75rem;flex-wrap:wrap}
+.sec-head .tag{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:.1rem .45rem;border-radius:3px}
+
+/* engineering title block */
+.titleblock{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:2px solid var(--ink);margin-top:1.25rem}
+.titleblock>div{border-right:1px solid var(--ink);border-top:1px solid var(--ink);padding:.4rem .6rem;min-width:0}
+.titleblock>div:nth-child(4n){border-right:0}
+.titleblock>div:nth-child(-n+4){border-top:0}
+.titleblock .k{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:block}
+.titleblock .v{font-family:var(--f-display);font-weight:600;font-size:1.05rem;font-variant-numeric:tabular-nums}
+@media (max-width:560px){.titleblock{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .titleblock>div:nth-child(4n){border-right:1px solid var(--ink)}
+ .titleblock>div:nth-child(2n){border-right:0}
+ .titleblock>div:nth-child(-n+4){border-top:1px solid var(--ink)}
+ .titleblock>div:nth-child(-n+2){border-top:0}}
+
+/* level pills */
+.lvl{display:inline-flex;align-items:center;gap:.35rem;font:600 .72rem/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:.3rem .5rem;border-radius:3px;border:1px solid currentColor}
+.lvl.a{color:var(--ok)} .lvl.p{color:var(--warn)} .lvl.x{color:var(--redline)}
+
+/* tables */
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:var(--r)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:.6rem .75rem;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--paper);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td code{white-space:nowrap}
+.num{font-variant-numeric:tabular-nums;font-family:var(--f-mono);font-size:.85rem}
+
+/* diagram canvas */
+.fig{display:flex;flex-direction:column;gap:.6rem;min-width:0}
+.canvas{background-color:var(--canvas);background-image:radial-gradient(var(--canvas-dot) 1px,transparent 1.2px);background-size:16px 16px;border:1px solid var(--rule-strong);border-radius:var(--r);overflow:auto;padding:16px;min-height:140px;color:var(--canvas-ink);display:flex;align-items:flex-start;justify-content:center}
+.canvas svg{height:auto}
+.canvas .loading{font-family:var(--f-mono);font-size:.8rem;color:#56656C;align-self:center}
+.canvas .err{font-family:var(--f-mono);font-size:.78rem;color:#B12A16;white-space:pre-wrap;align-self:stretch;width:100%}
+.figcap{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:baseline;justify-content:space-between}
+.figcap h4{font-size:1.1rem}
+.notice{background:var(--paper);border-left:3px solid var(--accent);padding:.6rem .85rem;border-radius:0 var(--r) var(--r) 0;font-size:.93rem}
+.notice ul{margin:.25rem 0 0;padding-left:1.1rem;display:flex;flex-direction:column;gap:.2rem}
+pre.src{background:var(--paper);border:1px solid var(--rule);border-radius:var(--r);padding:.85rem 1rem;overflow-x:auto;margin:0;line-height:1.5;font-size:.8rem}
+
+/* buttons */
+.btns{display:flex;flex-wrap:wrap;gap:.5rem}
+.btn{font:600 .85rem/1 var(--f-body);border:1px solid var(--rule-strong);background:var(--sheet);color:var(--ink);padding:.6rem .9rem;border-radius:var(--r);cursor:pointer;display:inline-flex;align-items:center;gap:.4rem}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{border-color:transparent;padding-inline:.4rem;color:var(--accent)}
+.btn.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(1rem,4vw,2.5rem);align-items:start}
+@media (max-width:820px){.hero{grid-template-columns:minmax(0,1fr)}}
+.hero p.lede{font-size:1.1rem;max-width:52ch;margin-top:.8rem}
+.zoom{display:flex;flex-direction:column;gap:.6rem;min-width:0}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--ink);border-radius:var(--r);overflow:hidden}
+.seg button{font:600 .8rem/1.15 var(--f-body);background:var(--sheet);color:var(--ink);border:0;border-right:1px solid var(--ink);padding:.55rem .3rem;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button small{display:block;font:500 .66rem/1 var(--f-mono);letter-spacing:.08em;color:var(--muted);margin-bottom:.2rem}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+.seg button[aria-pressed="true"] small{color:var(--sheet);opacity:.75}
+.zoom .canvas{height:340px}
+.zoom-meta{display:grid;grid-template-columns:1fr 1fr;gap:.5rem 1rem;font-size:.9rem}
+.zoom-meta .k{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block}
+
+/* path */
+.path{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+@media (max-width:760px){.path{grid-template-columns:minmax(0,1fr)}}
+.stage{border:1px solid var(--rule);border-radius:var(--r);padding:1rem;display:flex;flex-direction:column;gap:.5rem;background:var(--sheet)}
+.stage ol{margin:0;padding-left:1.1rem;font-size:.92rem}
+.bar{height:6px;background:var(--rule);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);transition:width .4s}
+.reg td:first-child{font-family:var(--f-mono);font-size:.8rem;white-space:nowrap}
+.reg button.link{background:none;border:0;padding:0;color:var(--ink);font:600 .95rem var(--f-body);cursor:pointer;text-align:left}
+.reg button.link:hover{color:var(--accent);text-decoration:underline}
+.chk{font-family:var(--f-mono);font-size:.8rem}
+.chk.ok{color:var(--ok)} .chk.no{color:var(--rule-strong)}
+
+/* quiz */
+.q{border:1px solid var(--rule);border-radius:var(--r);padding:1rem;display:flex;flex-direction:column;gap:.6rem}
+.q .qn{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);letter-spacing:.08em}
+.q .qt{font-weight:600}
+.opt{display:flex;gap:.6rem;align-items:flex-start;padding:.5rem .6rem;border:1px solid var(--rule);border-radius:var(--r);cursor:pointer;font-size:.95rem}
+.opt:hover{border-color:var(--rule-strong)}
+.opt input{margin-top:.3rem;accent-color:var(--accent)}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--redline);background:var(--redline-soft)}
+.why{font-size:.9rem;padding:.6rem .8rem;border-radius:var(--r);background:var(--paper)}
+.score{font-family:var(--f-display);font-size:1.4rem;font-weight:600}
+
+/* lab */
+.lab{display:flex;flex-direction:column;gap:1rem}
+.brief{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem}
+@media (max-width:760px){.brief{grid-template-columns:minmax(0,1fr)}}
+.reqs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.35rem}
+.reqs label{display:flex;gap:.55rem;align-items:flex-start;font-size:.93rem;cursor:pointer}
+.reqs input{margin-top:.32rem;accent-color:var(--ok)}
+.editor{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:.75rem}
+@media (max-width:820px){.editor{grid-template-columns:minmax(0,1fr)}}
+.editor textarea{width:100%;min-height:320px;resize:vertical;font:400 .8rem/1.55 var(--f-mono);background:var(--paper);color:var(--ink);border:1px solid var(--rule-strong);border-radius:var(--r);padding:.8rem;tab-size:2}
+.editor .canvas{min-height:320px}
+.edhead{display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap}
+.status{font-family:var(--f-mono);font-size:.72rem}
+.status.ok{color:var(--ok)} .status.bad{color:var(--redline)}
+details.reveal{border:1px solid var(--rule);border-radius:var(--r);padding:.6rem .85rem}
+details.reveal summary{cursor:pointer;font-weight:600;font-size:.92rem}
+details.reveal[open] summary{margin-bottom:.6rem}
+.steps{margin:0;padding-left:1.3rem;display:flex;flex-direction:column;gap:.55rem}
+.steps li::marker{font-family:var(--f-mono);color:var(--accent);font-weight:600}
+
+/* redline */
+.redline .canvas{border-color:var(--redline);border-style:dashed}
+.rl-item.found{color:var(--ok)}
+.rl-item.missed{color:var(--redline)}
+.rl-item.false{color:var(--warn)}
+
+/* cards grid */
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+@media (max-width:760px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.cap{border:1px solid var(--rule);border-radius:var(--r);padding:clamp(14px,3vw,24px);display:flex;flex-direction:column;gap:1rem;background:var(--sheet)}
+.cap-head{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:flex-start}
+.domain{font:600 .7rem/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.meterline{display:flex;align-items:center;gap:.6rem;font-family:var(--f-mono);font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.meterline .bar{flex:1;min-width:80px}
+
+/* picker */
+.picker{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem}
+@media (max-width:760px){.picker{grid-template-columns:minmax(0,1fr)}}
+.picker .qs{display:flex;flex-direction:column;gap:.35rem}
+.picker .qs button{text-align:left;font:500 .92rem/1.35 var(--f-body);background:var(--sheet);color:var(--ink);border:1px solid var(--rule);border-radius:var(--r);padding:.6rem .75rem;cursor:pointer}
+.picker .qs button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.answer{border:2px solid var(--ink);border-radius:var(--r);padding:1rem;display:flex;flex-direction:column;gap:.5rem;align-self:start;position:sticky;top:120px}
+@media (max-width:760px){.answer{position:static}}
+.answer .big{font-family:var(--f-display);font-size:1.7rem;font-weight:700;line-height:1.05}
+.anti{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:.75rem}
+.anti>div{border:1px solid var(--rule);border-top:3px solid var(--redline);border-radius:var(--r);padding:.8rem;display:flex;flex-direction:column;gap:.3rem;font-size:.9rem}
+.anti b{font-family:var(--f-display);font-size:1.15rem;font-weight:600}
+.anti .fix{color:var(--ok)}
+dl.gloss{display:grid;grid-template-columns:minmax(120px,max-content) minmax(0,1fr);gap:.5rem 1.2rem;margin:0}
+dl.gloss dt{font-weight:700}
+dl.gloss dd{margin:0}
+@media (max-width:560px){dl.gloss{grid-template-columns:minmax(0,1fr)} dl.gloss dd{margin-bottom:.4rem}}
+.toc{display:flex;flex-wrap:wrap;gap:.4rem}
+.toc a{font:600 .8rem/1 var(--f-body);text-decoration:none;border:1px solid var(--rule);padding:.45rem .65rem;border-radius:999px;color:var(--ink)}
+.pager{display:flex;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-top:1.5rem}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sheet);padding:.6rem 1rem;border-radius:var(--r);font-size:.88rem;z-index:50}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><b>Architecture Diagramming Studio</b><span class="meter" id="meter">0% complete</span></div>
+    <div class="navscroll"><nav class="tabs" id="tabs" aria-label="Course sections"></nav></div>
+  </div>
+</header>
+<main class="wrap" id="view" tabindex="-1"></main>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<script>
+"use strict";
+/* ---------- helpers ---------- */
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const pre = s => `<pre class="src"><code>${esc(s.trim())}</code></pre>`;
+const CODE = []; const reg = c => (CODE.push(c.trim()), CODE.length - 1);
+
+/* ---------- shared diagrams (running example: "Parcel", an online order platform) ---------- */
+const D = {};
+D.ctx = `C4Context
+  title System context: Parcel order platform
+  Person(shopper, "Shopper", "Buys products and tracks deliveries")
+  Person(ops, "Fulfilment staff", "Packs and ships orders")
+  System(parcel, "Parcel", "Lets shoppers browse, order and track deliveries")
+  System_Ext(pay, "Payment gateway", "Card authorisation and capture")
+  System_Ext(carrier, "Carrier API", "Shipping labels and tracking")
+  System_Ext(mail, "Email service", "Transactional email")
+  Rel(shopper, parcel, "Places orders using", "HTTPS")
+  Rel(ops, parcel, "Manages fulfilment using", "HTTPS")
+  Rel(parcel, pay, "Takes payments via", "REST")
+  Rel(parcel, carrier, "Books shipments via", "REST")
+  Rel(parcel, mail, "Sends notifications via", "SMTP")
+  UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")`;
+D.cont = `C4Container
+  title Container view: Parcel
+  Person(shopper, "Shopper")
+  System_Ext(pay, "Payment gateway", "Card payments")
+  System_Ext(carrier, "Carrier API", "Shipping")
+  System_Boundary(b, "Parcel") {
+    Container(web, "Storefront SPA", "React", "Catalogue, cart and checkout UI")
+    Container(api, "Order API", "Python, Django", "Carts, orders, checkout")
+    ContainerQueue(q, "Order events", "Kafka topic", "order.placed, order.shipped")
+    Container(worker, "Fulfilment worker", "Python, Celery", "Books shipments, sends email")
+    ContainerDb(db, "Orders DB", "PostgreSQL", "Orders, customers, stock")
+  }
+  Rel(shopper, web, "Uses", "HTTPS")
+  Rel(web, api, "Calls", "JSON/HTTPS")
+  Rel(api, db, "Reads and writes", "SQL")
+  Rel(api, pay, "Authorises cards", "REST")
+  Rel(api, q, "Publishes order.placed")
+  Rel(worker, q, "Consumes events from")
+  Rel(worker, carrier, "Books shipments", "REST")
+  UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")`;
+D.comp = `C4Component
+  title Component view: Order API
+  Container(web, "Storefront SPA", "React")
+  ContainerDb(db, "Orders DB", "PostgreSQL")
+  System_Ext(pay, "Payment gateway")
+  Container_Boundary(api, "Order API") {
+    Component(ctrl, "Checkout view", "Django view", "Validates the cart, starts checkout")
+    Component(svc, "Checkout service", "Python module", "Prices, reserves stock, takes payment")
+    Component(repo, "Order repository", "Django ORM", "Persists orders")
+    Component(paycl, "Payment client", "httpx", "Wraps the gateway API with retries")
+    Component(pub, "Event publisher", "confluent-kafka", "Emits order events")
+  }
+  Rel(web, ctrl, "POST /checkout", "JSON/HTTPS")
+  Rel(ctrl, svc, "Calls")
+  Rel(svc, repo, "Uses")
+  Rel(svc, paycl, "Uses")
+  Rel(svc, pub, "Uses")
+  Rel(repo, db, "Reads and writes", "SQL")
+  Rel(paycl, pay, "Authorises", "REST")
+  UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")`;
+D.code = `classDiagram
+  direction LR
+  class CheckoutService {
+    +checkout(cart, token) Order
+    -reserve_stock(lines)
+  }
+  class PaymentClient {
+    +authorise(amount, token) AuthResult
+  }
+  class OrderRepository {
+    +save(order)
+    +get(order_id) Order
+  }
+  class Order {
+    +id UUID
+    +status OrderStatus
+    +total Money
+  }
+  CheckoutService --> PaymentClient : uses
+  CheckoutService --> OrderRepository : uses
+  CheckoutService ..> Order : creates`;
+D.seq = `sequenceDiagram
+  autonumber
+  actor S as Shopper
+  participant W as Storefront SPA
+  participant A as Order API
+  participant P as Payment gateway
+  participant K as Order events
+  S->>W: Click "Place order"
+  W->>A: POST /checkout (cart, card token)
+  A->>A: Validate cart, reserve stock
+  A->>P: Authorise amount
+  alt Approved
+    P-->>A: 200 auth_id
+    A-)K: order.placed
+    A-->>W: 201 Created (order_id)
+  else Declined
+    P-->>A: 402 declined
+    A-->>W: 402 Payment required
+  end
+  W-->>S: Show confirmation or error`;
+D.state = `stateDiagram-v2
+  direction LR
+  [*] --> Pending
+  Pending --> Paid : payment authorised
+  Pending --> Cancelled : payment declined
+  Paid --> Shipped : shipment booked
+  Paid --> Refunded : cancelled by shopper
+  Shipped --> Delivered : carrier confirms
+  Delivered --> [*]
+  Cancelled --> [*]
+  Refunded --> [*]`;
+D.bpmn = `flowchart LR
+  subgraph C["Customer"]
+    s((Transfer requested)) --> t1[Submit transfer]
+  end
+  subgraph O["Payments operations"]
+    t2[Validate payee details] --> g1{Amount over 10,000?}
+    g1 -- No --> t4[Release payment]
+    g1 -- Yes --> t3[Second approver review]
+    t3 --> g2{Approved?}
+    g2 -- Yes --> t4
+    g2 -- No --> e2(((Transfer rejected)))
+    t4 --> e1(((Transfer sent)))
+  end
+  subgraph K["Compliance"]
+    t5[Screen against sanctions lists] --> g3{Possible match?}
+    g3 -- Yes --> t6[Investigate alert]
+    t6 --> g4{Cleared?}
+  end
+  t1 --> t2
+  t2 --> t5
+  g3 -- No --> g1
+  g4 -- Yes --> g1
+  g4 -- No --> e2`;
+D.deploy = `flowchart TB
+  user([Shoppers]) -- HTTPS --> cdn[CDN and WAF]
+  subgraph R["Region: us-east"]
+    subgraph V["VPC 10.0.0.0/16"]
+      lb[Application load balancer]
+      subgraph AZ1["Availability zone a"]
+        api1[Order API pods x3]
+        db1[(Postgres primary)]
+      end
+      subgraph AZ2["Availability zone b"]
+        api2[Order API pods x3]
+        db2[(Postgres standby)]
+      end
+    end
+  end
+  cdn -- HTTPS --> lb
+  lb --> api1
+  lb --> api2
+  api1 -- SQL/TLS --> db1
+  api2 -- SQL/TLS --> db1
+  db1 -. synchronous replication .-> db2`;
+D.dfd = `flowchart LR
+  user[Shopper browser]
+  gw[Payment gateway]
+  subgraph TB1["Trust boundary: internet to DMZ"]
+    direction LR
+    web([1. Serve storefront])
+  end
+  subgraph TB2["Trust boundary: private app network"]
+    direction LR
+    api([2. Process checkout])
+    db[(D1 Orders DB)]
+  end
+  user -- "card token, cart" --> web
+  web -- "checkout request (JWT)" --> api
+  api -- "order rows (PII)" --> db
+  api -- "amount, token" --> gw
+  style TB1 stroke-dasharray: 6 4,stroke:#C2331F
+  style TB2 stroke-dasharray: 6 4,stroke:#C2331F`;
+D.pipe = `flowchart LR
+  dev[Developer pushes tag] --> ci{{CI release workflow}}
+  ci --> build[Build wheel and conda package]
+  build --> test[Run test matrix]
+  test --> sbom[Generate SBOM from lockfile]
+  sbom --> sign[Sign artefacts]
+  sign --> idx[(Package index)]
+  sign --> rel[Release page with SBOM attached]`;
+D.landscape = `flowchart LR
+  subgraph Retail["Retail banking"]
+    mob[Mobile banking]
+    web[Online banking]
+  end
+  subgraph Pay["Payments"]
+    hub[Payments hub]
+    fraud[Fraud scoring]
+  end
+  subgraph Core["Core"]
+    ledger[Core ledger]
+    crm[Customer master]
+  end
+  mob --> hub
+  web --> hub
+  hub --> fraud
+  hub --> ledger
+  mob --> crm
+  web --> crm`;
+D.bad = `flowchart LR
+  G[User] --- A[Web]
+  A --- B[Backend]
+  B --- C[(DB)]
+  B --- D[Kafka]
+  D --- E[Service 2]
+  E --- C
+  B --- F[AWS]
+  E --- H[Stuff]
+  style F fill:#f6c343
+  style D fill:#e05555
+  style H fill:#59b36b`;
+
+/* ---------- modules ---------- */
+const MODULES = [
+{ id:"m1", dwg:"A-01", lvl:"a", title:"Why we diagram", time:"35 min",
+  summary:"Diagrams answer questions for specific readers. Learn to pick the audience, the question, and the level of detail before you draw anything.",
+  objectives:["Match a diagram to its audience and the question it answers","Explain levels of abstraction using the map analogy","Write a one-paragraph diagram brief before drawing"],
+  learn:`
+<h3>A diagram answers one question for one audience</h3>
+<p>Architecture diagrams are communication tools. A good one lets a specific reader answer a specific question quickly: "What does this system depend on?", "What happens when a payment fails?", "What runs in which data centre?". When a diagram tries to answer every question at once, it answers none of them well.</p>
+<div class="tbl"><table><thead><tr><th>Reader</th><th>What they ask</th><th>Usually show them</th></tr></thead><tbody>
+<tr><td>Executives, product owners</td><td>What is it, who uses it, what does it touch, what is the risk?</td><td>System context, landscape</td></tr>
+<tr><td>Architects, tech leads</td><td>What are the moving parts and how do they communicate?</td><td>Container view, dynamic views, ADRs</td></tr>
+<tr><td>Developers</td><td>Where does my code go? What calls what, in what order?</td><td>Component view, sequence, state machine</td></tr>
+<tr><td>SRE and operations</td><td>What runs where? What fails together? How do we recover?</td><td>Deployment view, network view</td></tr>
+<tr><td>Security and risk</td><td>Where does sensitive data go? Where are the trust boundaries?</td><td>Data-flow diagram with trust boundaries</td></tr>
+<tr><td>Business and process owners</td><td>Who does what, in which order, with which hand-offs?</td><td>BPMN or swimlane process</td></tr>
+</tbody></table></div>
+<h3>Levels of abstraction: think in maps</h3>
+<p>Online maps let you zoom from country to street. Each zoom level shows a different amount of detail, and nobody expects a country map to show house numbers. Architecture works the same way. The C4 model (Module 3) gives you four named zoom levels: <b>Context</b>, <b>Container</b>, <b>Component</b> and <b>Code</b>. The most common beginner mistake is mixing levels, for example a box for "the mobile app" next to a box for "the users table" next to a box for "AWS".</p>
+<h3>Write a diagram brief first</h3>
+<p>Before you open any tool, answer six questions in a sentence each. This takes two minutes and prevents most redraws.</p>
+<ol>
+<li><b>Reader:</b> who will look at this?</li>
+<li><b>Question:</b> what will they be able to answer afterwards?</li>
+<li><b>Scope:</b> which system, process or environment, and where is the boundary?</li>
+<li><b>Level:</b> context, container, component, code, process, or deployment?</li>
+<li><b>State:</b> current state, target state, or a transition between them?</li>
+<li><b>Home:</b> where will it live, and who keeps it current?</li>
+</ol>
+<h3>Sketch, then formalise</h3>
+<p>Whiteboards and paper are fine for thinking. Formalise a diagram when the design settles, when it needs review, or when someone outside the room needs it. A formal diagram has a title, a key, labelled lines, and an owner. Module 2 covers the grammar that makes that work.</p>`,
+  examples:[{title:"One system, one question", code:D.ctx, caption:"A context view answers: what is Parcel, who uses it, and what does it depend on?", notice:["Only one box is 'ours'; everything else is a person or an external system.","No technology inside Parcel is shown. That detail belongs one level down.","Every line has a verb, read from the arrow's tail to its head."]}],
+  quiz:[
+    {q:"A vice-president asks: \"What does the new platform depend on, and who uses it?\" Which diagram fits?", o:["A component diagram of the main service","A system context diagram","A class diagram of the domain model","A sequence diagram of the login flow"], a:1, why:"Context diagrams show the system as one box with its users and external dependencies. That is exactly the question asked, with no internal detail to distract."},
+    {q:"One diagram shows the mobile app, five microservices, the users table, and an 'AWS' box. What is the main problem?", o:["It has too few colours","It mixes levels of abstraction","It should be a sequence diagram","It needs vendor icons"], a:1, why:"An app, a database table, and a cloud provider live at different zoom levels. Mixed levels make readers guess what a box means."},
+    {q:"What should you decide first?", o:["Which tool to use","The colour palette","The reader and the question the diagram answers","Which icon set to import"], a:2, why:"The reader and their question determine scope, level, and notation. Tools and styling come later."},
+    {q:"Which statement about whiteboard sketches is most accurate?", o:["They should never be shared","They are fine for exploring; formalise once the design settles or needs review","They replace formal diagrams in documentation","They must use UML notation"], a:1, why:"Sketching is a thinking tool. A photo of a whiteboard rarely survives as documentation because it has no key, owner, or version."},
+    {q:"An on-call engineer wants to know what runs where and what fails together. Which view helps most?", o:["Deployment view","System context","BPMN process","Class diagram"], a:0, why:"Deployment views map software onto infrastructure: regions, zones, clusters and replication. Those are the failure domains."}
+  ],
+  lab:{type:"mermaid", title:"Brief and sketch a context view",
+    brief:"A public library wants a book reservation system. Members reserve books online and get an email when a book is ready. Librarians manage holds at the desk. Book data comes from the existing catalogue system, and email goes through the council's email service.",
+    reqs:["Write your six-question brief as comments (lines starting with %%) under the flowchart line","Show the reservation system as the only internal box","Show two kinds of people and two external systems","Every arrow has a verb and, where useful, a protocol","Mark external systems differently from the internal one"],
+    starter:`---
+title: Library reservations, system context
+---
+flowchart LR
+  %% Reader:
+  %% Question:
+  %% Scope:
+  %% Level:
+  %% State:
+  %% Home:
+  member([Library member])
+  sys[Reservation system]
+  member -- "Reserves books using<br/>HTTPS" --> sys
+  %% TODO: add the librarian, the catalogue system and the email service`,
+    solution:`---
+title: Library reservations, system context
+---
+flowchart LR
+  %% Reader: library leadership and the vendor's architects
+  %% Question: what does the reservation system do and depend on?
+  %% Scope: the reservation system and its direct neighbours
+  %% Level: system context
+  %% State: target state for the 2027 launch
+  %% Home: docs/architecture in the project repo, owned by the tech lead
+  member([Library member])
+  librarian([Librarian])
+  sys["Reservation system<br/>Lets members reserve books and<br/>librarians manage holds"]
+  cat["Catalogue system<br/>existing, external"]:::ext
+  mail["Council email service<br/>external"]:::ext
+  member -- "Reserves books using<br/>HTTPS" --> sys
+  librarian -- "Manages holds using<br/>HTTPS" --> sys
+  sys -- "Looks up titles and copies<br/>REST" --> cat
+  sys -- "Sends ready-for-pickup notices<br/>SMTP" --> mail
+  mail -- "Emails" --> member
+  classDef ext fill:#EEF0F0,stroke:#8A9599,stroke-dasharray:4 3`,
+    hint:"Use ([text]) for people, plain [text] for systems, and a classDef with a dashed stroke for external systems. Quote labels that contain punctuation."}
+},
+{ id:"m2", dwg:"A-02", lvl:"a", title:"Visual grammar", time:"45 min",
+  summary:"Boxes, lines, words, colour and layout. The small rules that make any notation readable.",
+  objectives:["Label every element with name, type, responsibility, and technology where relevant","Draw directional, labelled relationships","Use colour and shape with a key, and never as the only signal","Lay out a diagram so it reads in one pass"],
+  learn:`
+<h3>Boxes</h3>
+<p>A box with one word ("Backend") forces the reader to guess. Give each element four things:</p>
+<ul><li><b>Name</b>: what people call it ("Order API").</li><li><b>Type</b>: person, system, container, component, data store, queue.</li><li><b>Responsibility</b>: one short line about what it does.</li><li><b>Technology</b>: at container level and below ("Python, Django").</li></ul>
+<h3>Lines</h3>
+<p>Lines carry most of the meaning, and they are where most diagrams fail. For every line:</p>
+<ul><li><b>Direction</b>: point the arrow from the initiator to the receiver. For request/response, show the request direction; the reply is implied.</li><li><b>Verb</b>: "Publishes order.placed to", "Reads stock from". Avoid "uses" when a better verb exists.</li><li><b>Protocol or format</b> at container level: HTTPS, gRPC, SQL, AMQP, SFTP, JSON, Avro.</li><li><b>One line per intent.</b> Avoid double-headed arrows; they hide who calls whom.</li></ul>
+<h3>Words</h3>
+<p>Use the same name for the same thing on every diagram and in the code. Write labels in plain language. Prefer "Sends receipt emails via" over "Integration".</p>
+<h3>Colour and shape</h3>
+<ul><li>Colour must mean something, and the key must say what.</li><li>Keep to about four fills. Common choices: internal, external, data store, deprecated or planned.</li><li>Never rely on colour alone. Pair it with a shape, border style, or text label so the diagram works in greyscale and for colour-blind readers.</li><li>Dashed borders conventionally mean "external" or "planned". Say which in the key.</li></ul>
+<h3>Layout</h3>
+<ul><li>Pick a reading direction (left to right, or top to bottom) and keep the main flow in it.</li><li>Put users and callers on the left or top, data stores and external dependencies on the right or bottom.</li><li>Group with boundaries (a system, a team, a network zone), and label each boundary.</li><li>Minimise crossing lines. If you cannot, the diagram is probably too big.</li><li>Aim for roughly 20 elements or fewer. Past that, split by level or by scenario.</li></ul>
+<h3>Every diagram carries a frame</h3>
+<p>Engineering drawings carry a title block. Yours should too: <b>title</b>, <b>scope</b>, <b>key</b>, <b>date or version</b>, <b>status</b> (current, target, draft), and <b>owner</b>. Readers six months from now will thank you.</p>`,
+  examples:[
+    {title:"Before: a diagram nobody can review", code:D.bad, caption:"Typical first draft. It looks finished but answers almost nothing.", notice:["No title, scope or key.","Lines have no direction, verb or protocol.","'AWS' and 'Stuff' are not the same kind of thing as 'Web'.","Colours carry no stated meaning."]},
+    {title:"After: the same idea, readable", code:D.cont, caption:"Each element has a name, type, technology and responsibility. Each relationship has direction, verb and protocol.", notice:["The boundary shows what is inside the system.","The Kafka topic is a container with its events named, so it is not a mystery hub.","External systems are styled differently from internal ones."]}
+  ],
+  quiz:[
+    {q:"An unlabelled line connects 'Order API' and 'Payment gateway'. What is missing?", o:["Who initiates the call","What the call does","The protocol","All of these"], a:3, why:"Direction, verb and protocol each answer a different reader question. A bare line answers none of them."},
+    {q:"A diagram marks healthy services green and failing ones red, with no other cue. What is the problem?", o:["Red and green clash","About 1 in 12 men cannot reliably tell them apart, and greyscale printouts lose the meaning","Status should never appear on diagrams","Green should mean failing"], a:1, why:"Colour should never be the only signal. Add a shape, icon or text label as well."},
+    {q:"What is the better convention for arrows between services?", o:["Double-headed arrows for request and response","Point from the initiator to the receiver and label the intent","No arrowheads; direction is obvious","Point from the data store to the caller"], a:1, why:"Initiator-to-receiver arrows show dependency and call direction. Responses are implied unless the response itself is the point."},
+    {q:"Which is the best replacement for a box labelled 'Backend'?", o:["Server","Backend (blue)","Order API, a container: Python and Django, handles carts and checkout","Microservice"], a:2, why:"Name, type, technology and responsibility let a reader understand the box without asking."},
+    {q:"Your diagram has 35 boxes and many crossing lines. What should you do?", o:["Use a smaller font","Split it by level of abstraction or by scenario","Add more colours","Switch to vendor icons"], a:1, why:"Large diagrams usually mix concerns. Split into a higher-level overview and focused views."}
+  ],
+  lab:{type:"mermaid", title:"Fix a draft diagram",
+    brief:"A colleague drew this for a gift-card shop: a React web app calls a Node.js API, which stores orders in PostgreSQL, charges cards through Stripe, and sends receipts through an email provider. Rework it so a reviewer could sign it off.",
+    reqs:["Add a title with scope and date using Mermaid front matter","Give each box a name and technology","Make every line directional, with a verb and protocol","Put the internal containers in a labelled boundary","Style external systems differently and add a small key"],
+    starter:`flowchart LR
+  A[Frontend] --- B[Backend]
+  B --- C[(Database)]
+  B --- D[Stripe]
+  B --- E[Emails]`,
+    solution:`---
+title: Gift-card shop, container view, Oct 2026
+---
+flowchart LR
+  shopper([Shopper])
+  subgraph shop["Gift-card shop"]
+    web["Web app<br/>React SPA"]
+    api["Shop API<br/>Node.js, Express"]
+    db[("Orders DB<br/>PostgreSQL")]
+  end
+  stripe["Stripe<br/>external payments"]:::ext
+  mail["Email provider<br/>external"]:::ext
+  shopper -- "Buys gift cards<br/>HTTPS" --> web
+  web -- "Calls<br/>JSON/HTTPS" --> api
+  api -- "Reads and writes<br/>SQL/TLS" --> db
+  api -- "Charges cards<br/>REST/HTTPS" --> stripe
+  api -- "Sends receipts<br/>REST/HTTPS" --> mail
+  subgraph key["Key"]
+    direction TB
+    k1["Internal container"]
+    k2["External system"]:::ext
+  end
+  classDef ext fill:#EEF0F0,stroke:#8A9599,stroke-dasharray:4 3`,
+    hint:"Front matter goes at the very top between two lines of three dashes. Use -- \"label\" --> for labelled arrows and <br/> for line breaks inside labels."}
+},
+{ id:"m3", dwg:"A-03", lvl:"a", title:"The C4 model", time:"60 min",
+  summary:"The most widely used way to describe software architecture: four zoom levels plus a few supporting views, independent of notation.",
+  objectives:["Use the C4 abstractions correctly: person, software system, container, component, code","Draw context, container and component views of one system","Know when to use landscape, dynamic and deployment views","Avoid the common C4 mistakes"],
+  learn:`
+<h3>The abstractions</h3>
+<div class="tbl"><table><thead><tr><th>Abstraction</th><th>Meaning</th><th>Examples</th></tr></thead><tbody>
+<tr><td>Person</td><td>A human user or role</td><td>Shopper, Teller, Auditor</td></tr>
+<tr><td>Software system</td><td>The highest level of value delivery, usually owned by one team</td><td>Parcel, Payment gateway, Core ledger</td></tr>
+<tr><td>Container</td><td>A separately runnable or deployable unit, or a data store. Not necessarily a Docker container.</td><td>SPA, API service, batch job, database, topic, S3 bucket</td></tr>
+<tr><td>Component</td><td>A grouping of related code inside one container, behind an interface</td><td>Checkout service, Payment client</td></tr>
+<tr><td>Code</td><td>Classes, functions, tables</td><td>CheckoutService, orders table</td></tr>
+</tbody></table></div>
+<h3>The four core views</h3>
+<ol>
+<li><b>System context</b>: your system as one box, with people and external systems. For everyone.</li>
+<li><b>Container</b>: zoom into your system; show applications and data stores and how they talk. For technical people.</li>
+<li><b>Component</b>: zoom into one container. Draw it only when it helps; many teams draw few or none.</li>
+<li><b>Code</b>: UML class or ER diagrams. Usually generated from code, or skipped.</li>
+</ol>
+<h3>Supporting views</h3>
+<ul>
+<li><b>System landscape</b>: many systems across a department or enterprise. Useful for portfolio and platform conversations.</li>
+<li><b>Dynamic</b>: a numbered collaboration for one scenario. A sequence diagram works too (Module 4).</li>
+<li><b>Deployment</b>: containers mapped onto infrastructure nodes (Module 6).</li>
+</ul>
+<h3>Rules that keep C4 honest</h3>
+<ul>
+<li>Each view stays at one level. Containers do not appear on a context view.</li>
+<li>Every element states its type and, from container level down, its technology.</li>
+<li>Every relationship states its intent and, from container level down, its protocol.</li>
+<li>Shared libraries are not containers. They are components inside each container that uses them.</li>
+<li>Message brokers: show the topics or queues as containers and name the events on the arrows. Do not draw a single "Kafka" hub that everything points at.</li>
+<li>C4 is notation-independent. Mermaid, Structurizr, PlantUML and draw.io all work; what matters is a consistent key.</li>
+</ul>
+<h3>One model, many views</h3>
+<p>Structurizr DSL describes the model once and derives views from it, so a rename updates every diagram. This is the same Parcel system:</p>
+${pre(`workspace "Parcel" {
+  model {
+    shopper = person "Shopper"
+    pay = softwareSystem "Payment gateway" { tags "External" }
+    parcel = softwareSystem "Parcel" {
+      web = container "Storefront SPA" "Catalogue, cart, checkout" "React"
+      api = container "Order API" "Carts, orders, checkout" "Python, Django"
+      db  = container "Orders DB" "Orders, customers, stock" "PostgreSQL" { tags "Database" }
+    }
+    shopper -> web "Uses" "HTTPS"
+    web -> api "Calls" "JSON/HTTPS"
+    api -> db "Reads and writes" "SQL"
+    api -> pay "Authorises cards" "REST"
+  }
+  views {
+    systemContext parcel "Context" { include * autolayout lr }
+    container parcel "Containers" { include * autolayout lr }
+    styles {
+      element "External" { background #999999 }
+      element "Database" { shape cylinder }
+    }
+  }
+}`)}`,
+  examples:[
+    {title:"Level 2: container view", code:D.cont, caption:"Zoom into Parcel. Each box is something you deploy or a place data lives.", notice:["The Kafka topic is a container with its events named.","The worker consumes from the topic, so the arrow points from worker to topic: the worker initiates the connection.","Technology appears on every container."]},
+    {title:"Level 3: component view of the Order API", code:D.comp, caption:"Zoom into one container. Useful when onboarding developers or reviewing a risky area.", notice:["Neighbouring containers stay outside the boundary for context.","Components are groups of code behind an interface, not single classes."]},
+    {title:"Supporting view: system landscape", code:D.landscape, caption:"Many systems, grouped by domain. Good for platform and portfolio discussions.", notice:["No internals of any system are shown.","Groupings are business domains, labelled."]}
+  ],
+  quiz:[
+    {q:"In C4, a container is…", o:["A Docker container","Any separately runnable or deployable unit, or a data store","A group of classes","A Kubernetes namespace"], a:1, why:"The term predates Docker's popularity. A Lambda function, an SPA, a database and a batch job are all containers."},
+    {q:"Three services share a validation library. How do you show it?", o:["As a container used by all three","As a component inside each container that uses it, or not at all","As an external system","As a person"], a:1, why:"Libraries are not deployed on their own, so they are not containers. Show them where they run."},
+    {q:"Which C4 view do teams most often skip?", o:["System context","Container","Code","All of them equally"], a:2, why:"Code-level diagrams go stale fastest and IDEs can generate them on demand."},
+    {q:"Your system publishes to Kafka. What is the clearest container-level depiction?", o:["One 'Kafka' box with every service pointing at it","Topics as containers, with publishers and consumers on labelled arrows naming the events","Leave messaging off the diagram","A note saying 'event driven'"], a:1, why:"A single broker hub hides who talks to whom. Topics with named events show the real dependencies."},
+    {q:"You need to show the same containers running in two regions with failover. Which view?", o:["Component","Dynamic","Deployment","Context"], a:2, why:"Deployment views map container instances onto infrastructure such as regions, zones and clusters."}
+  ],
+  lab:{type:"mermaid", title:"Container view for a clinic booking system",
+    brief:"Patients book appointments with a mobile app (React Native) and a web app (Next.js). Both call a Booking API (Java, Spring Boot) backed by PostgreSQL. A Reminder job (Java, scheduled) reads upcoming bookings and sends SMS through Twilio. Clinic staff use the web app. Calendars sync with the clinic's existing practice-management system over HL7 FHIR.",
+    reqs:["Use Mermaid C4Container syntax","Show both people and both external systems","Put the five containers inside a System_Boundary","Each container has technology and a short description","Each Rel has a verb and a protocol"],
+    starter:`C4Container
+  title Container view: Clinic booking
+  Person(patient, "Patient")
+  System_Ext(pms, "Practice management system", "Existing clinic system")
+  System_Boundary(b, "Clinic booking") {
+    Container(mobile, "Mobile app", "React Native", "Book and manage appointments")
+    %% TODO: web app, Booking API, database, reminder job
+  }
+  Rel(patient, mobile, "Books using", "HTTPS")
+  %% TODO: the rest of the relationships`,
+    solution:`C4Container
+  title Container view: Clinic booking
+  Person(patient, "Patient")
+  Person(staff, "Clinic staff")
+  System_Ext(pms, "Practice management system", "Existing clinic system")
+  System_Ext(sms, "Twilio", "SMS delivery")
+  System_Boundary(b, "Clinic booking") {
+    Container(mobile, "Mobile app", "React Native", "Book and manage appointments")
+    Container(web, "Web app", "Next.js", "Booking for patients, schedule for staff")
+    Container(api, "Booking API", "Java, Spring Boot", "Availability, bookings, cancellations")
+    ContainerDb(db, "Bookings DB", "PostgreSQL", "Appointments and patients")
+    Container(job, "Reminder job", "Java, scheduled", "Sends reminders 24h ahead")
+  }
+  Rel(patient, mobile, "Books using", "HTTPS")
+  Rel(patient, web, "Books using", "HTTPS")
+  Rel(staff, web, "Manages schedule using", "HTTPS")
+  Rel(mobile, api, "Calls", "JSON/HTTPS")
+  Rel(web, api, "Calls", "JSON/HTTPS")
+  Rel(api, db, "Reads and writes", "JDBC")
+  Rel(api, pms, "Syncs calendars with", "HL7 FHIR")
+  Rel(job, db, "Reads upcoming bookings", "JDBC")
+  Rel(job, sms, "Sends reminders via", "REST")
+  UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")`,
+    hint:"ContainerDb draws a cylinder. Rel(from, to, \"verb\", \"protocol\"). UpdateLayoutConfig at the end controls how many shapes sit in a row."}
+},
+{ id:"m4", dwg:"B-01", lvl:"p", title:"UML that earns its place", time:"60 min",
+  summary:"You do not need all fourteen UML diagram types. Sequence and state diagrams carry most of the value for architects.",
+  objectives:["Draw sequence diagrams with sync, async and reply messages and alt/opt/loop/par fragments","Model a lifecycle with a state machine: event [guard] / action","Know which other UML diagrams to use and when to use C4 instead"],
+  learn:`
+<h3>Which UML diagrams matter to architects</h3>
+<div class="tbl"><table><thead><tr><th>Diagram</th><th>Use it for</th><th>How often</th></tr></thead><tbody>
+<tr><td>Sequence</td><td>Ordering of calls in one scenario, including failures and retries</td><td>Very often</td></tr>
+<tr><td>State machine</td><td>Lifecycle of an entity: order, payment, account, ticket</td><td>Often</td></tr>
+<tr><td>Activity</td><td>Algorithm or workflow logic within one actor</td><td>Sometimes; BPMN is better across roles</td></tr>
+<tr><td>Component, deployment</td><td>Structure and infrastructure</td><td>C4 container and deployment views usually replace these</td></tr>
+<tr><td>Class</td><td>Key domain types and relationships</td><td>For domain models, not full class dumps</td></tr>
+</tbody></table></div>
+<h3>Sequence diagram notation</h3>
+<div class="tbl"><table><thead><tr><th>Mermaid</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>A->>B: msg</code></td><td>Synchronous call; caller waits</td></tr>
+<tr><td><code>B-->>A: msg</code></td><td>Reply (dashed)</td></tr>
+<tr><td><code>A-)B: msg</code></td><td>Asynchronous message; caller does not wait</td></tr>
+<tr><td><code>A-xB: msg</code></td><td>Lost or failed message</td></tr>
+<tr><td><code>alt / else / end</code></td><td>Mutually exclusive branches</td></tr>
+<tr><td><code>opt</code></td><td>Optional step</td></tr>
+<tr><td><code>loop</code></td><td>Repetition, such as polling or retries</td></tr>
+<tr><td><code>par / and</code></td><td>Parallel branches</td></tr>
+<tr><td><code>Note over A,B: text</code></td><td>Annotation, e.g. timeouts or idempotency keys</td></tr>
+</tbody></table></div>
+<p>Good sequence diagrams show the <b>unhappy path</b>: timeouts, declines, retries, compensation. Reviewers learn the most from those.</p>
+<h3>State machines</h3>
+<p>Transitions are labelled <code>event [guard] / action</code>. For example: <code>payment authorised [amount &gt; 0] / send receipt</code>. Check that every state has a way out (or is final), and that every event that can arrive in a state is handled.</p>
+<h3>Class diagrams, sparingly</h3>
+<p>Draw the handful of domain types that make the design understandable, with multiplicities on the relationships. Leave getters, setters and framework classes out.</p>`,
+  examples:[
+    {title:"Checkout, including the decline path", code:D.seq, caption:"A sequence diagram for one scenario, with numbered steps.", notice:["The order event is asynchronous (open arrowhead); the API does not wait for consumers.","The alt fragment shows the decline branch, which reviewers will ask about.","Step numbers let people refer to 'step 6' in review comments."]},
+    {title:"Order lifecycle", code:D.state, caption:"Every status the Orders DB can hold, and what moves an order between them.", notice:["Each transition is labelled with the event that causes it.","Three final states are explicit.","This diagram doubles as a test checklist."]},
+    {title:"Code level: key types only", code:D.code, caption:"A focused class diagram supporting the component view.", notice:["Only the types needed to explain checkout are shown."]}
+  ],
+  quiz:[
+    {q:"In Mermaid sequence syntax, what does A-)B mean?", o:["Synchronous call","Reply","Asynchronous message","Deleted participant"], a:2, why:"The open arrowhead marks an asynchronous message; the sender continues without waiting."},
+    {q:"What is a sequence diagram best at showing?", o:["The full static structure of a system","The order of interactions in one scenario","Infrastructure topology","Business ownership"], a:1, why:"Sequence diagrams are about time and order for a single scenario."},
+    {q:"Which fragment shows mutually exclusive branches?", o:["loop","par","alt","opt"], a:2, why:"alt/else shows one branch or the other. opt is a single optional branch; par is parallel."},
+    {q:"In the label 'payment authorised [amount > 0] / send receipt', what is '[amount > 0]'?", o:["The event","The guard","The action","The target state"], a:1, why:"Event [guard] / action. The guard must be true for the transition to fire."},
+    {q:"How should architects use class diagrams?", o:["Generate every class in the codebase","Show key domain types and relationships only","Never","Only for databases"], a:1, why:"A focused domain model communicates; a full dump overwhelms and goes stale."}
+  ],
+  lab:{type:"mermaid", title:"Sign-in with OIDC and MFA",
+    brief:"A user signs in to an internal web app. The app redirects to the company identity provider (OIDC). The IdP checks the password, then pushes an MFA prompt to the user's phone. If the user approves within 60 seconds, the IdP redirects back with an authorisation code; the app exchanges it for tokens and creates a session. If the push times out, the IdP shows an error.",
+    reqs:["Participants: User, Browser, Web app, Identity provider, Authenticator app","Use autonumber","Show the code-for-token exchange as a back-channel call from the Web app","Use alt/else for approved versus timed out","Add a note about the 60-second timeout"],
+    starter:`sequenceDiagram
+  autonumber
+  actor U as User
+  participant B as Browser
+  participant W as Web app
+  participant I as Identity provider
+  participant M as Authenticator app
+  U->>B: Open app
+  B->>W: GET /dashboard
+  W-->>B: 302 redirect to IdP /authorize
+  %% TODO: continue the flow`,
+    solution:`sequenceDiagram
+  autonumber
+  actor U as User
+  participant B as Browser
+  participant W as Web app
+  participant I as Identity provider
+  participant M as Authenticator app
+  U->>B: Open app
+  B->>W: GET /dashboard
+  W-->>B: 302 redirect to IdP /authorize
+  B->>I: GET /authorize (client_id, PKCE challenge)
+  I-->>B: Sign-in page
+  U->>B: Enter username and password
+  B->>I: POST credentials
+  I-)M: Push MFA prompt
+  Note over I,M: Prompt expires after 60 seconds
+  alt Approved in time
+    M-)I: Approve
+    I-->>B: 302 to /callback?code=...
+    B->>W: GET /callback?code=...
+    W->>I: POST /token (code, PKCE verifier)
+    I-->>W: ID token, access token
+    W-->>B: Set session cookie, 302 /dashboard
+  else Timed out
+    I-->>B: MFA timed out, try again
+  end`,
+    hint:"Back-channel means server to server: W->>I, not B->>I. Use -) for the push because the IdP does not block waiting for it."}
+},
+{ id:"m5", dwg:"B-02", lvl:"p", title:"Processes and BPMN", time:"60 min",
+  summary:"Business and operational processes: who does what, in what order, with which decisions and hand-offs.",
+  objectives:["Read and draw the core BPMN elements: events, tasks, gateways, flows, pools and lanes","Apply naming rules for tasks and events","Build a BPMN diagram in draw.io and a quick approximation in Mermaid"],
+  learn:`
+<h3>The core BPMN palette</h3>
+<div class="tbl"><table><thead><tr><th>Element</th><th>Looks like</th><th>Means</th></tr></thead><tbody>
+<tr><td>Start event</td><td>Thin circle</td><td>Something that starts the process: "Invoice received"</td></tr>
+<tr><td>Intermediate event</td><td>Double circle</td><td>Something that happens mid-process: a timer, a message, an error</td></tr>
+<tr><td>End event</td><td>Thick circle</td><td>A result: "Invoice paid", "Claim rejected"</td></tr>
+<tr><td>Task</td><td>Rounded rectangle</td><td>A unit of work: "Review claim"</td></tr>
+<tr><td>Sub-process</td><td>Rounded rectangle with +</td><td>A collapsible group of tasks</td></tr>
+<tr><td>Exclusive gateway</td><td>Diamond with X (or empty)</td><td>Exactly one outgoing path is taken</td></tr>
+<tr><td>Parallel gateway</td><td>Diamond with +</td><td>All paths run; the join waits for all</td></tr>
+<tr><td>Inclusive gateway</td><td>Diamond with O</td><td>One or more paths run</td></tr>
+<tr><td>Event-based gateway</td><td>Diamond with pentagon</td><td>Path chosen by whichever event happens first</td></tr>
+<tr><td>Sequence flow</td><td>Solid arrow</td><td>Order of work within one pool</td></tr>
+<tr><td>Message flow</td><td>Dashed arrow, open circle tail</td><td>Communication between pools (organisations)</td></tr>
+<tr><td>Pool and lane</td><td>Large band split into rows</td><td>Pool: a participant. Lane: a role, team or system inside it.</td></tr>
+<tr><td>Data object, store</td><td>Folded page, cylinder</td><td>Information used or produced</td></tr>
+</tbody></table></div>
+<h3>Rules that prevent broken processes</h3>
+<ul>
+<li>Sequence flows stay inside one pool. Between pools, use message flows.</li>
+<li>Name tasks verb plus noun ("Approve payment"). Name events as states in the past tense ("Payment approved").</li>
+<li>Label every gateway as a question, and every outgoing flow as an answer.</li>
+<li>Close what you open: a parallel split needs a parallel join, or the process can deadlock or run twice.</li>
+<li>Every path ends in an end event. Show exception and timeout paths; they are where the risk is.</li>
+<li>Pick a level and stay there: descriptive (for business), analytical (with exceptions), or executable (for an engine like Camunda).</li>
+</ul>
+<h3>Tools</h3>
+<p>For true BPMN, use draw.io's BPMN shape libraries, or bpmn.io / Camunda Modeler, which save standard BPMN 2.0 XML. Mermaid has no BPMN type; a flowchart with subgraphs as lanes is a quick approximation for docs, as below.</p>`,
+  examples:[{title:"Wire transfer approval (swimlane approximation)", code:D.bpmn, caption:"Three lanes, two decision points, explicit rejection paths.", notice:["Events use circles: thin for start, double ring for end in this Mermaid approximation.","Gateways are questions; each outgoing flow is labelled with an answer.","The rejection path has its own end event."]}],
+  quiz:[
+    {q:"A diamond with an X inside is…", o:["A parallel gateway","An exclusive gateway: exactly one path","An error event","A sub-process"], a:1, why:"Exclusive (XOR) gateways route the flow down exactly one outgoing path."},
+    {q:"Message flows (dashed) connect…", o:["Tasks in the same lane","Elements in different pools","Gateways only","Data objects"], a:1, why:"Pools are separate participants; they communicate through messages. Sequence flows cannot cross pools."},
+    {q:"Which is the best name for an end event?", o:["Pay invoice","Invoice","Invoice paid","Payment step"], a:2, why:"Events describe a state reached, in the past tense. Tasks use verb plus noun."},
+    {q:"A parallel gateway splits into three paths. How should they merge?", o:["Into an exclusive gateway","Into a parallel gateway","They do not need to merge","Into a start event"], a:1, why:"A parallel join waits for all branches. Joining with an exclusive gateway can let the process continue three times."},
+    {q:"What do lanes represent?", o:["Time periods","Roles, teams or systems responsible for the work","Data stores","Priorities"], a:1, why:"Lanes show who performs each task within a participant."}
+  ],
+  lab:{type:"drawio", title:"Employee expense claim in draw.io (BPMN)",
+    brief:"Employees submit expense claims with receipts. Their manager reviews each claim and can approve it or send it back for changes. Finance checks approved claims against policy. Claims over policy limits go to the finance controller. Approved claims are paid in the next payroll run. If the manager does not act within five business days, the claim escalates to the manager's manager.",
+    steps:[
+      "Open <a href=\"https://app.diagrams.net\" target=\"_blank\" rel=\"noopener\">app.diagrams.net</a>, choose where to save (Device is fine), and create a blank diagram named <code>expense-claim</code>.",
+      "Add BPMN shapes: click <b>+ More Shapes</b> at the bottom of the left panel, tick <b>BPMN General</b> (and any other BPMN libraries listed), then <b>Apply</b>.",
+      "Search the shape panel for <b>pool</b>, drag a horizontal pool onto the canvas, and give it three lanes: Employee, Manager, Finance. Name the pool \"Expense claim\".",
+      "In Employee: a start event \"Expense incurred\", then tasks \"Prepare claim\" and \"Submit claim with receipts\".",
+      "In Manager: task \"Review claim\", then an exclusive gateway \"Claim acceptable?\". Label the outgoing flows Yes and No. No goes to \"Request changes\" and back to the employee's prepare task.",
+      "Attach a timer boundary event to \"Review claim\" labelled \"5 business days\". Its flow leads to a task \"Escalate to senior manager\".",
+      "In Finance: \"Check against policy\", then a gateway \"Within policy limit?\". No leads to \"Controller review\". Both paths reach \"Schedule payment in payroll\" and an end event \"Claim paid\". Add an end event \"Claim rejected\" for a controller refusal.",
+      "Tidy: keep the flow left to right, avoid crossing lines, and add a text box with title, date, owner and status.",
+      "Save with <b>File › Export as › SVG</b> and tick <b>Include a copy of my diagram</b>. The file stays editable in draw.io and renders in any Git host or wiki."
+    ],
+    reqs:["One pool with three labelled lanes","Tasks are verb plus noun; events are past tense","Every gateway is a question with labelled outgoing flows","Timer boundary event with an escalation path","Every path reaches an end event","Exported as an editable .drawio.svg with a title block"]}
+},
+{ id:"m6", dwg:"B-03", lvl:"p", title:"Cloud, infrastructure and data flow", time:"70 min",
+  summary:"Where software runs, what fails together, and where sensitive data crosses trust boundaries.",
+  objectives:["Draw deployment views with regions, zones, networks and replication","Make failure domains and single points of failure visible","Draw data-flow diagrams with trust boundaries for threat modelling","Use vendor icons without making icon soup"],
+  learn:`
+<h3>Deployment views</h3>
+<p>A deployment view maps containers onto infrastructure. Nest boundaries from the outside in: cloud account or data centre, region, network (VPC or VNet), availability zone, subnet, cluster or host, then the container instances.</p>
+<ul>
+<li>Show <b>instance counts</b> ("x3") and <b>scaling rules</b> where they matter.</li>
+<li>Show <b>replication</b> with direction and mode: synchronous or asynchronous.</li>
+<li>Show <b>ingress and egress</b>: load balancers, WAF, NAT, private endpoints, firewalls.</li>
+<li>Draw one deployment view per environment that differs. Production and development usually differ.</li>
+</ul>
+<h3>Make failure domains visible</h3>
+<p>A reader should be able to point at any box and say what happens if it disappears. If the only database sits inside one zone, the drawing should make that obvious. Mark single points of failure explicitly, and show the recovery path (failover, restore from backup) with RPO and RTO if they are known.</p>
+<h3>Data-flow diagrams and trust boundaries</h3>
+<p>Security reviews use data-flow diagrams (DFDs), which have only five elements:</p>
+<div class="tbl"><table><thead><tr><th>Element</th><th>Shape</th><th>Example</th></tr></thead><tbody>
+<tr><td>External entity</td><td>Rectangle</td><td>User, partner system</td></tr>
+<tr><td>Process</td><td>Circle or rounded box</td><td>Checkout service</td></tr>
+<tr><td>Data store</td><td>Open rectangle or cylinder</td><td>Orders DB</td></tr>
+<tr><td>Data flow</td><td>Arrow labelled with the data</td><td>"card token, cart"</td></tr>
+<tr><td>Trust boundary</td><td>Dashed line or box</td><td>Internet to DMZ, app to database network</td></tr>
+</tbody></table></div>
+<p>Wherever a flow crosses a trust boundary, walk through <b>STRIDE</b>: Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege. Label flows with the data they carry (PII, card data, credentials) so classification is visible.</p>
+<h3>Icons</h3>
+<ul>
+<li>Vendor icons (AWS, Azure, GCP) help infrastructure people recognise services quickly. They do not explain purpose.</li>
+<li>Always pair an icon with a text label: role first, product second ("Orders DB, Amazon RDS for PostgreSQL").</li>
+<li>Use the official, current icon set, at one size, and do not mix vendors' styles in one view.</li>
+<li>draw.io ships AWS, Azure, GCP, Kubernetes and Cisco libraries under <b>+ More Shapes</b>.</li>
+</ul>`,
+  examples:[
+    {title:"Deployment: two zones, one region", code:D.deploy, caption:"Production deployment of Parcel's Order API and database.", notice:["Nesting shows region, network and zone.","The replication arrow names its mode.","A reader can see the region is a single point of failure, which is a fair review question."]},
+    {title:"Data-flow diagram with trust boundaries", code:D.dfd, caption:"The checkout path, as a security reviewer would want it.", notice:["Flows are labelled with the data they carry.","Dashed red boundaries show where trust changes.","Processes are numbered and the data store is labelled D1, which is DFD convention."]}
+  ],
+  quiz:[
+    {q:"Which belongs on a deployment view?", o:["Classes and methods","Nodes, what runs on them, replication and network boundaries","Business process steps","Only vendor logos"], a:1, why:"Deployment views answer 'what runs where', including the infrastructure and connections between nodes."},
+    {q:"A trust boundary is…", o:["A team boundary","Where data or calls cross between different levels of privilege or trust","A firewall vendor","The edge of the diagram"], a:1, why:"Crossing a trust boundary is where authentication, authorisation, validation and encryption matter most."},
+    {q:"In STRIDE, T stands for…", o:["Timeout","Tampering","Tokenisation","Throttling"], a:1, why:"Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege."},
+    {q:"What is the right way to use vendor icons?", o:["Instead of labels","Sparingly, always with a text label saying what the thing does","Mix several vendors' styles for variety","Only on context diagrams"], a:1, why:"An icon says which product it is; the label says what it is for. Readers need both."},
+    {q:"How do you make a single-zone database risk visible?", o:["Mention it in a footnote","Place it inside one zone's boundary and show no replica","Colour it red without a key","Leave zones off the diagram"], a:1, why:"Correct nesting makes the failure domain obvious without extra explanation."}
+  ],
+  lab:{type:"mermaid", title:"DFD for a document upload service",
+    brief:"Customers upload ID documents for account opening. The browser sends files to an Upload API in the DMZ. The API stores files in an object store in the private network, writes metadata to a database, and calls an external verification vendor with the document image. Results come back by webhook to the API.",
+    reqs:["External entities: customer browser, verification vendor","Processes numbered (1. Upload API, 2. Verification handler)","Data stores labelled D1, D2","Every flow labelled with the data it carries; mark PII","At least two dashed trust boundaries"],
+    starter:`flowchart LR
+  user[Customer browser]
+  vendor[Verification vendor]
+  subgraph TB1["Trust boundary: internet to DMZ"]
+    up([1. Upload API])
+  end
+  %% TODO: private network boundary with stores and handler
+  user -- "ID image (PII)" --> up
+  style TB1 stroke-dasharray: 6 4,stroke:#C2331F`,
+    solution:`flowchart LR
+  user[Customer browser]
+  vendor[Verification vendor]
+  subgraph TB1["Trust boundary: internet to DMZ"]
+    up([1. Upload API])
+    hook([2. Verification handler])
+  end
+  subgraph TB2["Trust boundary: private network"]
+    obj[(D1 Document store)]
+    meta[(D2 Applications DB)]
+  end
+  user -- "ID image, session token (PII)" --> up
+  up -- "encrypted image (PII)" --> obj
+  up -- "metadata, applicant id (PII)" --> meta
+  up -- "image, request id (PII)" --> vendor
+  vendor -- "result webhook, signed" --> hook
+  hook -- "verification status" --> meta
+  style TB1 stroke-dasharray: 6 4,stroke:#C2331F
+  style TB2 stroke-dasharray: 6 4,stroke:#C2331F`,
+    hint:"Use ([text]) for processes and [(text)] for stores. A style line per subgraph gives the dashed boundary."}
+},
+{ id:"m7", dwg:"C-01", lvl:"x", title:"Diagrams as code and tooling", time:"60 min",
+  summary:"Keep diagrams next to the code, review them in pull requests, render them in CI, and publish them with your docs.",
+  objectives:["Choose between Mermaid, PlantUML, Structurizr, D2 and draw.io for a given job","Set up a docs folder that renders diagrams in CI","Keep draw.io diagrams editable and versioned in Git"],
+  learn:`
+<h3>Why treat diagrams as code</h3>
+<ul><li>They live next to the code they describe and change in the same pull request.</li><li>Reviewers see a text diff, not a mystery binary.</li><li>Rendering is repeatable, so styling stays consistent across a team.</li><li>Model-based tools (Structurizr) generate many views from one model, so names never drift.</li></ul>
+<h3>Choosing a tool</h3>
+<div class="tbl"><table><thead><tr><th>Tool</th><th>Strengths</th><th>Weak spots</th><th>Good for</th></tr></thead><tbody>
+<tr><td>Mermaid</td><td>Renders natively in GitHub, GitLab, many wikis; low friction</td><td>Limited layout control; C4 support is basic</td><td>Sequences, flows, state, quick views in READMEs</td></tr>
+<tr><td>PlantUML</td><td>Very complete UML; C4-PlantUML library; mature</td><td>Needs Java or a server to render; dated default look</td><td>Detailed UML, C4 with layout hints</td></tr>
+<tr><td>Structurizr DSL</td><td>One model, many C4 views; consistent naming</td><td>C4-specific; learning curve</td><td>Living architecture of a system or landscape</td></tr>
+<tr><td>D2</td><td>Modern layouts, nested containers, good looking</td><td>Smaller ecosystem</td><td>Polished infrastructure and overview diagrams</td></tr>
+<tr><td>draw.io</td><td>Free, visual, huge shape libraries, editable SVG/PNG in Git</td><td>Manual layout; diffs are XML</td><td>BPMN, cloud diagrams, presentation-quality views</td></tr>
+<tr><td>Excalidraw</td><td>Fast, hand-drawn style, collaborative</td><td>Not for formal documentation</td><td>Workshops and early sketches</td></tr>
+</tbody></table></div>
+<h3>A docs folder that works</h3>
+${pre(`docs/
+  architecture/
+    workspace.dsl          # Structurizr model: context, containers, deployment
+    decisions/
+      0001-use-postgres.md # ADRs, one per decision
+    diagrams/
+      checkout.mmd         # Mermaid sequence
+      expense-claim.drawio.svg
+    README.md              # index: what each diagram is for, owner, review date
+mkdocs.yml                 # or Backstage TechDocs config`)}
+<h3>Render and publish in CI</h3>
+${pre(`# .github/workflows/docs.yml (sketch)
+on: { push: { branches: [main], paths: ["docs/**"] } }
+jobs:
+  diagrams:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Render Mermaid
+        run: npx -y @mermaid-js/mermaid-cli -i docs/architecture/diagrams/checkout.mmd -o site/checkout.svg
+      - name: Export Structurizr views
+        run: docker run --rm -v $PWD:/w structurizr/cli export -w /w/docs/architecture/workspace.dsl -f plantuml
+      - name: Build docs site
+        run: pipx run mkdocs build`)}
+<h3>PlantUML with the C4 library</h3>
+${pre(`@startuml
+!include <C4/C4_Container>
+Person(shopper, "Shopper")
+System_Boundary(b, "Parcel") {
+  Container(api, "Order API", "Python, Django", "Carts and checkout")
+  ContainerDb(db, "Orders DB", "PostgreSQL")
+}
+Rel(shopper, api, "Uses", "HTTPS")
+Rel_R(api, db, "Reads and writes", "SQL")
+SHOW_LEGEND()
+@enduml`)}
+<h3>draw.io in Git</h3>
+<ul><li>Save as <code>.drawio.svg</code> or <code>.drawio.png</code>: an image any viewer renders, with the editable diagram embedded.</li><li>The draw.io VS Code extension edits these files in place.</li><li>Agree on a shared shape library and colour key, and keep it in the repo.</li></ul>`,
+  examples:[{title:"Release pipeline for an open-source package", code:D.pipe, caption:"A flowchart that lives in the repo's docs and changes with the workflow file.", notice:["The CI workflow is shown as a distinct shape.","Artefacts and destinations are named, so the supply chain is reviewable.","It is short enough to read in a pull request."]}],
+  quiz:[
+    {q:"What is the main benefit of diagrams as code?", o:["They always look better","They are versioned and reviewed alongside the code they describe","They need no tooling","They replace all prose"], a:1, why:"Versioning and review in the same workflow is what keeps diagrams honest."},
+    {q:"How does Structurizr differ from writing separate Mermaid files?", o:["It only draws sequence diagrams","You define one model and generate many views from it","It cannot render C4","It needs no text"], a:1, why:"Model-based tooling keeps names and relationships consistent across every view."},
+    {q:"How do you keep a draw.io diagram both viewable and editable in Git?", o:["Commit a PNG screenshot","Save as .drawio.svg or .drawio.png with the diagram embedded","Commit a PDF","Store only the XML and never render it"], a:1, why:"The embedded format renders anywhere and reopens in draw.io for edits."},
+    {q:"Where should diagrams be rendered for publication?", o:["Each developer's laptop","In CI on merge, published with the docs site","Only during architecture reviews","In email attachments"], a:1, why:"CI rendering means the published diagram always matches the main branch."},
+    {q:"Which is a known limitation of Mermaid?", o:["It cannot render in GitHub","Limited control over layout","No sequence diagrams","It requires Java"], a:1, why:"Mermaid auto-lays out diagrams. Precise placement needs other tools or restructuring."}
+  ],
+  lab:{type:"mermaid", title:"Diagram your own delivery pipeline",
+    brief:"Pick a real repository you own or know well. Draw its path from commit to production (or to a package index). Include the checks that can stop a release, and where artefacts and SBOMs go.",
+    reqs:["Title with repository name and date","At least one decision (gate) with labelled outcomes","Named artefacts and where they are stored","A subgraph per environment or stage group","Commit the .mmd file to the repo's docs folder"],
+    starter:`---
+title: my-repo delivery pipeline, Oct 2026
+---
+flowchart LR
+  pr[Pull request] --> checks{{CI checks}}
+  checks --> gate{All green?}
+  gate -- No --> fix[Author fixes]
+  gate -- Yes --> merge[Merge to main]
+  %% TODO: build, scan, SBOM, publish, deploy stages`,
+    solution:`---
+title: my-repo delivery pipeline, Oct 2026
+---
+flowchart LR
+  pr[Pull request] --> checks{{CI checks: lint, tests, type check}}
+  checks --> gate{All green?}
+  gate -- No --> fix[Author fixes]
+  fix --> pr
+  gate -- Yes --> merge[Merge to main]
+  subgraph rel["Release"]
+    tag[Tag vX.Y.Z] --> build[Build artefacts]
+    build --> scan[Vulnerability scan]
+    scan --> sev{Critical findings?}
+    sev -- Yes --> stop(((Release blocked)))
+    sev -- No --> sbom[Generate SBOM]
+    sbom --> sign[Sign artefacts and SBOM]
+  end
+  subgraph dist["Distribution"]
+    idx[(Package index)]
+    gh[(Release page)]
+  end
+  merge --> tag
+  sign --> idx
+  sign --> gh`,
+    hint:"{{text}} draws a hexagon, good for automated steps. ((( ))) draws a double circle for an end state."}
+},
+{ id:"m8", dwg:"C-02", lvl:"x", title:"Professional practice", time:"60 min",
+  summary:"Documentation sets, decision records, reviews, presenting, and keeping diagrams alive.",
+  objectives:["Assemble a documentation set with C4 views and ADRs (or arc42)","Write an Architecture Decision Record with a supporting diagram","Review a diagram against a rubric and give actionable feedback","Present architecture with progressive disclosure"],
+  learn:`
+<h3>The documentation set</h3>
+<p>A professional set is small and current. For most systems: a context view, a container view, one or two dynamic or sequence views for the riskiest scenarios, a deployment view per distinct environment, and a list of ADRs. arc42 is a popular 12-section template if you need a fuller structure; C4 views slot into its sections 3, 5, 6 and 7.</p>
+<h3>Architecture Decision Records</h3>
+${pre(`# 0007. Publish order events to Kafka instead of calling fulfilment directly
+
+Status: Accepted (2026-10-12)
+Deciders: Payments platform architecture group
+
+## Context
+Checkout latency rises when the fulfilment service is slow, and
+fulfilment outages block orders. Three other teams want order events.
+
+## Decision
+The Order API publishes order.placed to a Kafka topic. Fulfilment
+and other consumers subscribe. See container view v3 and sequence S-02.
+
+## Consequences
++ Checkout no longer depends on fulfilment availability.
++ New consumers can subscribe without changes to the Order API.
+- Fulfilment becomes eventually consistent; customer messaging must reflect that.
+- We now operate a topic: schema registry, retention and DLQ policies needed.`)}
+<p>Link each ADR to the diagram version it changes, and draw the "after" picture.</p>
+<h3>Reviewing diagrams</h3>
+<p>Review against a rubric (see Reference) and make each comment actionable: "Line 4 has no protocol; is it gRPC or REST?" beats "unclear". Engineers call marking up a drawing <b>redlining</b>: the reviewer marks problems in red and the author resolves each one.</p>
+<h3>Presenting</h3>
+<ul><li>Start at context, then zoom in only as far as the audience needs.</li><li>Build complex views in steps: show the happy path, then add failure paths.</li><li>One message per slide. Say it in the slide title.</li><li>Label current versus target state, and show the transition plan if it spans quarters.</li></ul>
+<h3>Keeping diagrams alive</h3>
+<ul><li>Every diagram has an owner and a review date.</li><li>Update diagrams in the same pull request as the change they describe.</li><li>Prefer generated or model-based views for things that change often.</li><li>Archive superseded diagrams with a note that points to the replacement. Do not leave fossils in the wiki.</li></ul>`,
+  examples:[{title:"Redline exercise source", code:D.bad, caption:"The lab below asks you to review this diagram. Look at it closely first.", notice:["Try to find at least six problems before opening the lab checklist."]}],
+  quiz:[
+    {q:"What does an ADR contain?", o:["Only the decision","Context, decision, status and consequences","A full design document","Meeting minutes"], a:1, why:"The context and consequences explain why, which is what future readers need."},
+    {q:"What best keeps diagrams current?", o:["A yearly documentation sprint","An owner, a review date, and updates in the same pull request as the change","Printing them","Locking the wiki page"], a:1, why:"Ownership plus a change-time habit keeps drift small."},
+    {q:"Presenting to executives, you should start with…", o:["The component view","The system context, then zoom in only as needed","The class diagram","The deployment YAML"], a:1, why:"Progressive disclosure keeps the audience oriented."},
+    {q:"Current and target state appear in one deck. What should you do?", o:["Mix them on one diagram without labels","Label each view clearly and date it","Show only the target","Use colour alone to tell them apart"], a:1, why:"Readers act on what they believe is true today. Make the state explicit."},
+    {q:"arc42 is…", o:["A diagram notation","A template for structuring architecture documentation","A cloud provider","A BPMN engine"], a:1, why:"arc42 gives a section structure. You still choose notations like C4 for its diagrams."}
+  ],
+  lab:{type:"redline", title:"Redline review",
+    brief:"Review the diagram below as if it were attached to a design review. Tick every problem you can see, then check your review.",
+    items:[
+      {t:"No title, scope, date or status", real:true},
+      {t:"No key explaining colours or shapes", real:true},
+      {t:"Lines have no direction", real:true},
+      {t:"Lines have no verbs or protocols", real:true},
+      {t:"Mixed abstraction levels: 'AWS' is not the same kind of thing as 'Web'", real:true},
+      {t:"Vague names: 'Backend', 'Service 2', 'Stuff'", real:true},
+      {t:"Colours appear without meaning", real:true},
+      {t:"Two services share one database, and the diagram does not say who owns it", real:true},
+      {t:"Kafka drawn as an anonymous box with no topics or events", real:true},
+      {t:"Too many elements for one view", real:false, note:"Nine elements is a comfortable size. The problems are elsewhere."},
+      {t:"It should use vendor icons", real:false, note:"Icons would not fix any of the real problems, and they are optional."}
+    ]}
+}
+];
+
+/* ---------- capstones ---------- */
+const CAPSTONES = [
+{ id:"cA", code:"CP-1", domain:"Enterprise platform", title:"Internal developer portal: app template service",
+  brief:"Your platform team runs an internal developer portal. Engineers pick a template (for example, a Django web service), fill in a form, and the portal creates a repository, CI pipeline, cloud namespace and service catalogue entry. The service integrates with the Git host, the CI system, the secrets vault, the cloud platform, the identity provider, and the service catalogue.",
+  deliver:["System context view","Container view of the template service","Component view of the container doing the scaffolding","Sequence diagram for 'create a new service', including a failure halfway through (repo created, pipeline failed)","Deployment view for production","Two ADRs, each linked to the diagram it changes"],
+  rubric:["Each view stays at one level of abstraction","All elements have name, type, technology (where relevant) and responsibility","All relationships are directional with verb and protocol","The failure scenario shows how partial work is cleaned up or retried","Secrets flow is visible and never passes through the browser","Deployment view shows failure domains and instance counts","Every diagram has title, key, date, status and owner","Diagrams are in Git as code or editable .drawio.svg and render in CI"],
+  stretch:"Write the whole model in Structurizr DSL and generate the context, container and deployment views from it.",
+  starter:D.ctx},
+{ id:"cB", code:"CP-2", domain:"Financial services process", title:"High-value payment approval",
+  brief:"A bank processes high-value outgoing payments. A relationship manager captures the request. Operations validates details. Compliance screens for sanctions. Payments over a threshold need dual approval. Some payments are held for a cut-off time or released next business day. The payment then goes to the clearing network, which confirms or rejects it.",
+  deliver:["BPMN diagram with at least four lanes and a separate pool for the clearing network (message flows)","State machine for the payment, from Draft to Settled or Returned","Sequence diagram for the sanctions screening call, including a timeout and a manual-review path","A one-page control map: which step enforces which control"],
+  rubric:["Message flows connect pools; sequence flows never cross pools","Every gateway is a question with labelled answers","Timer events model cut-off and next-day release","Every path reaches an end event, including rejections","State machine has no dead-end non-final states","Sequence shows timeout handling and idempotency","Naming is consistent across all three diagrams","A non-technical operations manager can follow the BPMN"],
+  stretch:"Model the BPMN in Camunda Modeler or bpmn.io so it would be executable, and note which tasks are automated.",
+  starter:D.bpmn},
+{ id:"cC", code:"CP-3", domain:"Cloud SaaS", title:"Event-driven commerce on the cloud",
+  brief:"Extend Parcel to multiple sellers. Add a seller portal, inventory service, search, and a recommendations service fed by order events. The business wants the storefront to stay up if a single availability zone fails, and plans a second region within a year.",
+  deliver:["Updated container view with topics as containers and named events","Dynamic or sequence view for 'order placed to shipped'","Deployment view across two zones, plus a target-state view for two regions","Data-flow diagram with trust boundaries and PII-labelled flows","A short STRIDE table for the three riskiest boundary crossings"],
+  rubric:["No anonymous broker hub; producers and consumers are explicit","Current state and target state are clearly labelled and dated","Replication mode and failover path are shown","Single points of failure are identified, not hidden","Every flow crossing a trust boundary is labelled with its data","Vendor icons, if used, all carry text labels","Views fit on one screen without zooming"],
+  stretch:"Draw the two-region deployment in draw.io with the official cloud icon set, exported as .drawio.svg.",
+  starter:D.deploy},
+{ id:"cD", code:"CP-4", domain:"Open-source supply chain", title:"Package release and SBOM pipeline",
+  brief:"Document the release process for an open-source Python package that publishes to PyPI and conda-forge. Releases produce an SBOM from the lockfile, sign artefacts, and attach both to the release page. The conda-forge feedstock is updated by a bot pull request that a maintainer merges.",
+  deliver:["Context view: maintainers, contributors, CI, package indexes, the feedstock repo, the update bot","Pipeline flowchart from tag to published packages, with gates","Sequence diagram for the feedstock update, including the bot PR and maintainer merge","A docs folder that renders all diagrams in CI and publishes them"],
+  rubric:["External systems are clearly external and named","Gates show what blocks a release","Artefacts and their destinations are explicit","Sequence shows asynchronous steps correctly","All diagrams live in the repo and render automatically","README index lists each diagram with owner and purpose"],
+  stretch:"Add a data-flow diagram showing where signing keys live and which boundaries they cross.",
+  starter:D.pipe}
+];
+
+/* ---------- reference data ---------- */
+const PICKER = [
+  {q:"Where does our system fit, and what does it depend on?", d:"System context (C4 level 1)", who:"Everyone, including non-technical readers", tip:"One box for your system. People and external systems around it. No technology inside."},
+  {q:"What are the deployable pieces and how do they talk?", d:"Container view (C4 level 2)", who:"Architects, developers, operations", tip:"Applications, data stores, topics. Technology and protocol on everything."},
+  {q:"How is one service organised inside?", d:"Component view (C4 level 3)", who:"Developers working on that container", tip:"Only for containers that are complex or risky."},
+  {q:"What happens, step by step, when this scenario runs?", d:"Sequence diagram or C4 dynamic view", who:"Developers, reviewers, testers", tip:"Include the failure path. Number the steps."},
+  {q:"What states can this entity be in?", d:"State machine", who:"Developers, product, QA", tip:"Label transitions event [guard] / action. Mark final states."},
+  {q:"Who does what in this business process?", d:"BPMN or swimlane process", who:"Process owners, operations, auditors", tip:"Lanes for roles. Gateways as questions. Every path ends."},
+  {q:"What runs where, and what fails together?", d:"Deployment view", who:"SRE, operations, architects", tip:"Nest region, network, zone, cluster. Show replication and counts."},
+  {q:"Where could an attacker get in? Where does sensitive data go?", d:"Data-flow diagram with trust boundaries", who:"Security, risk, auditors", tip:"Label flows with data and classification. Run STRIDE at each boundary crossing."},
+  {q:"How do our systems relate across the department?", d:"System landscape", who:"Leadership, enterprise architects", tip:"Group by domain. No internals."},
+  {q:"How does code get from commit to production?", d:"Pipeline flowchart", who:"Developers, platform, security", tip:"Show gates and where artefacts go."},
+  {q:"What did we decide, and why?", d:"ADR with a before/after diagram", who:"Future maintainers, reviewers", tip:"Link the ADR to the diagram version it changes."}
+];
+const RUBRIC = [
+  ["Frame","Title, scope, date or version, status and owner are present."],
+  ["Purpose","The reader and the question it answers are clear."],
+  ["Key","Every colour, shape and line style is explained."],
+  ["One level","All elements sit at the same level of abstraction."],
+  ["Elements","Each has a name, type, responsibility, and technology where relevant."],
+  ["Relationships","Each is directional with a verb, plus protocol at container level."],
+  ["Layout","One reading direction, few crossings, about 20 elements or fewer."],
+  ["Accessibility","Meaning never depends on colour alone; text is legible at normal zoom."],
+  ["Truth","It matches the system or plan as it is; current and target are labelled."],
+  ["Home","It lives in version control or a known location, with a link to its source."]
+];
+const ANTI = [
+  ["Mystery boxes","Boxes named 'Backend', 'Service', 'Stuff'.","Name, type, responsibility, technology."],
+  ["Spaghetti","Unlabelled lines in every direction.","Directional arrows with verb and protocol; split the view."],
+  ["Level soup","An app, a table and a cloud vendor side by side.","One level per view; zoom with C4."],
+  ["The god diagram","Everything on one poster.","A small set of views, each answering one question."],
+  ["Kafka octopus","Every service points at one broker box.","Topics as containers, events on the arrows."],
+  ["Icon soup","Dozens of logos, no words.","Icons only with text labels, role first."],
+  ["Rainbow, no key","Colours with no stated meaning.","Four or fewer fills, all in the key, plus a second cue."],
+  ["Two-way everything","Double-headed arrows hide who calls whom.","One arrow per intent, from initiator."],
+  ["Fossil","Last updated three reorganisations ago.","Owner, review date, updated in the same PR."],
+  ["Whiteboard photo","Phone photo pasted into the wiki.","Redraw it formally once the design settles."]
+];
+const GLOSS = [
+  ["ADR","Architecture Decision Record: a short document capturing one decision, its context and consequences."],
+  ["arc42","A 12-section template for architecture documentation."],
+  ["C4 model","Simon Brown's hierarchy of views: Context, Container, Component, Code."],
+  ["Container (C4)","A runnable or deployable unit, or a data store."],
+  ["DFD","Data-flow diagram: external entities, processes, stores, flows and trust boundaries."],
+  ["Dynamic view","A C4 view showing numbered interactions for one scenario."],
+  ["Failure domain","A set of components that fail together, such as a zone or a host."],
+  ["Gateway","A BPMN diamond where the flow branches or merges."],
+  ["Lifeline","A vertical line in a sequence diagram representing one participant over time."],
+  ["Pool and lane","BPMN containers for a participant and the roles within it."],
+  ["Redlining","Marking up a drawing with review comments, traditionally in red."],
+  ["STRIDE","Threat categories: Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege."],
+  ["Trust boundary","A line across which privilege or trust changes."],
+  ["View and viewpoint","From ISO/IEC/IEEE 42010: a view addresses stakeholders' concerns using a viewpoint's conventions."]
+];
+const LINKS = [
+  ["The C4 model","https://c4model.com"],["Structurizr DSL","https://docs.structurizr.com/dsl"],["Mermaid documentation","https://mermaid.js.org"],["PlantUML and C4-PlantUML","https://github.com/plantuml-stdlib/C4-PlantUML"],["draw.io","https://www.drawio.com"],["bpmn.io","https://bpmn.io"],["BPMN 2.0 specification (OMG)","https://www.omg.org/spec/BPMN/2.0.2/"],["arc42","https://arc42.org"],["ADR resources","https://adr.github.io"],["OWASP threat modeling","https://owasp.org/www-community/Threat_Modeling"],["D2","https://d2lang.com"]
+];
+const TEMPLATES = [
+  ["C4 context (Parcel)",D.ctx],["C4 container (Parcel)",D.cont],["C4 component (Order API)",D.comp],["Sequence (checkout)",D.seq],["State machine (order)",D.state],["Class (domain)",D.code],["Swimlane process (wire transfer)",D.bpmn],["Deployment (two zones)",D.deploy],["Data flow with trust boundaries",D.dfd],["Pipeline",D.pipe],["System landscape",D.landscape]
+];
+
+/* ---------- state ---------- */
+const KEY = "ads-progress-v1";
+let S = {read:{}, quiz:{}, lab:{}, cap:{}, labCode:{}, sandbox:null};
+try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(S, JSON.parse(raw)); } catch(e) {}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} updateMeter(); renderTabs(); }
+function modDone(m){ return !!(S.read[m.id] && S.lab[m.id] && (S.quiz[m.id]||0) >= 4); }
+function pct(){
+  let total = MODULES.length*3, got = 0;
+  MODULES.forEach(m => { got += (S.read[m.id]?1:0) + (S.lab[m.id]?1:0) + ((S.quiz[m.id]||0)>=4?1:0); });
+  CAPSTONES.forEach(c => { total += c.rubric.length; got += (S.cap[c.id]||[]).length; });
+  return Math.round(got/total*100);
+}
+function updateMeter(){ document.getElementById("meter").textContent = pct() + "% complete"; }
+function toast(t){ const el = document.getElementById("toast"); el.textContent = t; el.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(()=>el.hidden = true, 1800); }
+
+/* ---------- mermaid ---------- */
+let mmdReady = typeof mermaid !== "undefined";
+if (mmdReady) mermaid.initialize({
+  startOnLoad:false, securityLevel:"strict", theme:"base",
+  fontFamily:"Public Sans, system-ui, sans-serif",
+  flowchart:{htmlLabels:true, curve:"basis", padding:12},
+  sequence:{useMaxWidth:false, mirrorActors:false},
+  c4:{diagramMarginY:10},
+  themeVariables:{
+    background:"#FBFCFB", primaryColor:"#FFFFFF", primaryTextColor:"#172125", primaryBorderColor:"#0A6A7E",
+    lineColor:"#56656C", secondaryColor:"#DDEDEF", tertiaryColor:"#F1F5F4", textColor:"#172125",
+    clusterBkg:"#F1F5F4", clusterBorder:"#A9B7B6", edgeLabelBackground:"#FBFCFB", titleColor:"#172125",
+    actorBkg:"#FFFFFF", actorBorder:"#0A6A7E", actorTextColor:"#172125", signalColor:"#172125", signalTextColor:"#172125",
+    labelBoxBkgColor:"#DDEDEF", labelBoxBorderColor:"#0A6A7E", labelTextColor:"#172125", loopTextColor:"#172125",
+    noteBkgColor:"#FAEFD9", noteTextColor:"#172125", noteBorderColor:"#9A6512", fontSize:"14px"
+  }
+});
+let mmdN = 0;
+async function draw(el, code){
+  if (!mmdReady){ el.innerHTML = `<div class="err">The diagram renderer did not load. The source is still below.</div>`; return false; }
+  const id = "mmd" + (++mmdN);
+  try {
+    await mermaid.parse(code);
+    const { svg } = await mermaid.render(id, code);
+    el.innerHTML = svg;
+    return true;
+  } catch(e){
+    document.getElementById(id)?.remove(); document.getElementById("d"+id)?.remove();
+    el.innerHTML = `<div class="err">${esc((e && e.message || String(e)).split("\n").slice(0,6).join("\n"))}</div>`;
+    return false;
+  }
+}
+function hydrateDiagrams(root){
+  root.querySelectorAll("[data-mmd]").forEach(el => draw(el, CODE[+el.dataset.mmd]));
+}
+
+/* ---------- components ---------- */
+const LVL = {a:["Apprentice","a"], p:["Practitioner","p"], x:["Professional","x"]};
+const lvlPill = k => `<span class="lvl ${LVL[k][1]}">${LVL[k][0]}</span>`;
+function figure(ex, opts={}){
+  const i = reg(ex.code);
+  return `<div class="fig">
+    <div class="figcap"><h4>${esc(ex.title)}</h4>
+      <div class="btns"><button class="btn ghost" data-src="${i}">Source</button><button class="btn ghost" data-sandbox="${i}">Open in sandbox</button></div></div>
+    <div class="canvas" data-mmd="${i}"><span class="loading">Rendering…</span></div>
+    ${ex.caption ? `<p class="muted">${esc(ex.caption)}</p>` : ""}
+    ${ex.notice ? `<div class="notice"><b>What to notice</b><ul>${ex.notice.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div>` : ""}
+    <div class="srcbox" hidden>${pre(ex.code)}</div>
+  </div>`;
+}
+function editorBlock(key, code, compact){
+  return `<div class="editor" data-ed="${key}">
+    <div class="stack" style="gap:.4rem">
+      <div class="edhead"><span class="eyebrow">Mermaid source</span><span class="status" data-st>…</span></div>
+      <textarea id="ed-${key}" spellcheck="false" aria-label="Mermaid source">${esc(code)}</textarea>
+    </div>
+    <div class="stack" style="gap:.4rem">
+      <div class="edhead"><span class="eyebrow">Live preview</span><button class="btn ghost" data-copy="${key}">Copy source</button></div>
+      <div class="canvas" data-prev><span class="loading">Rendering…</span></div>
+    </div>
+  </div>`;
+}
+function bindEditor(root, key, onChange){
+  const wrap = root.querySelector(`[data-ed="${key}"]`); if (!wrap) return;
+  const ta = wrap.querySelector("textarea"), prev = wrap.querySelector("[data-prev]"), st = wrap.querySelector("[data-st]");
+  let t;
+  const run = async () => { const ok = await draw(prev, ta.value); st.textContent = ok ? "Renders" : "Syntax error"; st.className = "status " + (ok?"ok":"bad"); };
+  ta.addEventListener("input", () => { clearTimeout(t); t = setTimeout(run, 450); onChange && onChange(ta.value); });
+  ta.addEventListener("keydown", e => { if (e.key === "Tab" && !e.shiftKey){ e.preventDefault(); const s = ta.selectionStart; ta.setRangeText("  ", s, ta.selectionEnd, "end"); ta.dispatchEvent(new Event("input")); } });
+  wrap.querySelector("[data-copy]").addEventListener("click", () => copyText(ta.value, ta));
+  wrap._set = v => { ta.value = v; run(); onChange && onChange(v); };
+  run();
+}
+function copyText(txt, fallbackEl){
+  try { navigator.clipboard.writeText(txt).then(()=>toast("Copied"), ()=>{ fallbackEl && fallbackEl.select(); toast("Press Ctrl/⌘ + C to copy"); }); }
+  catch(e){ fallbackEl && fallbackEl.select(); toast("Press Ctrl/⌘ + C to copy"); }
+}
+
+/* ---------- views ---------- */
+const VIEWS = ["home", ...MODULES.map(m=>m.id), "capstones", "sandbox", "reference"];
+let current = "home";
+function renderTabs(){
+  const nav = document.getElementById("tabs");
+  const b = (id, label, dot) => `<button data-go="${id}" aria-current="${current===id}">${dot!==undefined?`<span class="dot ${dot?"ok":""}"></span>`:""}${label}</button>`;
+  nav.innerHTML = b("home","Overview") + `<span class="sep"></span>` +
+    MODULES.map((m,i)=>b(m.id, `${i+1}. ${m.title}`, modDone(m))).join("") + `<span class="sep"></span>` +
+    b("capstones","Capstones") + b("sandbox","Sandbox") + b("reference","Reference");
+}
+function go(id, focus){
+  if (!VIEWS.includes(id)) id = "home";
+  current = id; renderTabs();
+  const v = document.getElementById("view");
+  CODE.length = 0;
+  if (id === "home") v.innerHTML = viewHome();
+  else if (id === "capstones") v.innerHTML = viewCapstones();
+  else if (id === "sandbox") v.innerHTML = viewSandbox();
+  else if (id === "reference") v.innerHTML = viewReference();
+  else v.innerHTML = viewModule(MODULES.find(m=>m.id===id));
+  bind(v, id);
+  hydrateDiagrams(v);
+  try { if (location.hash.slice(1) !== id) history.replaceState(null, "", "#"+id); } catch(e){}
+  if (focus !== false) window.scrollTo({top:0});
+  document.querySelector(`nav.tabs [data-go="${id}"]`)?.scrollIntoView({block:"nearest", inline:"center"});
+}
+
+function viewHome(){
+  const stages = [
+    ["Apprentice","a","Read and draw clear diagrams in one notation.",[0,1,2]],
+    ["Practitioner","p","Model behaviour, processes and infrastructure.",[3,4,5]],
+    ["Professional","x","Run diagrams as a living, reviewed practice.",[6,7]]
+  ];
+  return `<section class="sheet">
+    <div class="hero">
+      <div class="stack" style="gap:.4rem">
+        <span class="eyebrow">Self-paced course · 8 modules · 4 capstones</span>
+        <h1>Draw systems people can read</h1>
+        <p class="lede">A practical path from first sketch to professional architecture documentation. Each module has worked examples, a quiz, and a hands-on lab with a live Mermaid editor or a guided draw.io exercise.</p>
+        <div class="btns" style="margin-top:1rem"><button class="btn primary" data-go="${nextModule()}">${pct()?"Continue":"Start module 1"}</button><button class="btn" data-go="reference">Which diagram do I need?</button></div>
+      </div>
+      <div class="zoom" id="zoom">
+        <div class="seg" role="group" aria-label="C4 zoom level">
+          ${["Context","Container","Component","Code"].map((n,i)=>`<button data-z="${i}" aria-pressed="${i===0}"><small>L${i+1}</small>${n}</button>`).join("")}
+        </div>
+        <div class="canvas" id="zoomc"><span class="loading">Rendering…</span></div>
+        <div class="zoom-meta" id="zoomm"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="margin-top:2rem">
+    <div class="sec-head"><h2>Learning path</h2><span class="muted">Each stage builds on the last.</span></div>
+    <div class="path">${stages.map(([n,k,d,idx])=>{
+      const done = idx.filter(i=>modDone(MODULES[i])).length;
+      return `<div class="stage">${lvlPill(k)}<p>${d}</p><ol>${idx.map(i=>`<li><button class="link btn ghost" style="padding:0" data-go="${MODULES[i].id}">${MODULES[i].title}</button></li>`).join("")}</ol>
+      <div class="meterline"><div class="bar"><i style="width:${done/idx.length*100}%"></i></div>${done}/${idx.length}</div></div>`;}).join("")}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="sec-head"><h2>Drawing register</h2><span class="muted">Your progress, sheet by sheet. Saved in this browser.</span></div>
+    <div class="tbl"><table class="reg"><thead><tr><th>Sheet</th><th>Module</th><th>Level</th><th>Read</th><th>Quiz</th><th>Lab</th></tr></thead><tbody>
+    ${MODULES.map(m=>`<tr><td>${m.dwg}</td><td><button class="link" data-go="${m.id}">${m.title}</button><div class="muted" style="font-size:.82rem">${m.time}</div></td><td>${lvlPill(m.lvl)}</td>
+      <td class="chk ${S.read[m.id]?"ok":"no"}">${S.read[m.id]?"✓":"–"}</td>
+      <td class="num">${S.quiz[m.id]!==undefined?`${S.quiz[m.id]}/${m.quiz.length}`:"–"}</td>
+      <td class="chk ${S.lab[m.id]?"ok":"no"}">${S.lab[m.id]?"✓":"–"}</td></tr>`).join("")}
+    ${CAPSTONES.map(c=>`<tr><td>${c.code}</td><td><button class="link" data-go="capstones">${c.title}</button></td><td>${lvlPill("x")}</td><td colspan="3" class="num">${(S.cap[c.id]||[]).length}/${c.rubric.length} rubric items</td></tr>`).join("")}
+    </tbody></table></div>
+    <p class="muted" style="font-size:.88rem">A module counts as complete when you have read it, scored at least 4 of 5 on its quiz, and finished its lab.</p>
+  </section>
+
+  <section class="section">
+    <div class="sec-head"><h2>How to use this studio</h2></div>
+    <div class="prose"><ol>
+      <li>Work through the modules in order. Read, study the worked examples, then take the quiz.</li>
+      <li>Do every lab. Type the diagram yourself before opening the reference solution.</li>
+      <li>Use the <b>Sandbox</b> to experiment with any template, and <b>Reference</b> for cheat sheets, the review rubric and anti-patterns.</li>
+      <li>Finish with at least two capstones, scored against their rubrics. Put the results in a real repository.</li>
+    </ol></div>
+  </section>`;
+}
+const ZOOM = [
+  {code:D.ctx, who:"Everyone, including executives", q:"What is it, who uses it, what does it depend on?"},
+  {code:D.cont, who:"Architects, developers, operations", q:"What are the deployable parts and how do they communicate?"},
+  {code:D.comp, who:"Developers on the Order API", q:"How is this container organised inside?"},
+  {code:D.code, who:"Developers, on demand", q:"Which classes implement checkout?"}
+];
+function nextModule(){ const m = MODULES.find(m=>!modDone(m)); return m ? m.id : "capstones"; }
+
+function viewModule(m){
+  const i = MODULES.indexOf(m), prev = MODULES[i-1], next = MODULES[i+1];
+  const qs = S.quiz[m.id];
+  return `<article class="sheet">
+    <span class="eyebrow">Module ${i+1} of ${MODULES.length}</span>
+    <h1 style="font-size:clamp(2rem,6vw,3.2rem);margin-top:.3rem">${m.title}</h1>
+    <p class="lede" style="font-size:1.08rem;max-width:62ch;margin-top:.6rem">${m.summary}</p>
+    <div class="titleblock">
+      <div><span class="k">Sheet</span><span class="v">${m.dwg}</span></div>
+      <div><span class="k">Level</span><span class="v">${LVL[m.lvl][0]}</span></div>
+      <div><span class="k">Time</span><span class="v">${m.time}</span></div>
+      <div><span class="k">Status</span><span class="v">${modDone(m)?"Complete":(S.read[m.id]||qs!==undefined||S.lab[m.id])?"In progress":"Not started"}</span></div>
+    </div>
+
+    <div class="section" style="margin-top:1.8rem">
+      <div class="sec-head"><span class="tag">Objectives</span></div>
+      <ul class="reqs">${m.objectives.map(o=>`<li>→ ${o}</li>`).join("")}</ul>
+      <div class="toc"><a href="#learn-${m.id}">Learn</a><a href="#ex-${m.id}">Examples</a><a href="#quiz-${m.id}">Quiz</a><a href="#lab-${m.id}">Lab</a></div>
+    </div>
+
+    <div class="section" id="learn-${m.id}">
+      <div class="sec-head"><span class="tag">Learn</span></div>
+      <div class="prose">${m.learn}</div>
+      <div><button class="btn ${S.read[m.id]?"done":""}" data-read>${S.read[m.id]?"✓ Marked as read":"Mark as read"}</button></div>
+    </div>
+
+    <div class="section" id="ex-${m.id}">
+      <div class="sec-head"><span class="tag">Worked examples</span></div>
+      <div class="stack" style="gap:2rem">${m.examples.map(e=>figure(e)).join("")}</div>
+    </div>
+
+    <div class="section" id="quiz-${m.id}">
+      <div class="sec-head"><span class="tag">Quiz</span>${qs!==undefined?`<span class="muted">Best score: ${qs}/${m.quiz.length}</span>`:""}</div>
+      <form class="stack" data-quiz>${m.quiz.map((q,qi)=>`<fieldset class="q" style="margin:0"><span class="qn">QUESTION ${qi+1}</span><legend class="qt" style="padding:0">${esc(q.q)}</legend>
+        ${q.o.map((o,oi)=>`<label class="opt"><input type="radio" id="${m.id}-q${qi}-o${oi}" name="q${qi}" value="${oi}">${esc(o)}</label>`).join("")}
+        <div class="why" hidden></div></fieldset>`).join("")}
+        <div class="btns" style="align-items:center"><button class="btn primary" type="submit">Check answers</button><button class="btn" type="button" data-reset>Reset</button><span class="score" data-score></span></div>
+      </form>
+    </div>
+
+    <div class="section" id="lab-${m.id}">
+      <div class="sec-head"><span class="tag">Hands-on lab</span><h3 style="margin:0">${m.lab.title}</h3></div>
+      ${labBlock(m)}
+      <div><button class="btn ${S.lab[m.id]?"done":""}" data-labdone>${S.lab[m.id]?"✓ Lab complete":"Mark lab complete"}</button></div>
+    </div>
+  </article>
+  <nav class="pager">${prev?`<button class="btn" data-go="${prev.id}">← ${prev.title}</button>`:`<span></span>`}${next?`<button class="btn primary" data-go="${next.id}">${next.title} →</button>`:`<button class="btn primary" data-go="capstones">Capstones →</button>`}</nav>`;
+}
+function labBlock(m){
+  const L = m.lab;
+  if (L.type === "mermaid"){
+    const code = S.labCode[m.id] ?? L.starter;
+    return `<div class="lab"><div class="brief">
+      <div class="stack" style="gap:.5rem"><span class="eyebrow">Scenario</span><p>${esc(L.brief)}</p></div>
+      <div class="stack" style="gap:.5rem"><span class="eyebrow">Your diagram must</span><ul class="reqs">${L.reqs.map((r,ri)=>`<li><label><input type="checkbox" id="${m.id}-r${ri}">${esc(r)}</label></li>`).join("")}</ul></div>
+    </div>
+    ${editorBlock(m.id, code)}
+    <div class="btns"><button class="btn" data-resetlab>Reset to starter</button></div>
+    <details class="reveal"><summary>Hint</summary><p>${esc(L.hint)}</p></details>
+    <details class="reveal" data-solution><summary>Reference solution</summary><div class="stack"><div class="canvas" data-solcanvas><span class="loading">Open to render</span></div>${pre(L.solution)}<div><button class="btn" data-loadsol>Load into editor</button></div></div></details>
+    </div>`;
+  }
+  if (L.type === "drawio"){
+    return `<div class="lab"><div class="stack" style="gap:.5rem"><span class="eyebrow">Scenario</span><p class="prose">${esc(L.brief)}</p></div>
+      <div class="stack" style="gap:.5rem"><span class="eyebrow">Steps in draw.io</span><ol class="steps">${L.steps.map(s=>`<li>${s}</li>`).join("")}</ol></div>
+      <div class="stack" style="gap:.5rem"><span class="eyebrow">Self-check</span><ul class="reqs">${L.reqs.map((r,ri)=>`<li><label><input type="checkbox" id="${m.id}-r${ri}">${esc(r)}</label></li>`).join("")}</ul></div>
+      <details class="reveal"><summary>Want a quick text version too?</summary><p class="muted" style="margin-bottom:.6rem">Sketch the flow in Mermaid first, then rebuild it properly in draw.io.</p>${editorBlock(m.id, S.labCode[m.id] ?? `flowchart LR
+  subgraph E["Employee"]
+    s((Expense incurred)) --> p[Prepare claim] --> sub[Submit claim with receipts]
+  end
+  subgraph M["Manager"]
+    r[Review claim] --> g{Claim acceptable?}
+  end
+  sub --> r
+  g -- No --> p
+  %% TODO: Finance lane, policy check, payment, end events`)}</details>
+    </div>`;
+  }
+  if (L.type === "redline"){
+    const i = reg(D.bad);
+    return `<div class="lab redline"><p>${esc(L.brief)}</p>
+      <div class="canvas" data-mmd="${i}"><span class="loading">Rendering…</span></div>
+      <ul class="reqs" data-rl>${L.items.map((it,ii)=>`<li class="rl-item"><label><input type="checkbox" id="rl-${ii}">${esc(it.t)}</label><div class="muted rl-note" hidden style="font-size:.85rem;padding-left:1.6rem"></div></li>`).join("")}</ul>
+      <div class="btns" style="align-items:center"><button class="btn primary" data-rlcheck>Check my review</button><span class="score" data-rlscore></span></div>
+    </div>`;
+  }
+  return "";
+}
+
+function viewCapstones(){
+  return `<section class="sheet stack" style="gap:.6rem">
+    <span class="eyebrow">Professional level</span><h1 style="font-size:clamp(2rem,6vw,3.2rem)">Capstone projects</h1>
+    <p class="lede" style="max-width:62ch">Four briefs from different domains. Each produces a small, real documentation set. Do at least two. Build them in a Git repository, score yourself honestly against the rubric, and ask a colleague to redline one.</p>
+  </section>
+  <div class="stack" style="gap:1.25rem;margin-top:1.25rem">${CAPSTONES.map(c=>{
+    const got = (S.cap[c.id]||[]);
+    return `<article class="cap" id="${c.id}">
+      <div class="cap-head"><div class="stack" style="gap:.3rem"><span class="domain">${c.code} · ${c.domain}</span><h2>${c.title}</h2></div>
+        <div class="meterline" style="min-width:180px"><div class="bar"><i style="width:${got.length/c.rubric.length*100}%"></i></div>${got.length}/${c.rubric.length}</div></div>
+      <p style="max-width:68ch">${esc(c.brief)}</p>
+      <div class="grid2">
+        <div class="stack" style="gap:.5rem"><span class="eyebrow">Deliverables</span><ol class="steps">${c.deliver.map(d=>`<li>${esc(d)}</li>`).join("")}</ol></div>
+        <div class="stack" style="gap:.5rem"><span class="eyebrow">Rubric</span><ul class="reqs">${c.rubric.map((r,ri)=>`<li><label><input type="checkbox" id="${c.id}-${ri}" data-cap="${c.id}" data-ri="${ri}" ${got.includes(ri)?"checked":""}>${esc(r)}</label></li>`).join("")}</ul></div>
+      </div>
+      <div class="notice"><b>Stretch goal.</b> ${esc(c.stretch)}</div>
+      <div class="btns"><button class="btn" data-sandbox="${reg(c.starter)}">Open a starter in the sandbox</button></div>
+    </article>`;}).join("")}</div>`;
+}
+
+function viewSandbox(){
+  return `<section class="sheet stack">
+    <span class="eyebrow">Free practice</span><h1 style="font-size:clamp(2rem,6vw,3.2rem)">Sandbox</h1>
+    <p style="max-width:62ch">Edit Mermaid and see the result as you type. Start from a template or paste your own. Your last sandbox diagram is kept in this browser.</p>
+    <div class="btns" style="align-items:center"><label for="tpl" class="eyebrow">Template</label>
+      <select id="tpl" class="btn" style="font-weight:500">${TEMPLATES.map((t,i)=>`<option value="${i}">${esc(t[0])}</option>`).join("")}</select>
+      <button class="btn" data-loadtpl>Load template</button></div>
+    ${editorBlock("sandbox", S.sandbox ?? TEMPLATES[0][1])}
+    <details class="reveal"><summary>Mermaid quick syntax</summary>${quickSyntax()}</details>
+  </section>`;
+}
+function quickSyntax(){
+  return `<div class="tbl"><table><thead><tr><th>Write</th><th>Draws</th></tr></thead><tbody>
+  <tr><td><code>flowchart LR</code> / <code>TB</code></td><td>Flowchart, left-to-right or top-to-bottom</td></tr>
+  <tr><td><code>a[Box]</code> <code>b([Pill])</code> <code>c[(DB)]</code> <code>d{Decision}</code> <code>e((Circle))</code> <code>f{{Hexagon}}</code></td><td>Node shapes</td></tr>
+  <tr><td><code>a -- "label" --> b</code></td><td>Labelled arrow</td></tr>
+  <tr><td><code>a -.-> b</code> / <code>a ==> b</code></td><td>Dotted / thick arrow</td></tr>
+  <tr><td><code>subgraph id["Title"] … end</code></td><td>Boundary or lane</td></tr>
+  <tr><td><code>classDef ext stroke-dasharray:4 3</code> then <code>x:::ext</code></td><td>Reusable style</td></tr>
+  <tr><td><code>---</code> <code>title: …</code> <code>---</code></td><td>Diagram title (front matter, very top)</td></tr>
+  <tr><td><code>sequenceDiagram</code>, <code>stateDiagram-v2</code>, <code>classDiagram</code></td><td>UML types</td></tr>
+  <tr><td><code>C4Context</code>, <code>C4Container</code>, <code>C4Component</code>, <code>C4Dynamic</code>, <code>C4Deployment</code></td><td>C4 views</td></tr>
+  <tr><td><code>%% comment</code></td><td>Comment line</td></tr>
+  </tbody></table></div>`;
+}
+
+function viewReference(){
+  return `<section class="sheet stack">
+    <span class="eyebrow">Keep this open while you work</span><h1 style="font-size:clamp(2rem,6vw,3.2rem)">Reference</h1>
+    <div class="toc"><a href="#r-pick">Diagram picker</a><a href="#r-rubric">Review rubric</a><a href="#r-anti">Anti-patterns</a><a href="#r-c4">C4 cheat sheet</a><a href="#r-bpmn">BPMN cheat sheet</a><a href="#r-lines">Line styles</a><a href="#r-syntax">Mermaid syntax</a><a href="#r-gloss">Glossary</a><a href="#r-links">Further reading</a></div>
+
+    <div class="section" id="r-pick"><div class="sec-head"><span class="tag">Picker</span><h2>Which diagram do I need?</h2></div>
+      <div class="picker"><div class="qs">${PICKER.map((p,i)=>`<button data-pick="${i}" aria-pressed="${i===0}">${esc(p.q)}</button>`).join("")}</div>
+      <div class="answer" id="pickans"></div></div></div>
+
+    <div class="section" id="r-rubric"><div class="sec-head"><span class="tag">Rubric</span><h2>Ten-point diagram review</h2></div>
+      <div class="tbl"><table><thead><tr><th>#</th><th>Check</th><th>Pass when</th></tr></thead><tbody>${RUBRIC.map((r,i)=>`<tr><td class="num">${i+1}</td><td><b>${r[0]}</b></td><td>${r[1]}</td></tr>`).join("")}</tbody></table></div>
+      <p class="muted">Score 1 point per check. Eight or more: ready for review. Below six: rework before sharing.</p></div>
+
+    <div class="section" id="r-anti"><div class="sec-head"><span class="tag">Anti-patterns</span><h2>What goes wrong, and the fix</h2></div>
+      <div class="anti">${ANTI.map(a=>`<div><b>${a[0]}</b><span>${a[1]}</span><span class="fix">Fix: ${a[2]}</span></div>`).join("")}</div></div>
+
+    <div class="section" id="r-c4"><div class="sec-head"><span class="tag">C4</span><h2>C4 cheat sheet</h2></div>
+      <div class="tbl"><table><thead><tr><th>View</th><th>Shows</th><th>Audience</th><th>Mermaid</th></tr></thead><tbody>
+      <tr><td>Landscape</td><td>Many systems and people</td><td>Leadership, enterprise</td><td><code>C4Context</code> with several systems</td></tr>
+      <tr><td>Context</td><td>One system, its users and dependencies</td><td>Everyone</td><td><code>C4Context</code></td></tr>
+      <tr><td>Container</td><td>Apps, services, data stores in one system</td><td>Technical</td><td><code>C4Container</code></td></tr>
+      <tr><td>Component</td><td>Code groupings inside one container</td><td>Developers</td><td><code>C4Component</code></td></tr>
+      <tr><td>Dynamic</td><td>Numbered interactions for a scenario</td><td>Technical</td><td><code>C4Dynamic</code> or <code>sequenceDiagram</code></td></tr>
+      <tr><td>Deployment</td><td>Containers on infrastructure</td><td>Ops, SRE</td><td><code>C4Deployment</code> or nested flowchart</td></tr>
+      </tbody></table></div>
+      ${pre(`Person(id, "Name", "Description")          System(id, "Name", "Description")
+System_Ext(id, ...)  Container(id, "Name", "Tech", "Description")
+ContainerDb(...)  ContainerQueue(...)  Component(id, "Name", "Tech", "Desc")
+System_Boundary(id, "Name") { ... }   Container_Boundary(id, "Name") { ... }
+Rel(from, to, "Verb", "Protocol")      UpdateLayoutConfig($c4ShapeInRow="3")`)}</div>
+
+    <div class="section" id="r-bpmn"><div class="sec-head"><span class="tag">BPMN</span><h2>BPMN cheat sheet</h2></div>
+      <div class="tbl"><table><thead><tr><th>Symbol</th><th>Name</th><th>Rule of thumb</th></tr></thead><tbody>
+      <tr><td>○</td><td>Start event</td><td>Past tense trigger: "Order received"</td></tr>
+      <tr><td>◎</td><td>Intermediate event</td><td>Timer, message, error during the process</td></tr>
+      <tr><td>●</td><td>End event</td><td>Every path ends in one</td></tr>
+      <tr><td>▭</td><td>Task</td><td>Verb plus noun: "Approve invoice"</td></tr>
+      <tr><td>◇ ×</td><td>Exclusive gateway</td><td>One path. Label as a question.</td></tr>
+      <tr><td>◇ +</td><td>Parallel gateway</td><td>All paths. Join with another parallel gateway.</td></tr>
+      <tr><td>◇ ○</td><td>Inclusive gateway</td><td>One or more paths</td></tr>
+      <tr><td>→</td><td>Sequence flow</td><td>Inside one pool only</td></tr>
+      <tr><td>⇢</td><td>Message flow</td><td>Between pools only</td></tr>
+      </tbody></table></div></div>
+
+    <div class="section" id="r-lines"><div class="sec-head"><span class="tag">Lines</span><h2>Line styles that read consistently</h2></div>
+      <div class="tbl"><table><thead><tr><th>Style</th><th>Common meaning</th></tr></thead><tbody>
+      <tr><td>Solid arrow</td><td>Synchronous call or dependency</td></tr>
+      <tr><td>Dashed arrow</td><td>Asynchronous message, event, or reply (sequence diagrams)</td></tr>
+      <tr><td>Dotted arrow</td><td>Replication, configuration, or "derived from"</td></tr>
+      <tr><td>Thick arrow</td><td>Main flow or high volume path</td></tr>
+      <tr><td>Dashed border</td><td>External system, planned element, or trust boundary (say which)</td></tr>
+      </tbody></table></div>
+      <p class="muted">These are conventions, not standards. Whatever you choose, put it in the key and keep it the same across your diagram set.</p></div>
+
+    <div class="section" id="r-syntax"><div class="sec-head"><span class="tag">Syntax</span><h2>Mermaid quick reference</h2></div>${quickSyntax()}</div>
+
+    <div class="section" id="r-gloss"><div class="sec-head"><span class="tag">Glossary</span></div>
+      <dl class="gloss">${GLOSS.map(g=>`<dt>${g[0]}</dt><dd>${g[1]}</dd>`).join("")}</dl></div>
+
+    <div class="section" id="r-links"><div class="sec-head"><span class="tag">Reading</span><h2>Further reading</h2></div>
+      <ul class="reqs">${LINKS.map(l=>`<li>→ <a href="${l[1]}" target="_blank" rel="noopener">${l[0]}</a> <span class="muted" style="font-size:.85rem">${l[1].replace("https://","")}</span></li>`).join("")}
+      <li>→ Simon Brown, <i>Software Architecture for Developers</i>, volume 2 (visualise, document, explore)</li>
+      <li>→ Gregor Hohpe, <i>The Software Architect Elevator</i>, chapters on diagrams and communication</li></ul></div>
+  </section>`;
+}
+
+/* ---------- binding ---------- */
+function bind(v, id){
+  v.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => go(b.dataset.go)));
+  v.querySelectorAll("[data-src]").forEach(b => b.addEventListener("click", () => { const box = b.closest(".fig").querySelector(".srcbox"); box.hidden = !box.hidden; b.textContent = box.hidden ? "Source" : "Hide source"; }));
+  v.querySelectorAll("[data-sandbox]").forEach(b => b.addEventListener("click", () => { S.sandbox = CODE[+b.dataset.sandbox]; save(); go("sandbox"); }));
+  v.querySelectorAll('.toc a').forEach(a => a.addEventListener("click", e => { e.preventDefault(); document.getElementById(a.getAttribute("href").slice(1))?.scrollIntoView({behavior:"smooth", block:"start"}); }));
+
+  if (id === "home"){
+    const zc = v.querySelector("#zoomc"), zm = v.querySelector("#zoomm");
+    const setZ = i => { v.querySelectorAll("[data-z]").forEach(b=>b.setAttribute("aria-pressed", +b.dataset.z===i)); draw(zc, ZOOM[i].code); zm.innerHTML = `<div><span class="k">For</span>${ZOOM[i].who}</div><div><span class="k">Answers</span>${ZOOM[i].q}</div>`; };
+    v.querySelectorAll("[data-z]").forEach(b => b.addEventListener("click", () => setZ(+b.dataset.z)));
+    setZ(0);
+  }
+
+  const m = MODULES.find(x=>x.id===id);
+  if (m){
+    v.querySelector("[data-read]").addEventListener("click", e => { S.read[m.id] = !S.read[m.id]; save(); e.target.classList.toggle("done", !!S.read[m.id]); e.target.textContent = S.read[m.id]?"✓ Marked as read":"Mark as read"; });
+    v.querySelector("[data-labdone]").addEventListener("click", e => { S.lab[m.id] = !S.lab[m.id]; save(); e.target.classList.toggle("done", !!S.lab[m.id]); e.target.textContent = S.lab[m.id]?"✓ Lab complete":"Mark lab complete"; if (S.lab[m.id]) toast("Lab recorded"); });
+    const form = v.querySelector("[data-quiz]");
+    form.addEventListener("submit", e => {
+      e.preventDefault(); let score = 0;
+      m.quiz.forEach((q,qi) => {
+        const fs = form.querySelectorAll("fieldset")[qi], sel = form.querySelector(`input[name="q${qi}"]:checked`);
+        fs.querySelectorAll(".opt").forEach((o,oi) => { o.classList.remove("right","wrong"); if (oi===q.a) o.classList.add("right"); else if (sel && +sel.value===oi) o.classList.add("wrong"); });
+        if (sel && +sel.value===q.a) score++;
+        const w = fs.querySelector(".why"); w.hidden = false; w.innerHTML = `<b>${sel && +sel.value===q.a ? "Correct." : sel ? "Not quite." : "No answer."}</b> ${esc(q.why)}`;
+      });
+      form.querySelector("[data-score]").textContent = `${score} / ${m.quiz.length}`;
+      S.quiz[m.id] = Math.max(S.quiz[m.id]||0, score); save();
+      if (score >= 4) toast("Quiz passed");
+    });
+    form.querySelector("[data-reset]").addEventListener("click", () => { form.reset(); form.querySelectorAll(".opt").forEach(o=>o.classList.remove("right","wrong")); form.querySelectorAll(".why").forEach(w=>w.hidden=true); form.querySelector("[data-score]").textContent=""; });
+
+    if (m.lab.type !== "redline"){
+      bindEditor(v, m.id, val => { S.labCode[m.id] = val; try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} });
+    }
+    if (m.lab.type === "mermaid"){
+      v.querySelector("[data-resetlab]").addEventListener("click", () => v.querySelector(`[data-ed="${m.id}"]`)._set(m.lab.starter));
+      const sol = v.querySelector("[data-solution]"); let drawn = false;
+      sol.addEventListener("toggle", () => { if (sol.open && !drawn){ drawn = true; draw(sol.querySelector("[data-solcanvas]"), m.lab.solution); } });
+      v.querySelector("[data-loadsol]").addEventListener("click", () => { v.querySelector(`[data-ed="${m.id}"]`)._set(m.lab.solution); toast("Solution loaded"); });
+    }
+    if (m.lab.type === "redline"){
+      v.querySelector("[data-rlcheck]").addEventListener("click", () => {
+        let found = 0, realN = 0, falseHits = 0;
+        m.lab.items.forEach((it,ii) => {
+          const li = v.querySelectorAll(".rl-item")[ii], on = li.querySelector("input").checked, note = li.querySelector(".rl-note");
+          li.classList.remove("found","missed","false"); note.hidden = true;
+          if (it.real){ realN++; if (on){ found++; li.classList.add("found"); } else li.classList.add("missed"); }
+          else if (on){ falseHits++; li.classList.add("false"); note.hidden = false; note.textContent = it.note; }
+        });
+        v.querySelector("[data-rlscore]").textContent = `${found}/${realN} found${falseHits?`, ${falseHits} false alarm${falseHits>1?"s":""}`:""}`;
+        if (found >= realN - 1 && !falseHits){ S.lab[m.id] = true; save(); const b = v.querySelector("[data-labdone]"); b.classList.add("done"); b.textContent = "✓ Lab complete"; toast("Sharp eyes"); }
+      });
+    }
+  }
+
+  if (id === "capstones"){
+    v.querySelectorAll("[data-cap]").forEach(cb => cb.addEventListener("change", () => {
+      const c = cb.dataset.cap, ri = +cb.dataset.ri; const arr = new Set(S.cap[c]||[]);
+      cb.checked ? arr.add(ri) : arr.delete(ri); S.cap[c] = [...arr]; save();
+      const card = cb.closest(".cap"), cap = CAPSTONES.find(x=>x.id===c);
+      card.querySelector(".meterline").innerHTML = `<div class="bar"><i style="width:${arr.size/cap.rubric.length*100}%"></i></div>${arr.size}/${cap.rubric.length}`;
+    }));
+  }
+
+  if (id === "sandbox"){
+    bindEditor(v, "sandbox", val => { S.sandbox = val; try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} });
+    v.querySelector("[data-loadtpl]").addEventListener("click", () => v.querySelector('[data-ed="sandbox"]')._set(TEMPLATES[+v.querySelector("#tpl").value][1]));
+  }
+
+  if (id === "reference"){
+    const ans = v.querySelector("#pickans");
+    const setP = i => { const p = PICKER[i]; v.querySelectorAll("[data-pick]").forEach(b=>b.setAttribute("aria-pressed", +b.dataset.pick===i));
+      ans.innerHTML = `<span class="eyebrow">Draw a</span><div class="big">${esc(p.d)}</div><div><span class="eyebrow">For</span><p>${esc(p.who)}</p></div><div><span class="eyebrow">Tip</span><p>${esc(p.tip)}</p></div>`; };
+    v.querySelectorAll("[data-pick]").forEach(b => b.addEventListener("click", () => setP(+b.dataset.pick)));
+    setP(0);
+  }
+}
+
+document.getElementById("tabs").addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b) go(b.dataset.go); });
+updateMeter();
+go((location.hash || "#home").slice(1), false);
+</script>
+
+</body></html>

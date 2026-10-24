@@ -256,7 +256,7 @@ mark.jg{background:var(--risk-soft);color:inherit;border-bottom:2px solid var(--
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 const pre = s => `<pre class="src"><code>${esc(s.trim())}</code></pre>`;
 const CODE = []; const reg = c => (CODE.push(c.trim()), CODE.length - 1);
-const STUDIO = "https://claude.ai/artifact/34PDMjCjTgPivo2TFXko4S";
+const STUDIO = "../architecture-diagramming/index.html";
 
 /* ======== diagrams (running case: Northbank CDO technology, the Trusted Data programme) ======== */
 const D = {};
