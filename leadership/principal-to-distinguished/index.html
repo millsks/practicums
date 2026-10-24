@@ -1,0 +1,1341 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Principal to Distinguished</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,500;0,600;1,500&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: same brief-style system as the Principal Architect Practicum; the home page traces the scope ladder from team to industry. */
+:root{
+  --bg:#F2F4F6; --sheet:#FFFFFF; --ink:#121A26; --muted:#586374; --rule:#D8DEE5; --rule-strong:#AAB4C1;
+  --accent:#17624F; --accent-ink:#FFFFFF; --accent-soft:#DCEEE6;
+  --amber:#9C5E16; --amber-soft:#F8EAD3; --risk:#B23A2B; --risk-soft:#F8E1DD;
+  --canvas:#FCFCFD; --canvas-dot:#DCE1E7;
+  --f-display:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C1118; --sheet:#141B25; --ink:#E3E8EF; --muted:#97A2B2; --rule:#263142; --rule-strong:#3D4C60;
+  --accent:#5CC5A0; --accent-ink:#052219; --accent-soft:#12342A;
+  --amber:#E5AE5C; --amber-soft:#33260F; --risk:#EE7B68; --risk-soft:#3A1C17;
+  --canvas:#E9EDF1; --canvas-dot:#CBD3DC; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1118; --sheet:#141B25; --ink:#E3E8EF; --muted:#97A2B2; --rule:#263142; --rule-strong:#3D4C60;
+  --accent:#5CC5A0; --accent-ink:#052219; --accent-soft:#12342A;
+  --amber:#E5AE5C; --amber-soft:#33260F; --risk:#EE7B68; --risk-soft:#3A1C17;
+  --canvas:#E9EDF1; --canvas-dot:#CBD3DC; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.62;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sheet)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:600;line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.1rem,6vw,3.4rem);letter-spacing:-.01em}
+h2{font-size:clamp(1.5rem,4vw,2rem)}
+h3{font-size:1.3rem;margin-top:.5rem}
+h4{font-size:1.08rem}
+p{margin:0}
+code,pre{font-family:var(--f-mono);font-size:.85em}
+:not(pre)>code{background:var(--accent-soft);padding:.05em .35em;border-radius:3px}
+.wrap{max-width:1000px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.eyebrow{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:1rem}
+.prose{display:flex;flex-direction:column;gap:.85rem;max-width:68ch}
+.prose ul,.prose ol{margin:0;padding-left:1.25rem;display:flex;flex-direction:column;gap:.35rem}
+.prose blockquote{margin:0;border-left:3px solid var(--accent);padding:.3rem 0 .3rem 1rem;font-family:var(--f-display);font-style:italic;font-size:1.05rem}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--sheet);border-bottom:1px solid var(--rule)}
+.top .wrap{display:flex;flex-direction:column;gap:.35rem;padding-block:.6rem .5rem}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:1rem}
+.brand b{font-family:var(--f-display);font-size:1.15rem;font-weight:600}
+.brand .meter{font-family:var(--f-mono);font-size:.74rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.navscroll{overflow-x:auto;scrollbar-width:none;margin-inline:-4px}
+.navscroll::-webkit-scrollbar{display:none}
+nav.tabs{display:flex;gap:4px;padding:2px 4px;width:max-content}
+nav.tabs button{font:600 .8rem/1 var(--f-body);color:var(--muted);background:none;border:1px solid transparent;border-radius:999px;padding:.5rem .75rem;cursor:pointer;white-space:nowrap;display:flex;gap:.4rem;align-items:center}
+nav.tabs button:hover{color:var(--ink);border-color:var(--rule)}
+nav.tabs button[aria-current="true"]{background:var(--ink);color:var(--sheet)}
+nav.tabs .dot{width:7px;height:7px;border-radius:50%;background:var(--rule-strong)}
+nav.tabs .dot.ok{background:var(--accent)}
+nav.tabs .sep{width:1px;background:var(--rule);margin:4px 2px}
+main{padding-block:1.5rem 4rem}
+
+.sheet{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);padding:clamp(16px,3.5vw,34px)}
+.section{display:flex;flex-direction:column;gap:1.1rem}
+.section+.section{margin-top:2.2rem;padding-top:2rem;border-top:1px solid var(--rule)}
+.sec-head{display:flex;align-items:baseline;gap:.75rem;flex-wrap:wrap}
+.sec-head .tag{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:.12rem .45rem;border-radius:3px}
+
+/* memo header block */
+.memo{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:3px double var(--ink);border-bottom:3px double var(--ink);margin-top:1.25rem}
+.memo>div{padding:.5rem .7rem;border-right:1px solid var(--rule);min-width:0}
+.memo>div:last-child{border-right:0}
+.memo .k{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:block}
+.memo .v{font-weight:600;font-variant-numeric:tabular-nums}
+@media (max-width:560px){.memo{grid-template-columns:repeat(2,minmax(0,1fr))}.memo>div:nth-child(2){border-right:0}.memo>div:nth-child(-n+2){border-bottom:1px solid var(--rule)}}
+
+.lvl{display:inline-flex;align-items:center;font:600 .7rem/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:.3rem .5rem;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.lvl.f{color:var(--accent)} .lvl.p{color:var(--amber)} .lvl.e{color:var(--risk)}
+
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:var(--r)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:.6rem .75rem;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--bg);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.num{font-variant-numeric:tabular-nums;font-family:var(--f-mono);font-size:.85rem}
+
+.canvas{background-color:var(--canvas);background-image:radial-gradient(var(--canvas-dot) 1px,transparent 1.2px);background-size:16px 16px;border:1px solid var(--rule-strong);border-radius:var(--r);overflow:auto;padding:16px;min-height:120px;color:#121A26;display:flex;align-items:flex-start;justify-content:center}
+.canvas .loading{font-family:var(--f-mono);font-size:.8rem;color:#586374;align-self:center}
+.canvas .err{font-family:var(--f-mono);font-size:.78rem;color:#B23A2B;white-space:pre-wrap;width:100%}
+.fig{display:flex;flex-direction:column;gap:.6rem;min-width:0}
+.figcap{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:baseline;justify-content:space-between}
+.notice{background:var(--bg);border-left:3px solid var(--accent);padding:.6rem .85rem;border-radius:0 var(--r) var(--r) 0;font-size:.93rem}
+.notice ul{margin:.25rem 0 0;padding-left:1.1rem;display:flex;flex-direction:column;gap:.2rem}
+pre.src{background:var(--bg);border:1px solid var(--rule);border-radius:var(--r);padding:.85rem 1rem;overflow-x:auto;margin:0;line-height:1.55;font-size:.8rem;white-space:pre}
+.ba{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem}
+@media (max-width:760px){.ba{grid-template-columns:minmax(0,1fr)}}
+.ba>div{border:1px solid var(--rule);border-radius:var(--r);padding:1rem;display:flex;flex-direction:column;gap:.5rem;min-width:0}
+.ba .before{border-top:3px solid var(--risk)} .ba .after{border-top:3px solid var(--accent)}
+.ba .txt{font-size:.92rem;white-space:pre-wrap}
+
+.btns{display:flex;flex-wrap:wrap;gap:.5rem}
+.btn{font:600 .85rem/1 var(--f-body);border:1px solid var(--rule-strong);background:var(--sheet);color:var(--ink);padding:.6rem .9rem;border-radius:var(--r);cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{border-color:transparent;padding-inline:.4rem;color:var(--accent)}
+.btn.done{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+
+/* hero + line of sight */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(1rem,4vw,2.5rem);align-items:start}
+@media (max-width:820px){.hero{grid-template-columns:minmax(0,1fr)}}
+.lede{font-size:1.08rem;max-width:56ch}
+.los{display:flex;flex-direction:column;gap:.7rem;min-width:0}
+.chain{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--ink);border-radius:var(--r);overflow:hidden}
+.chain button{flex:1 1 auto;font:600 .78rem/1.15 var(--f-body);background:var(--sheet);color:var(--ink);border:0;border-right:1px solid var(--ink);padding:.6rem .5rem;cursor:pointer;min-width:84px;position:relative}
+.chain button:last-child{border-right:0}
+.chain button small{display:block;font:500 .62rem/1 var(--f-mono);letter-spacing:.08em;color:var(--muted);margin-bottom:.25rem}
+.chain button[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+.chain button[aria-pressed="true"] small{color:var(--sheet);opacity:.7}
+@media (max-width:560px){.chain button{flex:1 1 30%;border-bottom:1px solid var(--ink)}}
+.loscard{border:1px solid var(--rule);border-radius:var(--r);padding:1rem;display:flex;flex-direction:column;gap:.65rem;background:var(--sheet)}
+.loscard .big{font-family:var(--f-display);font-size:1.25rem;font-weight:600;line-height:1.3}
+.kv{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.6rem 1rem;font-size:.9rem}
+@media (max-width:480px){.kv{grid-template-columns:minmax(0,1fr)}}
+.kv .k{font-family:var(--f-mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block}
+
+.path{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+@media (max-width:760px){.path{grid-template-columns:minmax(0,1fr)}}
+.stage{border:1px solid var(--rule);border-radius:var(--r);padding:1rem;display:flex;flex-direction:column;gap:.5rem;background:var(--sheet)}
+.stage ol{margin:0;padding-left:1.1rem;font-size:.92rem}
+.bar{height:6px;background:var(--rule);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .4s}
+.meterline{display:flex;align-items:center;gap:.6rem;font-family:var(--f-mono);font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.meterline .bar{flex:1;min-width:80px}
+button.link{background:none;border:0;padding:0;color:var(--ink);font:600 .95rem var(--f-body);cursor:pointer;text-align:left}
+button.link:hover{color:var(--accent);text-decoration:underline}
+.chk{font-family:var(--f-mono);font-size:.8rem}
+.chk.ok{color:var(--accent)} .chk.no{color:var(--rule-strong)}
+
+.q{border:1px solid var(--rule);border-radius:var(--r);padding:1rem;display:flex;flex-direction:column;gap:.6rem;margin:0}
+.q .qn{font-family:var(--f-mono);font-size:.7rem;color:var(--muted);letter-spacing:.08em}
+.q legend{font-weight:600;padding:0}
+.opt{display:flex;gap:.6rem;align-items:flex-start;padding:.5rem .6rem;border:1px solid var(--rule);border-radius:var(--r);cursor:pointer;font-size:.95rem}
+.opt input{margin-top:.3rem;accent-color:var(--accent)}
+.opt.right{border-color:var(--accent);background:var(--accent-soft)}
+.opt.wrong{border-color:var(--risk);background:var(--risk-soft)}
+.why{font-size:.9rem;padding:.6rem .8rem;border-radius:var(--r);background:var(--bg)}
+.score{font-family:var(--f-display);font-size:1.35rem;font-weight:600}
+
+.reqs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.4rem}
+.reqs label{display:flex;gap:.55rem;align-items:flex-start;font-size:.93rem;cursor:pointer}
+.reqs input{margin-top:.32rem;accent-color:var(--accent)}
+.steps{margin:0;padding-left:1.3rem;display:flex;flex-direction:column;gap:.5rem}
+.steps li::marker{font-family:var(--f-mono);color:var(--accent);font-weight:600}
+details.reveal{border:1px solid var(--rule);border-radius:var(--r);padding:.6rem .85rem}
+details.reveal summary{cursor:pointer;font-weight:600;font-size:.92rem}
+details.reveal[open] summary{margin-bottom:.6rem}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+@media (max-width:760px){.grid2{grid-template-columns:minmax(0,1fr)}}
+
+/* lab widgets */
+.field{display:flex;flex-direction:column;gap:.25rem}
+.field label{font-weight:600;font-size:.88rem}
+.field .help{font-size:.8rem;color:var(--muted)}
+.field textarea,.field input[type=text],select.sel,input.cell{font:400 .92rem/1.45 var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--rule-strong);border-radius:var(--r);padding:.5rem .65rem;width:100%}
+.field textarea{min-height:64px;resize:vertical}
+.preview{border:2px solid var(--ink);border-radius:var(--r);padding:1rem 1.1rem;font-size:.93rem;white-space:pre-wrap;background:var(--sheet);min-width:0;overflow-wrap:anywhere}
+.editor{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:.75rem}
+@media (max-width:820px){.editor{grid-template-columns:minmax(0,1fr)}}
+.editor textarea{width:100%;min-height:300px;resize:vertical;font:400 .8rem/1.55 var(--f-mono);background:var(--bg);color:var(--ink);border:1px solid var(--rule-strong);border-radius:var(--r);padding:.8rem}
+.edhead{display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap}
+.status{font-family:var(--f-mono);font-size:.72rem}
+.status.ok{color:var(--accent)} .status.bad{color:var(--risk)}
+.sortrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,220px);gap:.6rem;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--rule)}
+.sortrow:last-child{border-bottom:0}
+@media (max-width:520px){.sortrow{grid-template-columns:minmax(0,1fr)}}
+.sortrow .fb{grid-column:1/-1;font-size:.85rem}
+.sortrow.right .fb{color:var(--accent)} .sortrow.wrong .fb{color:var(--risk)}
+.slider{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 3.2rem;gap:.75rem;align-items:center;padding:.45rem 0;border-bottom:1px solid var(--rule)}
+@media (max-width:560px){.slider{grid-template-columns:minmax(0,1fr) 3.2rem}.slider input{grid-column:1/-1;grid-row:2}}
+.slider input{accent-color:var(--accent);width:100%}
+.slider .val{font-family:var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+.slider .lab small{display:block;color:var(--muted);font-size:.78rem}
+.flag{font:600 .68rem/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:.2rem .4rem;border-radius:3px;margin-left:.35rem}
+.flag.lo{background:var(--amber-soft);color:var(--amber)} .flag.hi{background:var(--risk-soft);color:var(--risk)} .flag.ok{background:var(--accent-soft);color:var(--accent)}
+input.cell{width:4.2rem;text-align:center;padding:.35rem;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+td.win{background:var(--accent-soft);font-weight:700}
+.scen{border:1px solid var(--rule);border-radius:var(--r);padding:1rem;display:flex;flex-direction:column;gap:.6rem}
+.scen .opt.strong{border-color:var(--accent);background:var(--accent-soft)}
+.scen .opt.weak{border-color:var(--risk);background:var(--risk-soft)}
+.scen .opt.ok{border-color:var(--amber);background:var(--amber-soft)}
+
+.cap{border:1px solid var(--rule);border-radius:var(--r);padding:clamp(14px,3vw,26px);display:flex;flex-direction:column;gap:1rem;background:var(--sheet)}
+.cap-head{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:flex-start}
+.domain{font:600 .7rem/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.toc{display:flex;flex-wrap:wrap;gap:.4rem}
+.toc a{font:600 .8rem/1 var(--f-body);text-decoration:none;border:1px solid var(--rule);padding:.45rem .65rem;border-radius:999px;color:var(--ink)}
+.pager{display:flex;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-top:1.5rem}
+dl.gloss{display:grid;grid-template-columns:minmax(130px,max-content) minmax(0,1fr);gap:.5rem 1.2rem;margin:0}
+dl.gloss dt{font-weight:700} dl.gloss dd{margin:0}
+@media (max-width:560px){dl.gloss{grid-template-columns:minmax(0,1fr)} dl.gloss dd{margin-bottom:.4rem}}
+.comp{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:.4rem 1rem;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--rule)}
+.comp:last-child{border-bottom:0}
+@media (max-width:620px){.comp{grid-template-columns:minmax(0,1fr)}}
+.comp .lv{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.comp .lv button{font:600 .72rem/1 var(--f-mono);padding:.5rem 0;border:1px solid var(--rule-strong);background:var(--sheet);color:var(--muted);border-radius:4px;cursor:pointer}
+.comp .lv button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sheet);padding:.6rem 1rem;border-radius:var(--r);font-size:.88rem;z-index:50}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* added labs */
+.qrow{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr);gap:.5rem 1rem;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--rule)}
+@media (max-width:640px){.qrow{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.qrow .qname{grid-column:1/-1}}
+.qname{font:400 .92rem/1.4 var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--rule-strong);border-radius:var(--r);padding:.45rem .6rem;width:100%;min-width:0}
+.rng{display:flex;flex-direction:column;gap:.15rem;font-size:.78rem;color:var(--muted)}
+.rng b{color:var(--ink);font-family:var(--f-mono)}
+.rng input{accent-color:var(--accent);width:100%}
+.quadwrap{display:grid;grid-template-columns:1.4rem minmax(0,1fr);gap:.4rem;margin-top:.8rem}
+.axis-y{writing-mode:vertical-rl;transform:rotate(180deg);font:600 .68rem/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center}
+.axis-x{grid-column:2;text-align:right;font:600 .68rem/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.quad{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.6rem}
+@media (max-width:560px){.quad{grid-template-columns:minmax(0,1fr)}}
+.quad>div{border:1px solid var(--rule);border-radius:var(--r);padding:.8rem;display:flex;flex-direction:column;gap:.35rem;min-width:0;background:var(--sheet)}
+.quad .q-protect{border-top:3px solid var(--accent)} .quad .q-lighter{border-top:3px solid var(--amber)} .quad .q-ration{border-top:3px solid var(--rule-strong)} .quad .q-drop{border-top:3px solid var(--risk)}
+.quad ul{margin:0;padding-left:1.1rem;font-size:.9rem}
+.quad .hint{font-size:.8rem;color:var(--muted)}
+.wmgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.5rem}
+.wm{border:1px solid var(--rule);border-left:3px solid var(--rule-strong);border-radius:var(--r);padding:.5rem .7rem;display:flex;flex-direction:column;gap:.1rem;min-width:0}
+.wm.ok{border-left-color:var(--accent)} .wm.bad{border-left-color:var(--risk)}
+.wm .k{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.wm .v{font-weight:700;font-variant-numeric:tabular-nums}
+.wm .n{font-size:.8rem;color:var(--muted);overflow-wrap:anywhere}
+.wm.bad .n{color:var(--risk)}
+.wrhl{white-space:normal;line-height:1.8}
+.wrhl .long,.legend .long{background:var(--amber-soft);box-shadow:0 0 0 1px var(--amber) inset;border-radius:2px}
+mark.jg{background:var(--risk-soft);color:inherit;border-bottom:2px solid var(--risk);border-radius:2px;padding:0 1px}
+.pv{border-bottom:2px dashed var(--amber)}
+.ac{font-family:var(--f-mono);font-size:.9em;background:var(--accent-soft);border-radius:2px;padding:0 2px}
+.legend{font-size:.75rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.legend>*{padding:0 .25rem}
+.tfb.ok{color:var(--accent)} .tfb.warn{color:var(--amber)} .tfb.bad{color:var(--risk)}
+</style>
+
+<header class="top"><div class="wrap">
+  <div class="brand"><b>Principal to Distinguished Practicum</b><span class="meter" id="meter">0% complete</span></div>
+  <div class="navscroll"><nav class="tabs" id="tabs" aria-label="Practicum sections"></nav></div>
+</div></header>
+<main class="wrap" id="view"></main>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<script>
+"use strict";
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const pre = s => `<pre class="src"><code>${esc(s.trim())}</code></pre>`;
+const CODE = []; const reg = c => (CODE.push(c.trim()), CODE.length - 1);
+const COMPANION = "../../architecture/principal-architecture/index.html";
+
+/* ======== diagrams (running case: Northbank, you as principal architect for CDO technology) ======== */
+const D = {};
+D.scope = `flowchart LR
+  T["Team<br/>one system"] --> Dm["Domain<br/>CDO platforms"]
+  Dm --> O["Organisation<br/>technology division"]
+  O --> C["Company<br/>every engineering group"]
+  C --> I["Industry<br/>peers, standards, regulators"]
+  classDef you fill:#DCEEE6,stroke:#17624F,stroke-width:2px
+  classDef next fill:#F8EAD3,stroke:#9C5E16,stroke-width:2px
+  class Dm you
+  class C,I next`;
+D.horizons = `flowchart TB
+  subgraph H1["Horizon 1 · 0-12 months · run and extend"]
+    A1["Finish CDC migration"] --- A2["Policy-based access live"]
+  end
+  subgraph H2["Horizon 2 · 1-3 years · build the next platform"]
+    B1["Data products as the default interface"] --- B2["Lineage and controls generated, not documented"]
+  end
+  subgraph H3["Horizon 3 · 3-5 years · options on the future"]
+    C1["AI agents as governed data consumers"] --- C2["Regulatory reporting from data contracts"]
+  end
+  H1 --> H2 --> H3
+  V["Vision: any approved person or system gets trusted data in minutes, with evidence built in"] -.-> H3`;
+D.decision = `flowchart LR
+  F["Frame the decision<br/>and its reversibility"] --> P["Pre-mortem:<br/>assume it failed"]
+  P --> E["Estimate with<br/>probabilities"]
+  E --> Dd["Decide and<br/>write the journal entry"]
+  Dd --> R["Review the decision<br/>at a set date"]
+  R -->|"Separate luck from judgement"| F`;
+D.community = `flowchart TB
+  DE["You: distinguished track"] --> G["Architecture guild<br/>monthly, open to all"]
+  DE --> R["Design review circle<br/>principals and staff"]
+  DE --> M["Sponsorship<br/>2-3 named engineers"]
+  G --> P1["Shared principles<br/>and paved roads"]
+  R --> P2["Decisions made<br/>without you in the room"]
+  M --> P3["Next principals<br/>ready for promotion"]
+  classDef out fill:#DCEEE6,stroke:#17624F
+  class P1,P2,P3 out`;
+D.presence = `flowchart LR
+  W["Internal write-up<br/>of real work"] --> T["Internal tech talk"]
+  T --> B["Public blog post<br/>cleared by comms"]
+  B --> C["Conference or<br/>meetup talk"]
+  C --> S["Standards body,<br/>open source or book"]
+  W -.->|"Same idea, reused"| S`;
+
+/* ======== modules ======== */
+const MODULES = [
+{ id:"d1", lvl:"f", title:"What distinguished actually means", time:"60 min",
+  summary:"Distinguished engineer is a scope and evidence problem, not a skills checklist. Find out what your firm actually rewards at this level, and where your evidence falls short.",
+  objectives:["Describe how distinguished differs from principal in scope, horizon and kind of impact","Find and read your firm's real promotion criteria","Separate evidence from activity","Write an honest gap analysis against the criteria"],
+  learn:`
+<h3>A different job, not a better principal</h3>
+<p>Most firms describe principal engineers as owning the technical direction of a <b>domain</b>. Distinguished engineers shape the technical direction of the <b>company</b>, and often influence the industry. The step is rarely "the same, but more". It is a change in scope (company rather than domain), horizon (years rather than quarters), and kind of impact (setting the terms others work within, rather than solving the problems in front of you).</p>
+<p>Distinguished roles are scarce. Many large firms have one distinguished engineer for every several hundred or thousand engineers. That scarcity means promotion usually happens because a company-level need already exists and you are visibly meeting it, not because you completed a list.</p>
+<h3>The four tests most committees apply</h3>
+<ul>
+<li><b>Scope.</b> Does your work change how engineering is done across the company, not only in your domain?</li>
+<li><b>Durability.</b> Will your decisions and the systems they shaped still matter in five years?</li>
+<li><b>Originality.</b> Did you see something others did not, or set a direction others now follow?</li>
+<li><b>Recognition.</b> Do senior people outside your reporting line, and ideally outside the firm, seek your judgement?</li>
+</ul>
+<h3>Find the real criteria</h3>
+<p>Every firm writes its own rubric, and the written version is only half of it. Get the published career framework for your level and the next. Then ask two or three current distinguished engineers, and someone who sits on the promotion committee, what actually tipped recent cases. Write down the gap between the written rubric and the lived one. That gap is where most promotion cases fail.</p>
+<h3>Evidence, not activity</h3>
+<div class="tbl"><table><thead><tr><th>Activity</th><th>Evidence</th></tr></thead><tbody>
+<tr><td>Led the data access working group</td><td>Access lead time across the firm fell from 15 days to 1; three other divisions adopted the policy service</td></tr>
+<tr><td>Wrote the streaming standard</td><td>The standard is now the default for 40 teams outside CDO; incidents from bespoke integrations fell by half</td></tr>
+<tr><td>Presented at the architecture forum</td><td>The CTO used the proposal as the basis for next year's platform investment</td></tr>
+</tbody></table></div>
+<p>Committees read evidence. Activity only counts when it leads to a result someone else can verify.</p>
+<h3>Sponsorship is a precondition</h3>
+<p>At this level you need a sponsor: a senior leader who will argue your case in a room you are not in. Mentors give advice; sponsors spend their reputation on you. A sponsor needs to have seen your work directly, so part of the plan is giving them the chance.</p>
+<h3>In a regulated firm</h3>
+<p>Company-level technical leaders in banks are increasingly asked to speak for the firm on technology risk: to regulators, to the board risk committee, and in industry groups. Being trusted on operational resilience, data risk and model risk is often a stronger signal here than technical novelty.</p>`,
+  examples:[{kind:"diagram", title:"The scope ladder", code:D.scope, caption:"Green is where a principal architect in CDO technology usually operates. Amber is where distinguished-level evidence has to come from.", notice:["The step is two rungs, not one. Organisation-level work alone usually reads as a strong principal.","Industry scope is not always required, but it strengthens almost every case.","Evidence at a higher rung only counts if people at that rung recognise it."]},
+    {kind:"ba", title:"An impact statement, rewritten for a promotion case", before:"Led the Trusted Data programme architecture. Designed the CDC framework and data access platform. Ran the architecture working group and mentored several engineers.", after:"Set the firm's pattern for governed data access. The policy service I designed for CDO is now used by risk, finance and markets technology (31 teams). Firm-wide access lead time fell from 15 days to 1, and the 2025 internal audit closed two long-standing data-access findings. The CTO adopted the pattern as a group standard in March 2026.", notice:["The rewrite names company-level scope: teams outside your domain.","Every claim can be checked by someone else.","It shows durability: a group standard outlasts the programme."]}],
+  quiz:[
+    {q:"What most often separates distinguished from principal?",o:["Deeper expertise in one technology","Scope of impact (company or industry) and a longer horizon","More direct reports","Longer tenure"],a:1,why:"Depth is assumed at both levels. The difference is how far your impact reaches and how long it lasts."},
+    {q:"Which statement is evidence rather than activity?",o:["Chaired the data architecture forum","Wrote the event streaming standard","Three divisions outside CDO adopted the policy service, and access lead time fell from 15 days to 1","Mentored six engineers"],a:2,why:"It names a result, its scope and a measure someone else can verify."},
+    {q:"What is the difference between a mentor and a sponsor?",o:["There is none","A mentor gives advice; a sponsor uses their own standing to advocate for you","A sponsor is always your manager","A mentor must be outside the firm"],a:1,why:"Sponsors argue your case in rooms you are not in. They need to have seen your work directly."},
+    {q:"The written career framework says 'industry-recognised expertise'. What should you do first?",o:["Start submitting conference talks","Ask current distinguished engineers and committee members what that phrase has meant in recent cases","Ignore it","Publish a book"],a:1,why:"The lived criteria often differ from the written ones. Calibrate before you invest."},
+    {q:"Why is a promotion to distinguished rarely 'earned by completing a checklist'?",o:["Committees are arbitrary","Roles are scarce and usually tied to a company-level need you are already visibly meeting","Checklists are secret","Only external hires get the role"],a:1,why:"Find the need, meet it visibly, and the case follows. Checklists help you prepare, not qualify."}],
+  lab:{type:"sort", title:"Principal-level or distinguished-level evidence?",
+    brief:"Classify each statement from a draft promotion case. Some are activity rather than evidence of any level.",
+    buckets:["Activity","Principal-level evidence","Distinguished-level evidence"],
+    items:[
+      ["Designed the target architecture for CDO data movement platforms","Principal-level evidence","Strong work, but scoped to your domain."],
+      ["Attended the quarterly technology strategy offsite","Activity","Being present is not a result."],
+      ["The group CTO adopted your data contract pattern as a standard for every division","Distinguished-level evidence","Company scope, durable, and set by you."],
+      ["Cut access request lead time in CDO from 15 days to 1","Principal-level evidence","A strong outcome inside your domain."],
+      ["Wrote 14 ADRs this year","Activity","Count of outputs. Ask what they changed."],
+      ["Your industry working group paper shaped a regulator's consultation response","Distinguished-level evidence","Industry scope and a durable effect."],
+      ["Two engineers you sponsored were promoted to principal in other divisions","Distinguished-level evidence","You multiplied senior talent beyond your own area."],
+      ["Mentored contract engineers on the CDC framework","Principal-level evidence","Valuable, and expected at principal."],
+      ["Gave a talk at the internal architecture guild","Activity","Evidence only if it led to adoption or a decision."],
+      ["Your incident review changed deployment policy for the whole firm","Distinguished-level evidence","A firm-wide change that will outlast the incident."]]},
+  project:{title:"Criteria and gap analysis", deliver:"A two-page gap analysis against your firm's real distinguished criteria.", steps:["Get the published career framework for principal and distinguished","Interview two current distinguished engineers and one committee member about recent cases","Write the lived criteria next to the written ones","List your strongest five pieces of evidence and place each on the scope ladder","Mark each criterion as met, partly met or missing","Choose the two gaps you will close in the next 12 months","Review it with your manager and one potential sponsor"],
+    rubric:["Both written and lived criteria are captured","Evidence is stated as results, not activities","Each piece of evidence has a scope level","Two priority gaps are named with a 12-month plan","A potential sponsor has read it"]}
+},
+{ id:"d2", lvl:"f", title:"Multi-year technical vision", time:"90 min",
+  summary:"Write a technical vision that holds for three to five years, connects to the firm's strategy, and gives many teams a reason to move in the same direction.",
+  objectives:["Distinguish a vision, a strategy and a roadmap","Use three horizons to balance today's commitments with options on the future","Write a vision one-pager with principles and explicit bets","Get a vision adopted beyond your own domain"],
+  learn:`
+<h3>Vision, strategy, roadmap</h3>
+<div class="tbl"><table><thead><tr><th>Artefact</th><th>Answers</th><th>Horizon</th></tr></thead><tbody>
+<tr><td>Vision</td><td>What does good look like when we get there?</td><td>3 to 5 years</td></tr>
+<tr><td>Strategy</td><td>What is the problem, and how will we approach it? (Rumelt's kernel)</td><td>1 to 3 years</td></tr>
+<tr><td>Roadmap</td><td>What happens in what order?</td><td>Quarters</td></tr>
+</tbody></table></div>
+<p>At principal level you mostly work on strategies and roadmaps for your domain. At distinguished level you are expected to write the vision others build strategies against. Will Larson's advice holds: write strategies from real decisions, then synthesise several into a vision. Visions written from nothing tend to be wishes.</p>
+<h3>Three horizons</h3>
+<p>McKinsey's three horizons model is a useful frame for a technical portfolio. Horizon 1 runs and extends what you have. Horizon 2 builds the next platform. Horizon 3 buys options on futures that may not arrive. A vision that lives only in Horizon 1 is a plan. One that lives only in Horizon 3 is a slide deck. Most firms under-invest in Horizon 2, because it competes with Horizon 1 for the same people.</p>
+<h3>Make the bets explicit</h3>
+<p>A vision is a set of bets about the future. Name them: "We bet that AI agents will become a major consumer of governed data within three years." For each bet, say what you will do now, what would tell you it is right or wrong, and when you will check. Bets you do not write down cannot be reviewed, so they never improve.</p>
+<h3>Principles carry the vision</h3>
+<p>Teams will not reread your vision every week. They will remember three to five principles if they are short and opinionated: "Data products are the only interface", "Controls are generated, not documented". Good principles help a team make a decision you never see.</p>
+<h3>Adoption beyond your domain</h3>
+<ul>
+<li><b>Co-author.</b> Write it with a principal from at least two other divisions. Their names on the document are worth more than your polish.</li>
+<li><b>Pre-wire.</b> Walk the CTO's staff through it one at a time before any forum.</li>
+<li><b>Anchor to the firm's strategy.</b> Quote it. A technical vision that does not cite business strategy will be read as a hobby.</li>
+<li><b>Revisit on a calendar.</b> Review it yearly in public, including the bets you got wrong.</li>
+</ul>
+<h3>Signs a vision is working</h3>
+<p>Teams you have never met cite it in their designs. Funding requests reference it. People argue about it, which means they read it.</p>`,
+  examples:[{kind:"diagram", title:"Northbank data platform vision across three horizons", code:D.horizons, caption:"The vision sits above Horizon 3. Each horizon contains work that moves toward it.", notice:["Horizon 1 work is already funded; the vision explains why it matters.","Horizon 2 is where most teams outside CDO would need to change.","Horizon 3 items are bets with review dates, not commitments."]}],
+  quiz:[
+    {q:"Which artefact answers 'what does good look like in three to five years'?",o:["Roadmap","Strategy","Vision","OKRs"],a:2,why:"A vision describes the destination. Strategies and roadmaps describe the route."},
+    {q:"Why does Horizon 2 tend to be under-funded?",o:["It has no value","It competes with Horizon 1 for the same people and budget","Regulators forbid it","It is always outsourced"],a:1,why:"Urgent run work crowds out next-platform work. Protect Horizon 2 capacity explicitly."},
+    {q:"What makes a vision bet reviewable?",o:["It is written in the appendix","It states what you will do, the signal that would prove it right or wrong, and a review date","It is approved by the CTO","It is kept confidential"],a:1,why:"Without a signal and a date, nobody can learn whether the bet was good."},
+    {q:"What is the best way to get a technical vision adopted outside your domain?",o:["Publish it and wait","Co-author it with principals from other divisions and pre-wire it with the CTO's staff","Mandate it through governance","Present it at one large forum"],a:1,why:"Co-authors become advocates. Pre-wiring avoids surprises in the forum."},
+    {q:"Which principle is most useful to teams?",o:["We value quality","Data products are the only interface for consuming data","We will be best in class","We embrace innovation"],a:1,why:"It is short, opinionated and helps a team decide something without asking you."}],
+  lab:{type:"builder", title:"Write a vision one-pager",
+    brief:"Draft a technical vision for your area at company scope. The preview assembles it into a one-page format you can share.",
+    fields:[["dest","Destination (one sentence, 3-5 years out)","Any approved person or system at Northbank gets trusted data in minutes, with control evidence produced automatically."],["why","Why it matters to the firm (cite the business strategy)","The group strategy commits to faster regulatory change and safe use of AI. Both depend on data we can find, trust and evidence."],["now","Where we are today, honestly","Access takes 15 days; lineage covers 30% of critical data; each division runs its own integration patterns."],["pr","Three to five principles","Data products are the only interface. Controls are generated, not documented. Capture once, publish once."],["b1","Bet 1, with signal and review date","AI agents become a major data consumer within 3 years. Signal: agent-originated queries pass 10% of volume. Review: Q4 2027."],["b2","Bet 2, with signal and review date","Regulators will accept lineage generated from data contracts as evidence. Signal: positive supervisory feedback on the pilot. Review: Q2 2027."],["h","What changes for teams outside CDO","Source teams publish data contracts. Consumer teams stop building private extracts. Platform teams offer one paved road for data movement."],["co","Co-authors and reviewers","Principal engineers from markets and finance technology; reviewed with the CTO's staff."]],
+    template:v=>`TECHNICAL VISION\n\nWhere we are going\n${v.dest||"…"}\n\nWhy it matters\n${v.why||"…"}\n\nWhere we are now\n${v.now||"…"}\n\nPrinciples\n${v.pr||"…"}\n\nOur bets\n1. ${v.b1||"…"}\n2. ${v.b2||"…"}\n\nWhat changes for teams outside CDO\n${v.h||"…"}\n\nCo-authors and reviewers\n${v.co||"…"}`,
+    check:["The destination is concrete enough to disagree with","It cites the firm's business strategy","Principles are short and opinionated","Each bet has a signal and a review date","It names changes for teams outside your domain","Co-authors come from at least two other areas"]},
+  project:{title:"A vision others co-own", deliver:"A technical vision of no more than four pages, co-authored across divisions and reviewed by the CTO's staff.", steps:["Gather the three to five strategies or major decisions the vision synthesises","Recruit two co-authors from other divisions","Draft the destination, principles and bets together","Map current work into three horizons and name the Horizon 2 gap","Pre-wire with each member of the CTO's staff","Present it and record objections","Set a public review date one year out"],
+    rubric:["Grounded in real strategies or decisions, not a blank page","Co-authored with at least two other divisions","Bets have signals and review dates","Horizon 2 investment gap is named","The CTO's staff reviewed it","A review date is set"]}
+},
+{ id:"d3", lvl:"p", title:"Engineering economics", time:"90 min",
+  summary:"Speak the language of the CFO: total cost of ownership, present value, unit economics, and the difference between capital and operating spend.",
+  objectives:["Build a multi-year total cost of ownership including exit costs","Discount future costs to compare options fairly","Express platform value as unit economics","Explain capex and opex trade-offs to finance partners"],
+  learn:`
+<h3>Why economics, and why now</h3>
+<p>At company scope, most technical decisions are also capital allocation decisions. Executives trust technical leaders who can show the money, including the parts that are uncomfortable. Being the person who brings an honest five-year cost picture, rather than the vendor's, is one of the fastest ways to be trusted at the top table.</p>
+<h3>Total cost of ownership</h3>
+<p>TCO is every cost over the life of a choice, not just the licence or the cloud bill.</p>
+<ul>
+<li><b>Upfront:</b> build effort, migration, licences bought in advance, training.</li>
+<li><b>Run:</b> infrastructure, licences, support contracts, monitoring, audit effort.</li>
+<li><b>People:</b> engineers to operate and evolve it. Usually the biggest line and the most often missed.</li>
+<li><b>Exit:</b> what it costs to leave. Migrations, data egress, contract penalties, parallel running.</li>
+</ul>
+<h3>Money now is worth more than money later</h3>
+<p>Comparing a large upfront build with a subscription needs discounting. Present value of a cost in year <i>t</i> = cost ÷ (1 + r)<sup>t</sup>, where <i>r</i> is the discount rate your finance team uses (often called the hurdle rate or cost of capital). Ask finance for it; do not invent one. Net present value (NPV) adds up the discounted benefits minus the discounted costs.</p>
+<h3>Unit economics</h3>
+<p>"The platform costs $4M a year" invites a cut. "Each governed data product costs $3,100 a year to run, down from $9,000 for the bespoke extracts it replaced" invites investment. Pick a unit the business understands: cost per data product, per access request, per regulatory report, per million events. Track it over time, and show how it falls as adoption grows.</p>
+<h3>Capex and opex</h3>
+<p>Capital expenditure (capex) is spent on assets and spread over their useful life through depreciation. Operating expenditure (opex) is expensed in the year. Building software can sometimes be capitalised; cloud services are usually opex. The same total can look very different on the income statement. Learn your firm's capitalisation rules from finance, because they shape which option a budget holder prefers.</p>
+<h3>FinOps</h3>
+<p>The FinOps Foundation describes three phases: inform (make cost visible and allocated), optimise (rightsize, commit, remove waste), and operate (make cost part of every design decision). A distinguished engineer makes cost a design attribute, like latency or availability, rather than a quarterly surprise.</p>
+<h3>Honest numbers</h3>
+<p>Give ranges, not points. State your assumptions. Include the do-nothing option, which is rarely free. Show sensitivity: which assumption, if wrong, changes the answer.</p>`,
+  examples:[{kind:"ba", title:"A platform cost, reframed", before:"The data access platform will cost $2.4M to build and $900K a year to run. We need approval for the full amount.", after:"Recommendation: build the policy-based access platform.\nFive-year cost in today's money: $5.9M, against $8.7M to keep the current manual process (mostly analyst and steward time).\nUnit cost: about $40 per access request, down from $310.\nBiggest uncertainty: adoption speed. If adoption is half our estimate, the platform still breaks even in year four.", notice:["Leads with a comparison, including do-nothing.","Uses present value over five years, not just year one.","Gives a unit cost the business understands.","Names the assumption that matters most."]}],
+  quiz:[
+    {q:"Which cost is most often missing from a technology TCO?",o:["Licences","People to operate and evolve the system","Hardware","Training"],a:1,why:"Engineering and operations people are usually the largest cost over five years and the easiest to leave out."},
+    {q:"Why discount future costs when comparing options?",o:["Finance requires it for no reason","Money spent later is worth less in today's terms, so timing changes the comparison","It makes numbers smaller","To hide costs"],a:1,why:"A big upfront build and a steady subscription can only be compared fairly in present value."},
+    {q:"Which framing is most likely to win investment?",o:["The platform costs $4M a year","Each data product costs $3,100 a year, down from $9,000 for bespoke extracts","We need more budget","Our costs are in line with peers"],a:1,why:"Unit economics show value and a trend, and invite growth rather than cuts."},
+    {q:"Where should the discount rate come from?",o:["Pick 10%","Your finance team's hurdle rate or cost of capital","The vendor","The highest rate you can find"],a:1,why:"Use the firm's rate so your analysis is comparable with every other investment case."},
+    {q:"What does the 'operate' phase of FinOps aim for?",o:["Cutting all cloud spend","Making cost a routine design consideration across teams","Moving everything on-premises","Annual cost reviews only"],a:1,why:"Cost becomes a design attribute, like latency or availability."}],
+  lab:{type:"tco", title:"Five-year TCO and present value",
+    brief:"Compare three options for Northbank's data access platform. Edit the numbers ($K) to match your own decision. The page totals each option, discounts it to present value, and shows which assumption moves the answer most.",
+    years:5, rate:8,
+    options:[["Build in-house",1800,350,900,200],["Buy a vendor platform",600,700,450,600],["Do nothing (manual process)",0,250,1500,0]]},
+  project:{title:"An honest cost case", deliver:"A one-page economic comparison for a real decision in your area, reviewed by a finance partner.", steps:["Pick a live build, buy, migrate or decommission decision","List upfront, run, people and exit costs for each option, including do-nothing","Get the discount rate from finance and calculate present value over five years","Choose one unit metric the business understands and show it for each option","Identify the assumption that most changes the answer","Review the numbers with a finance partner","Rewrite the case to lead with the comparison"],
+    rubric:["Do-nothing is costed","People and exit costs are included","Uses the firm's discount rate","States a unit cost","Names the most sensitive assumption","A finance partner reviewed it"]}
+},
+{ id:"d4", lvl:"p", title:"Decision quality under uncertainty", time:"75 min",
+  summary:"Judge decisions by the quality of the thinking, not the outcome. Use pre-mortems, probabilities and decision reviews so your judgement improves year on year.",
+  objectives:["Separate decision quality from outcome quality","Run a pre-mortem that surfaces real risks","Express uncertainty as calibrated probabilities","Keep a decision journal and review it"],
+  learn:`
+<h3>Good decisions can have bad outcomes</h3>
+<p>Annie Duke calls the habit of judging a decision by its outcome "resulting". A sound decision can turn out badly because of luck, and a reckless one can turn out well. If you only learn from outcomes, you learn the wrong lessons. Distinguished engineers are trusted for judgement, so improving judgement deliberately is part of the job.</p>
+<h3>Match effort to the decision</h3>
+<p>Jeff Bezos's distinction is useful: one-way doors are hard to reverse, so slow down and widen the input. Two-way doors can be walked back, so decide quickly and push the decision to the people closest to it. Most decisions are two-way doors treated as one-way doors.</p>
+<h3>Pre-mortems</h3>
+<p>Gary Klein's technique: before committing, the group imagines it is a year later and the decision failed badly. Each person writes down why, privately, then shares. It works because it gives people permission to voice doubts without looking negative. Turn the top reasons into mitigations, early warning signals, or a different decision.</p>
+<h3>Speak in probabilities</h3>
+<p>"This migration will probably finish in Q3" means 55% to one person and 90% to another. Say "about 70%". Philip Tetlock's research on forecasting found that people who use precise probabilities, update often in small steps, and review their record get measurably better. Track your forecasts, then check how often your 70% calls come true.</p>
+<h3>The decision journal</h3>
+<p>For important decisions, write a short entry at the time: the options, what you expected, your confidence, and what you knew. Review it at a set date. Without the entry, hindsight bias rewrites your memory of what you believed.</p>
+<h3>Noise</h3>
+<p>Kahneman, Sibony and Sunstein show that experts given the same case often disagree widely, and the same expert can disagree with themselves on a different day. In architecture review, that means two reviewers can reach opposite verdicts on the same design. Reduce noise with explicit criteria, independent scoring before discussion, and decision templates.</p>`,
+  examples:[{kind:"diagram", title:"A decision quality loop", code:D.decision, caption:"Each important decision passes through a pre-mortem and a journal entry, and is reviewed later.", notice:["The review asks whether the reasoning was sound, not only whether it worked.","Probabilities make the review possible: you can check calibration.","The loop is what turns experience into better judgement."]}],
+  quiz:[
+    {q:"What is 'resulting'?",o:["Measuring outcomes","Judging a decision's quality only by how it turned out","Writing results first","A type of OKR"],a:1,why:"Outcomes mix decision quality and luck. Judge the reasoning separately."},
+    {q:"Why does a pre-mortem surface more risks than asking 'what could go wrong?'",o:["It takes longer","Imagining failure has already happened gives people permission to voice doubts","It uses a template","Managers run it"],a:1,why:"It changes the social cost of being negative."},
+    {q:"What does a forecaster need in order to improve?",o:["More confidence","Precise probabilities and a record to check calibration against","Fewer forecasts","Vague language to avoid being wrong"],a:1,why:"Without precise numbers and a record, you cannot tell whether your 70% means 70%."},
+    {q:"A decision can be reversed next sprint at low cost. What is the right approach?",o:["Escalate to the CTO","Decide quickly, close to the work","Run a full ATAM","Wait for more data"],a:1,why:"Two-way doors deserve speed. Save deep analysis for one-way doors."},
+    {q:"Two architecture reviewers reach opposite verdicts on the same design. What reduces this?",o:["A more senior reviewer","Explicit criteria and independent scoring before discussion","Longer meetings","Fewer reviewers"],a:1,why:"Structure reduces noise. Discussion before independent scoring lets the loudest voice anchor everyone."}],
+  lab:{type:"builder", title:"Pre-mortem and decision journal entry",
+    brief:"Pick a real decision you face now. Fill in the pre-mortem and the journal entry. The preview gives you a record to review in six months.",
+    fields:[["dec","Decision","Retire the nightly batch feeds to finance and move them to the streaming backbone by Q2."],["door","One-way or two-way door, and why","Mostly one-way: finance will rebuild its reconciliations, and the batch platform licence ends."],["opts","Options considered","1. Migrate all feeds by Q2. 2. Migrate critical feeds only, keep batch for two years. 3. Do nothing."],["pm","Pre-mortem: it is a year later and this failed. Why?","Finance reconciliation broke at quarter end. Source teams did not publish data contracts in time. The licence was cancelled before parallel running finished."],["mit","Mitigations and early signals","Two quarter-ends of parallel running. Signal: contract coverage under 80% by January means delay the licence exit."],["exp","What I expect, with probability","75% chance all critical feeds move by Q2 without a reporting incident."],["know","What I know and do not know now","Known: volumes, latency needs. Unknown: how much finance logic sits in the batch jobs."],["rev","Review date and reviewer","1 October, with the head of finance technology."]],
+    template:v=>`DECISION JOURNAL\n\nDecision: ${v.dec||"…"}\nDoor type: ${v.door||"…"}\nOptions: ${v.opts||"…"}\n\nPre-mortem (why it failed)\n${v.pm||"…"}\n\nMitigations and early signals\n${v.mit||"…"}\n\nExpectation\n${v.exp||"…"}\n\nWhat I know and do not know\n${v.know||"…"}\n\nReview: ${v.rev||"…"}`,
+    check:["The door type is justified","At least three options, including doing nothing or less","Pre-mortem reasons are specific","Each major risk has a signal you can watch","The expectation is a number","A review date and reviewer are set"]},
+  project:{title:"A quarter of decision reviews", deliver:"Journal entries for five significant decisions, with at least two reviewed, and a short note on what you learned about your judgement.", steps:["Write a journal entry for each significant decision this quarter","Run one group pre-mortem on a one-way-door decision","Make at least ten probability forecasts about delivery or adoption","Review two decisions at their set dates with a peer","Score your forecasts: how often did your 70% calls come true?","Write one page on patterns in your judgement"],
+    rubric:["Five entries written at the time of decision","One group pre-mortem changed the plan","Ten forecasts recorded with probabilities","Two reviews separate luck from reasoning","You named one bias to correct"]}
+},
+{ id:"d5", lvl:"p", title:"Technical authority beyond your domain", time:"75 min",
+  summary:"Become someone the whole company seeks out for technical judgement, while still being credible and useful in domains you do not own.",
+  objectives:["Earn credibility in domains you do not own","Choose which company-level problems to take on","Work as the CTO's technical partner without becoming a proxy","Resolve cross-division technical disputes"],
+  learn:`
+<h3>From owning a domain to serving the company</h3>
+<p>At principal level, your authority comes from owning a domain. At distinguished level it comes from being right, often, about problems that cut across many domains. That authority is earned, not granted. Nobody outside CDO has to listen to you.</p>
+<h3>How to earn credibility outside your domain</h3>
+<ul>
+<li><b>Learn before you speak.</b> Spend time with the teams. Read their incident reviews and design docs before offering a view.</li>
+<li><b>Bring a pattern, not an answer.</b> "Here is what we learned moving 120 feeds to streaming" is welcome. "You should use streaming" is not.</li>
+<li><b>Make others look good.</b> Help a principal in another division land their proposal. They will remember.</li>
+<li><b>Be useful in a crisis.</b> Major incidents are where people see judgement under pressure.</li>
+</ul>
+<h3>Choosing company-level problems</h3>
+<p>Tanya Reilly suggests looking for work that is important, neglected, and a match for your skills. At company scope, good candidates often sit between organisations: problems every division has and no division owns. Examples: data contracts between systems, identity for machine users, resilience testing, the firm's approach to AI. Pick one or two and go deep. Spreading across ten is the most common failure at this level.</p>
+<h3>Partnering with the CTO</h3>
+<p>Many distinguished engineers work closely with the CTO or the CTO's staff. Be clear about the role: you give an independent technical view, including when it is unwelcome. If you become the CTO's spokesperson, teams will stop telling you the truth, and you will lose the thing that made you useful.</p>
+<h3>Resolving cross-division disputes</h3>
+<p>When two divisions disagree on a shared technical standard, the fastest route is rarely to pick a winner. Name the decision and who owns it. Agree the criteria before discussing options. Make the cost of each option visible to both sides. If needed, propose a time-boxed experiment. Record the outcome so the same fight does not return next year.</p>
+<h3>Staying technically credible</h3>
+<p>Distinguished engineers who stop understanding systems lose authority quickly. Keep a deliberate practice: read code in critical paths, review designs outside your area, build small prototypes of new technology, and take part in major incident reviews.</p>`,
+  examples:[{kind:"ba", title:"Offering a view outside your domain", before:"Markets technology should move its trade feeds onto our streaming backbone. It is clearly the better architecture and we have already proven it.", after:"We moved 120 feeds from batch to streaming in CDO last year. Three things surprised us: reconciliation logic hiding in batch jobs, the cost of parallel running, and how much faster consumers adopted once a data contract existed. Happy to share the playbook and walk your team through the reconciliation work, if that would help your decision.", notice:["Offers experience and evidence, not a verdict.","Leaves the decision with the team that owns it.","Shows the hard parts as well as the wins.","Opens a relationship rather than a turf fight."]}],
+  quiz:[
+    {q:"Where does a distinguished engineer's authority mostly come from?",o:["Their title","Owning a large domain","A record of good judgement on problems that cross many domains","Their manager"],a:2,why:"Outside your domain, nobody has to listen. Credibility is earned through judgement others can see."},
+    {q:"Which company-level problem is usually the best candidate to take on?",o:["Something already owned and well run","Something important that every division has and no division owns","Whatever the CTO mentioned last","Ten problems at once"],a:1,why:"Important, neglected, and a fit for your skills. Problems between organisations are often all three."},
+    {q:"What is the risk of becoming the CTO's spokesperson?",o:["None","Teams stop telling you the truth, and you lose your independent view","You get promoted too fast","You will have too many meetings"],a:1,why:"Your value is an honest technical view. Proxying for a leader trades it away."},
+    {q:"Two divisions disagree about a shared event schema standard. What do you do first?",o:["Pick the better design","Name the decision owner and agree the criteria before discussing options","Escalate to the CTO","Let them work it out"],a:1,why:"Criteria first separates the decision from the people. Then options can be compared fairly."},
+    {q:"How do you best offer a view in another division's design review?",o:["Tell them what to do","Share what you learned, including the hard parts, and leave the decision with them","Stay silent","Ask for a veto"],a:1,why:"Patterns and evidence are welcome; verdicts from outside are not."}],
+  lab:{type:"scenario", title:"Five moments outside your domain",
+    brief:"Choose how you would respond. Each option gets feedback.",
+    scen:[
+      {s:"The CTO asks you to join a review of the payments division's cloud migration. You know little about payments.",o:[["Decline; it is not your domain","weak","You miss a chance to build company-level credibility, and the CTO asked for a reason."],["Accept, read their designs and incident history first, and focus your questions on what you know: data movement and resilience","strong","You add value where you are strong and learn the rest."],["Accept and give a full verdict on their architecture","weak","Overreach outside your expertise damages credibility fast."],["Send a principal from your team instead","ok","Sometimes right, but you lose the visibility the CTO offered."]]},
+      {s:"A principal in markets technology is struggling to get their resilience proposal adopted, and it overlaps with your domain.",o:[["Write a competing proposal","weak","Splits support and creates a rivalry you will regret."],["Offer to co-sponsor, add CDO's evidence, and help them pre-wire","strong","Their success becomes shared success, and you gain an ally."],["Stay out of it","ok","Safe, but you miss a chance to shape a company-level standard."],["Raise concerns in the forum","weak","Surprising a peer in public is costly."]]},
+      {s:"The CTO wants you to announce a new standard at the all-hands. You have doubts about it.",o:[["Announce it as asked","weak","You become a spokesperson, and teams discount your future views."],["Tell the CTO privately what worries you, suggest changes, and offer to present it if they are addressed","strong","Independent and supportive at once."],["Refuse publicly","weak","Damages the relationship and the standard."],["Announce it but hint at your doubts","weak","Undermines both of you."]]},
+      {s:"During a firm-wide incident, a team you do not know is stuck on a data replication failure.",o:[["Take over the incident","weak","You displace the incident commander and confuse the response."],["Offer specific help to the incident commander and work through them","strong","Your judgement shows without breaking the response structure."],["Wait for the review","ok","Avoids interference, but loses a chance to help when it matters."],["Post suggestions in the incident channel","ok","Helpful sometimes, noisy often."]]},
+      {s:"You are invited to ten cross-division working groups.",o:[["Join all ten","weak","Spread thin, you will decide nothing."],["Pick the one or two most important and neglected, and send delegates to the rest","strong","Depth beats coverage at this level."],["Decline all","weak","You lose company-level scope."],["Join all and attend occasionally","weak","The worst of both: visible absence."]]}]},
+  project:{title:"One company-level problem", deliver:"A one-page problem statement and six-month plan for one company-level technical problem, endorsed by a member of the CTO's staff.", steps:["List five problems every division has and no division owns","Score each for importance, neglect and fit with your skills","Interview a principal in two other divisions about the top candidate","Write a problem statement with the cost of doing nothing","Plan the first six months, including who co-leads with you","Get an endorsement from a member of the CTO's staff","Start, and report progress monthly"],
+    rubric:["The problem crosses at least three divisions","Importance and neglect are evidenced","A co-lead from another division is named","The cost of doing nothing is stated","A member of the CTO's staff endorsed it"]}
+},
+{ id:"d6", lvl:"p", title:"Judgement from industry case studies", time:"90 min",
+  summary:"Build technical judgement at scale by studying how major systems failed and succeeded, and turning those lessons into firm-wide practice.",
+  objectives:["Analyse a major industry incident for its systemic causes","Recognise recurring failure patterns across cases","Translate lessons into standards, tests or controls","Lead a learning review that changes firm-wide practice"],
+  learn:`
+<h3>Why case studies</h3>
+<p>Your own experience is a small sample. The industry has run millions of experiments for you, many of them public. Distinguished engineers are expected to recognise a pattern before it hits, because they have seen it elsewhere. Studying cases deliberately is how you borrow that experience.</p>
+<h3>Five cases worth knowing</h3>
+<div class="tbl"><table><thead><tr><th>Case</th><th>What happened</th><th>Lesson</th></tr></thead><tbody>
+<tr><td>Knight Capital, 2012</td><td>A deployment reached only seven of eight servers. Old code on the eighth was triggered by a reused flag. The firm lost about $440M in 45 minutes.</td><td>Deployment consistency, dead code removal, and the ability to stop fast.</td></tr>
+<tr><td>AWS S3, 2017</td><td>A mistyped command during routine maintenance removed more capacity than intended in us-east-1. Many services depending on S3 failed.</td><td>Tooling should limit blast radius; hidden dependencies on one region are common.</td></tr>
+<tr><td>TSB, 2018</td><td>A UK bank's migration to a new core platform left many customers unable to use their accounts for weeks. Regulators later fined the bank.</td><td>Big-bang migrations, readiness evidence, and board oversight of technology risk.</td></tr>
+<tr><td>Equifax, 2017</td><td>An unpatched web framework flaw was exploited, exposing personal data of about 147 million people.</td><td>Asset inventory and patch processes are architecture, not admin.</td></tr>
+<tr><td>CrowdStrike, 2024</td><td>A faulty content update to security software crashed about 8.5 million Windows machines worldwide.</td><td>Staged rollout applies to configuration and content, not only code; concentration risk in vendors.</td></tr>
+</tbody></table></div>
+<p>Read the primary sources where they exist: regulator reports, company post-incident reviews, court filings. Secondary summaries often miss the systemic causes.</p>
+<h3>Look for the system, not the person</h3>
+<p>Almost every major incident has a proximate cause (a typo, a missed server) and systemic causes (tooling that allowed it, pressure that rushed it, design that let one failure spread). Sidney Dekker and the resilience engineering community argue that blaming the person who made the last move teaches nothing. Ask: why did this seem reasonable at the time? What made the failure possible and the spread easy?</p>
+<h3>Recurring patterns</h3>
+<ul>
+<li><b>Big-bang change:</b> everything switched at once, with no safe way back.</li>
+<li><b>Hidden coupling:</b> a dependency nobody mapped turned a local failure into a global one.</li>
+<li><b>Configuration as code's poor cousin:</b> changes that skip the testing and staging applied to code.</li>
+<li><b>Ownership gaps:</b> an asset, patch or process no team owned.</li>
+<li><b>Normalised deviance:</b> small warnings ignored so often they became normal (Diane Vaughan's term from the Challenger investigation).</li>
+</ul>
+<h3>From lesson to practice</h3>
+<p>A lesson changes nothing until it becomes a standard, a test, a control or a habit. For each case you study, ask: could this happen here? Where? What would stop it? Then make one change and measure it.</p>`,
+  examples:[{kind:"ba", title:"An incident lesson, made firm-wide", before:"Lessons learned from CrowdStrike: we should be careful with vendor updates.", after:"Could it happen here? Yes: 14 agents and appliances receive vendor content updates with no staging.\nChange: from Q3, vendor content updates reach 1% of hosts, then 10%, then all, with automated health checks between stages.\nOwner: infrastructure engineering. Evidence: staging logs reviewed monthly by operational risk.\nFirst result: one faulty signature update stopped at the 1% stage in August.", notice:["Turns a headline into a specific exposure in the firm.","Names an owner and evidence, which regulators will ask for.","Measures whether the change works."]}],
+  quiz:[
+    {q:"What made Knight Capital's 2012 failure possible?",o:["A cyber attack","Inconsistent deployment across servers, with old code activated by a reused flag","A regulator's error","A network outage"],a:1,why:"Deployment consistency and dead code removal are architecture concerns."},
+    {q:"What is the main lesson of the CrowdStrike 2024 outage for architects?",o:["Avoid Windows","Staged rollout and health checks apply to configuration and content updates too","Never use vendors","Patch less often"],a:1,why:"Content and configuration can break systems as badly as code, so they need the same safety."},
+    {q:"Why look for systemic causes rather than the person who made the last move?",o:["To avoid accountability","Because the system allowed and spread the failure, and fixing that prevents recurrence","Because people never make mistakes","Regulators require it"],a:1,why:"Blame teaches people to hide mistakes. Fixing the system prevents the next one."},
+    {q:"What is normalised deviance?",o:["A statistical method","Small warnings ignored so often that they come to feel normal","A coding standard","A type of fitness function"],a:1,why:"Diane Vaughan described it in the Challenger investigation. It shows up in every long-running platform."},
+    {q:"When is an incident lesson complete?",o:["When the review document is published","When it becomes a standard, test, control or habit, and you can measure its effect","When the team agrees","After a year"],a:1,why:"Lessons that do not change practice are just stories."}],
+  lab:{type:"sort", title:"Which failure pattern?",
+    brief:"Classify each incident summary by its main systemic pattern. These are composite or anonymised examples.",
+    buckets:["Big-bang change","Hidden coupling","Unsafe configuration change","Ownership gap"],
+    items:[
+      ["A core banking platform switched all customers in one weekend with no rollback path","Big-bang change","Everything moved at once with no safe way back."],
+      ["A logging service outage stopped trading, because the order router waited on log writes","Hidden coupling","A non-critical dependency sat on the critical path."],
+      ["A feature flag change reached every region at once and disabled authentication","Unsafe configuration change","Configuration skipped the staged rollout code would get."],
+      ["An expired TLS certificate took down an internal API; nobody knew who renewed it","Ownership gap","An asset with no owner fails silently until it fails loudly."],
+      ["A data warehouse migration cut over every report on the same day as quarter end","Big-bang change","All consumers switched at once, at the worst time."],
+      ["A shared DNS resolver failure took down applications in every division","Hidden coupling","A single shared dependency nobody mapped as critical."],
+      ["A firewall rule pushed to production without review blocked market data feeds","Unsafe configuration change","No staging, no review, full blast radius."],
+      ["An unpatched library sat in a service whose team had been disbanded","Ownership gap","Patch processes fail when no team owns the asset."]]},
+  project:{title:"Case study to firm-wide change", deliver:"A learning review of one major public incident, with a firm-specific exposure analysis and one change in place.", steps:["Pick a major public incident relevant to your firm","Read the primary sources: regulator reports, company reviews","Write a one-page analysis separating proximate and systemic causes","Ask: could this happen here? Find the specific exposures","Propose one change: a standard, test, control or habit","Get an owner to adopt it and agree how to measure it","Present the review at a cross-division forum"],
+    rubric:["Uses primary sources","Separates proximate and systemic causes","Names specific exposures in your firm","One change is adopted with an owner","Effect is measured","Presented beyond your domain"]}
+},
+{ id:"d7", lvl:"p", title:"Growing principals and an architecture community", time:"75 min",
+  summary:"Multiply your impact by growing the next generation of staff and principal engineers, and by building a community that makes good decisions without you.",
+  objectives:["Sponsor senior engineers toward promotion","Build an architecture community of practice that outlasts you","Measure bench strength","Make yourself unnecessary for the decisions you used to make"],
+  learn:`
+<h3>Multiplying senior engineers</h3>
+<p>At principal level you grow the engineers around you. At distinguished level you are expected to grow the next principals, across the firm. A useful test: if you left tomorrow, who would make the decisions you make, and how good would they be?</p>
+<h3>Sponsorship, done well</h3>
+<ul>
+<li><b>Choose deliberately.</b> Sponsor two or three people at a time. Look beyond the people who remind you of yourself.</li>
+<li><b>Give them stretch work with visibility.</b> Hand over a cross-division problem, and make sure senior leaders know whose work it is.</li>
+<li><b>Name them in rooms they are not in.</b> That is what sponsorship means.</li>
+<li><b>Be honest about gaps.</b> Tell them directly what the committee will question.</li>
+</ul>
+<h3>Communities of practice</h3>
+<p>Etienne Wenger described communities of practice as groups who share a concern and learn together by doing. An architecture guild works when it is useful, not mandatory. Run it on real problems: design reviews, incident learning, standards drafts. Rotate the facilitators. Your role is to start it, protect it and then step back.</p>
+<h3>Design review circles</h3>
+<p>A small group of staff and principal engineers reviewing each other's designs builds shared judgement faster than any training. Use a light template, independent written comments before discussion, and a clear decision owner who is not the reviewer.</p>
+<h3>Measuring bench strength</h3>
+<p>Track a few measures: how many people could step into each senior technical role, how many decisions are made without you, how long promotions to principal take, and whether the community draws people from across divisions.</p>
+<h3>The hardest part</h3>
+<p>Letting a decision be made differently from how you would make it. If the result is within the guardrails, let it stand. Correcting it teaches everyone to wait for you.</p>`,
+  examples:[{kind:"diagram", title:"Your multiplier structure", code:D.community, caption:"Three channels for multiplying judgement across the firm. Green boxes are the results that show up in your promotion case.", notice:["Each channel produces evidence someone else can verify.","The design review circle is where decisions start happening without you.","Sponsorship results appear as other people's promotions."]}],
+  quiz:[
+    {q:"What is the best test of your multiplying impact at this level?",o:["How many people you mentor","Who would make your decisions if you left tomorrow, and how good they would be","How many forums you chair","Your calendar"],a:1,why:"Bench strength is what multiplication produces."},
+    {q:"What makes sponsorship different from mentoring?",o:["Nothing","You use your standing to advocate for them in rooms they are not in","It is formal","It is only for managers"],a:1,why:"Sponsors spend reputation. Mentors give advice."},
+    {q:"What keeps an architecture guild alive?",o:["Making attendance mandatory","Working on real problems people care about, with rotating facilitators","A large slide deck","The CTO attending every session"],a:1,why:"Communities of practice live on usefulness. Mandates create attendance, not engagement."},
+    {q:"In a design review circle, why collect written comments before discussion?",o:["To save time","To reduce noise and stop the most senior voice anchoring everyone","To create documentation","Because it is required"],a:1,why:"Independent views first, then discussion."},
+    {q:"A principal you sponsor makes a decision differently from how you would, but within the guardrails. What do you do?",o:["Overrule it","Let it stand and discuss the reasoning afterwards if useful","Escalate","Redo the analysis"],a:1,why:"Overruling decisions within guardrails teaches everyone to wait for you."}],
+  lab:{type:"scorecard", title:"Bench strength scorecard",
+    brief:"Enter current values and targets for your area. Colours show where to act.",
+    rows:[["Ready-now successors for your role","People who could step in within six months",1,2,"higher"],["Engineers you actively sponsor","Named, with a stretch assignment",1,3,"higher"],["Decisions escalated to you per month","From teams that could decide themselves",22,8,"lower"],["Divisions represented in the guild","Out of all technology divisions",2,5,"higher"],["Months from staff to principal promotion","Median for people you sponsor",36,24,"lower"],["Guild sessions run by someone else","Share of sessions in the last quarter, %",10,60,"higher"]]},
+  project:{title:"Sponsorship and community plan", deliver:"A six-month plan for sponsoring two or three senior engineers and starting or strengthening an architecture community.", steps:["Choose two or three people to sponsor, at least one from outside your division","Agree a stretch assignment and a visibility plan with each","Start or reshape a guild or design review circle around real problems","Hand facilitation to someone else within three months","Measure bench strength at the start and after six months","Ask each sponsee what helped and what did not"],
+    rubric:["At least one sponsee is outside your division","Each sponsee has a visible stretch assignment","The community works on real decisions","Someone else facilitates most sessions","Bench strength measures improved","Sponsees gave feedback"]}
+},
+{ id:"d8", lvl:"e", title:"Industry presence", time:"75 min",
+  summary:"Build an external reputation on the strength of real work: writing, speaking, open source and standards, done within the rules of a regulated firm.",
+  objectives:["Choose external channels that fit your goals and constraints","Turn internal work into publishable material","Work with communications, legal and compliance on external content","Contribute to industry groups and standards"],
+  learn:`
+<h3>Why external presence matters</h3>
+<p>Many distinguished criteria include recognition outside the firm. External presence also helps the firm: it attracts engineers, shapes industry standards in ways that suit your architecture, and gives regulators a familiar technical voice. It should come from real work. External talks with nothing behind them are noticed, internally and externally.</p>
+<h3>The channels</h3>
+<div class="tbl"><table><thead><tr><th>Channel</th><th>Effort</th><th>Reach</th><th>Best for</th></tr></thead><tbody>
+<tr><td>Engineering blog posts</td><td>Low to medium</td><td>Medium</td><td>Sharing patterns and lessons</td></tr>
+<tr><td>Conference and meetup talks</td><td>Medium</td><td>Medium to high</td><td>Visibility with practitioners</td></tr>
+<tr><td>Open source contributions</td><td>High, sustained</td><td>High in a niche</td><td>Technical credibility</td></tr>
+<tr><td>Industry groups and standards</td><td>High, slow</td><td>High with peers and regulators</td><td>Shaping the field</td></tr>
+<tr><td>Papers and books</td><td>Very high</td><td>Durable</td><td>Lasting authority</td></tr>
+</tbody></table></div>
+<h3>Turn work into material</h3>
+<p>The easiest path is a ladder: write up a real piece of work internally, give it as an internal talk, remove anything confidential and publish it as a blog post, then submit it as a conference talk. One idea, used four times. Each step improves it.</p>
+<h3>In a regulated firm</h3>
+<p>Expect a review process. Communications, legal and sometimes compliance will need to clear external content. Learn the process early, build a relationship with the reviewers, and allow weeks, not days. Never publish anything about clients, security controls, unreleased results or regulatory matters without explicit approval. Open source contributions usually need an approved policy and sometimes a contributor licence agreement signed by the firm.</p>
+<h3>Industry groups for data in financial services</h3>
+<p>Examples include FINOS (the Fintech Open Source Foundation), the EDM Council, and the working groups that respond to regulators' consultations. Pick one where your work is relevant, and contribute consistently over years. Showing up once does little.</p>
+<h3>Talks that land</h3>
+<ul>
+<li>One idea per talk. State it in the first minute.</li>
+<li>Tell the story of a real problem, including what went wrong.</li>
+<li>Give the audience something they can use on Monday.</li>
+<li>Rehearse with a hostile but kind audience.</li>
+</ul>`,
+  examples:[{kind:"diagram", title:"The reuse ladder", code:D.presence, caption:"One piece of real work becomes several external contributions.", notice:["Each step needs less new effort and reaches more people.","The internal write-up is also promotion evidence.","Standards and open source take the longest, so start early."]}],
+  quiz:[
+    {q:"What should external presence be built on?",o:["Personal branding","Real work and lessons that others can use","Frequent social media posts","Vendor partnerships"],a:1,why:"Talks without substance behind them are noticed, inside and outside the firm."},
+    {q:"What is the most efficient route to a first conference talk?",o:["Write a new talk from scratch","Write up real work internally, present it, publish a cleared blog post, then submit it","Ask a vendor to sponsor you","Wait to be invited"],a:1,why:"One idea reused across channels improves at every step."},
+    {q:"In a regulated firm, what must happen before external publishing?",o:["Nothing","Clearance through communications, legal and sometimes compliance","Only your manager's approval","Post first, ask later"],a:1,why:"Learn the process early and build time into your plan."},
+    {q:"Which channel builds the most lasting authority with peers and regulators?",o:["Social media","Sustained work in industry groups and standards","A single keynote","Internal newsletters"],a:1,why:"Slow, but durable. Consistency over years is what counts."},
+    {q:"What makes a technical talk land?",o:["Many ideas","One idea stated early, a real story including failures, and something useful by Monday","Lots of slides","A product demo"],a:1,why:"Clarity and honesty beat volume."}],
+  lab:{type:"allocate", title:"External presence portfolio",
+    brief:"Estimate how you will split external-facing effort over the next year. The ranges are a starting point for someone building recognition from a standing start.",
+    cats:[["Internal write-ups and talks","The raw material for everything else",20,35,40],["Blog posts","Cleared, public versions of internal work",10,25,0],["Conference and meetup talks","One or two a year",10,25,10],["Open source","Sustained contributions to a relevant project",5,20,0],["Industry groups and standards","One group, consistently",15,30,0],["Building relationships with communications and legal","Makes the rest possible",5,10,0]]},
+  project:{title:"Your first external contribution", deliver:"One cleared, published external contribution based on real work, and a 12-month presence plan.", steps:["Choose a piece of real work with a lesson others can use","Write it up internally and present it","Meet communications and legal to learn the clearance process","Publish a cleared blog post or give a meetup talk","Choose one industry group and attend for a quarter","Write a 12-month plan covering the reuse ladder"],
+    rubric:["Based on real work","Cleared through the firm's process","Published or delivered externally","One industry group joined and attended","A 12-month plan exists","Someone outside the firm responded or followed up"]}
+},
+{ id:"d9", lvl:"e", title:"Building the case", time:"75 min",
+  summary:"Assemble a promotion case that a committee can read quickly and believe: impact narratives, evidence, endorsements and a sponsor who will argue it.",
+  objectives:["Write impact narratives that show scope, durability and originality","Gather endorsements that add new evidence","Work with your sponsor on timing and positioning","Treat the case as a living document, not a one-time effort"],
+  learn:`
+<h3>A case is an argument</h3>
+<p>Committees often read many cases in a session. Yours needs a clear claim ("operates at company scope today"), three to five strong pieces of evidence, and endorsements that confirm it. Lead with your strongest evidence. Do not bury it under a chronology.</p>
+<h3>Impact narratives</h3>
+<p>Structure each narrative so a reader outside your area can follow it:</p>
+<ol><li><b>Situation:</b> the company-level problem, in business terms.</li><li><b>Your role:</b> what you specifically did that others did not.</li><li><b>Scope:</b> how many teams, divisions or firms were affected.</li><li><b>Result:</b> a measure, with a baseline.</li><li><b>Durability:</b> why it will still matter in five years.</li></ol>
+<h3>Endorsements</h3>
+<p>The best endorsements come from senior people outside your reporting line, and say something new. "Great to work with" adds nothing. "Their data contract pattern became our division's standard and cut onboarding time for new feeds by two thirds" adds evidence. Brief your endorsers on what you would like them to speak to.</p>
+<h3>Working with your sponsor</h3>
+<p>Ask your sponsor directly: are you ready, and what would the committee question? Agree the timing. Going up too early and being turned down can set a case back a year or more at some firms.</p>
+<h3>A living document</h3>
+<p>Keep a running impact log from today, even if your case is two years away. Write down results when they happen, with numbers and names of people who saw them. Memory fades, and the best evidence is often forgotten by the time you need it.</p>
+<h3>Narrate without bragging</h3>
+<p>Use "I" for what you did and "we" for what the group did. Give credit precisely. Committees trust candidates who are clear about their own part and generous about others'.</p>`,
+  examples:[{kind:"ba", title:"An impact narrative, before and after", before:"I was the lead architect on the Trusted Data programme, which was a very large and complex programme with many stakeholders. I worked closely with many teams to design and deliver a modern data platform, including streaming, a catalogue and access controls.", after:"Situation: every division copied sensitive data into unmanaged stores because access took 15 days, creating repeated audit findings.\nMy role: I proposed and designed the policy-based access pattern, and persuaded markets and finance technology to co-own it.\nScope: 31 teams across 4 divisions now use it.\nResult: median access time fell from 15 days to 1; two audit findings closed.\nDurability: the CTO made it a group standard, and the next three platform investments build on it.", notice:["Every line answers a question a committee member would ask.","Scope and result are specific and checkable.","'My role' separates your contribution from the team's."]}],
+  quiz:[
+    {q:"What should open a promotion case?",o:["A chronology of your career","A clear claim and your strongest evidence","Your education","A list of projects"],a:1,why:"Committees read many cases. Lead with the argument."},
+    {q:"Which endorsement adds the most?",o:["'A pleasure to work with'","A senior leader outside your line describing a specific result in their division","Your manager restating your case","A peer on your team"],a:1,why:"New evidence from outside your reporting line confirms company scope."},
+    {q:"When should you start your impact log?",o:["The month before the case is due","Today, even if the case is years away","After promotion","Never"],a:1,why:"Evidence is forgotten quickly. Record results when they happen."},
+    {q:"Why agree timing with your sponsor?",o:["It is polite","A turned-down case can set you back, and your sponsor knows the committee","Sponsors set the deadline","Timing does not matter"],a:1,why:"Going up too early is costly."},
+    {q:"How should you use 'I' and 'we'?",o:["Always 'we' to sound humble","'I' for what you did, 'we' for what the group did, with precise credit","Always 'I'","Avoid pronouns"],a:1,why:"Clarity about your part and generosity about others' both build trust."}],
+  lab:{type:"builder", title:"Write an impact narrative",
+    brief:"Write one narrative from your real work. The preview assembles it in committee-ready form.",
+    fields:[["title","Title (the result, as a sentence)","Set the firm's pattern for governed data access"],["sit","Situation (business terms)","Every division copied sensitive data into unmanaged stores because access took 15 days, creating repeated audit findings."],["role","My role (what I did that others did not)","Proposed and designed the policy-based access pattern; persuaded markets and finance technology to co-own it."],["scope","Scope","31 teams across 4 divisions."],["res","Result, with baseline","Median access time from 15 days to 1; two audit findings closed."],["dur","Durability","Adopted as a group standard; the next three platform investments build on it."],["end","Who can confirm it","Head of markets technology; chief audit executive's data lead."]],
+    template:v=>`${(v.title||"…").toUpperCase()}\n\nSituation: ${v.sit||"…"}\nMy role: ${v.role||"…"}\nScope: ${v.scope||"…"}\nResult: ${v.res||"…"}\nDurability: ${v.dur||"…"}\nCan be confirmed by: ${v.end||"…"}`,
+    check:["The title states a result","The situation is in business terms","'My role' is distinct from the team's work","Scope reaches beyond your domain","The result has a baseline","Someone outside your line can confirm it"]},
+  project:{title:"Draft case and impact log", deliver:"A draft promotion case with three to five impact narratives, reviewed by your sponsor, and a running impact log.", steps:["Start an impact log and backfill the last two years","Write three to five impact narratives","Identify four endorsers, at least two outside your reporting line","Brief each endorser on what to speak to","Review the draft with your sponsor and agree timing","Update the log monthly"],
+    rubric:["Opens with a clear claim","Three to five narratives with scope and results","At least two endorsers outside your line","Your sponsor reviewed the draft","Timing is agreed","The impact log is updated monthly"]}
+}
+];
+MODULES.forEach((m,i)=>{ m.no=String(i+1).padStart(2,"0"); });
+
+/* ======== capstones ======== */
+const CAPSTONES = [
+{ id:"cA", code:"CP-1", domain:"Company-level vision", title:"A five-year technical vision the CTO adopts",
+  brief:"Write and land a technical vision at company scope for an area where you already have credibility, co-owned with other divisions and adopted by the CTO's staff.",
+  deliver:["Vision document of four pages or fewer (Module 2)","Three horizons map with the Horizon 2 investment gap named","Explicit bets with signals and review dates","Economic case for the first Horizon 2 investment (Module 3)","Pre-wiring notes for each member of the CTO's staff","Adoption evidence: teams outside your domain citing it"],
+  rubric:["Co-authored with at least two other divisions","The CTO's staff formally adopted or endorsed it","The economic case uses present value and includes do-nothing","At least three teams outside your domain cite it","A public review date is set"],
+  stretch:"Hold the first annual review in public, including the bets you got wrong."},
+{ id:"cB", code:"CP-2", domain:"Judgement", title:"A firm-wide decision, done properly",
+  brief:"Lead one significant, cross-division technical decision from framing to review, using economics, a pre-mortem and a decision journal.",
+  deliver:["Decision framing with door type and decision owner","Five-year TCO and present value for each option, including do-nothing","Group pre-mortem and resulting mitigations","Decision journal entry with probabilities","Decision memo for the executive forum","Six-month review separating luck from reasoning"],
+  rubric:["Spans at least two divisions","A finance partner reviewed the economics","The pre-mortem changed the plan","Probabilities were recorded at the time","The review happened on its set date"],
+  stretch:"Turn the decision process into a template other principals now use."},
+{ id:"cC", code:"CP-3", domain:"Multiplying", title:"Two principals and a community that runs without you",
+  brief:"Over six to twelve months, sponsor senior engineers toward principal and build an architecture community that makes good decisions without you.",
+  deliver:["Sponsorship plans for two or three engineers (Module 7)","Community of practice running on real decisions","Bench strength scorecard at start and end","A quarter in which someone else facilitates every session","Feedback from sponsees and community members"],
+  rubric:["At least one sponsee promoted or formally ready","Community draws members from at least four divisions","Escalations to you fell measurably","Someone else runs the community day to day","Sponsees describe specific help"],
+  stretch:"A sponsee becomes a sponsor for someone else."},
+{ id:"cD", code:"CP-4", domain:"Industry", title:"An external contribution that outlasts the talk",
+  brief:"Make a sustained external contribution from real work: a talk series, an open source contribution, or work in an industry group, cleared through your firm's process.",
+  deliver:["Internal write-up and talk of the underlying work","At least one cleared external publication or talk (Module 8)","Six months of consistent participation in one industry group or project","Evidence of response: citations, follow-ups, adoption","A 12-month plan for the next step"],
+  rubric:["Built on real, verifiable work","Cleared through communications and legal","Delivered or published externally","Sustained for six months or more","Someone outside the firm acted on it"],
+  stretch:"Co-author a standard, a paper, or a regulator consultation response."},
+{ id:"cE", code:"CP-5", domain:"The case", title:"Distinguished engineer promotion packet",
+  brief:"Bring it together: a complete promotion case that your sponsor is ready to take to committee.",
+  deliver:["Gap analysis against real criteria, refreshed (Module 1)","Claim statement and three to five impact narratives (Module 9)","Evidence from capstones 1 to 4 where available","Four endorsements, at least two outside your reporting line","Sponsor review with agreed timing","Impact log covering at least 12 months"],
+  rubric:["Every criterion maps to evidence","Narratives show company or industry scope","Endorsements add new evidence","Your sponsor says it is ready","Timing is agreed"],
+  stretch:"Ask a distinguished engineer outside your area to read it cold and tell you what they would question."}
+];
+
+/* ======== reference data ======== */
+const LOS = [
+  {k:"Team", ex:"You designed the CDC connector framework and led its first release.", own:"Senior or staff engineer", you:"Solve the hard problem in front of you.", art:"Designs, code, runbooks"},
+  {k:"Domain", ex:"You set the target architecture for CDO data movement and access; access time fell from 15 days to 1.", own:"Principal engineer", you:"Set direction for a domain; teams build on your decisions.", art:"Target architecture, ADRs, roadmap"},
+  {k:"Organisation", ex:"Your policy service is adopted by risk and finance technology, outside CDO.", own:"Senior principal", you:"Your patterns cross organisational lines by choice, not mandate.", art:"Standards others adopt, cross-division decisions"},
+  {k:"Company", ex:"The CTO adopts your data contract pattern as a group standard; your vision shapes the next three years of platform investment.", own:"Distinguished engineer", you:"Set the terms that many organisations work within.", art:"Technical vision, group standards, investment cases"},
+  {k:"Industry", ex:"Your working group paper shapes a regulator's consultation response; peers at other banks adopt the pattern.", own:"Distinguished or fellow", you:"Influence how the field solves the problem.", art:"Talks, papers, open source, standards"}
+];
+const COMP = [
+  ["Company-level scope","Your decisions and patterns are used across most of the firm's technology divisions"],
+  ["Technical vision","You write the vision others build strategies against, and review it in public"],
+  ["Engineering economics","Finance partners trust your cost cases; you speak in present value and unit economics"],
+  ["Decision quality","You keep a decision record, use probabilities, and can show your judgement improving"],
+  ["Cross-domain credibility","Leaders outside your domain seek your view on their hardest problems"],
+  ["Learning from the industry","You turn industry incidents and successes into firm-wide practice"],
+  ["Multiplying senior engineers","People you sponsor become principals; a community decides well without you"],
+  ["Industry presence","Peers outside the firm know your work and act on it"]
+];
+const COMPMAP = {"Company-level scope":"Modules 1 and 5","Technical vision":"Module 2","Engineering economics":"Module 3","Decision quality":"Module 4","Cross-domain credibility":"Module 5","Learning from the industry":"Module 6","Multiplying senior engineers":"Module 7","Industry presence":"Module 8"};
+const TEMPLATES = [
+  ["Gap analysis",`GAP ANALYSIS: <name>, toward Distinguished Engineer
+Criterion (written) | Criterion (lived) | My evidence | Scope level | Met / partly / missing
+<row per criterion>
+Top two gaps for the next 12 months:
+1. <gap>: <plan>
+2. <gap>: <plan>
+Reviewed with: <manager, potential sponsor>, <date>`],
+  ["Technical vision one-pager",`TECHNICAL VISION: <area>
+Where we are going (3-5 years): <one sentence>
+Why it matters (cite the business strategy): <text>
+Where we are now: <honest baseline>
+Principles: <3-5 short, opinionated statements>
+Bets: <bet> / signal: <evidence> / review: <date>
+What changes for teams outside <domain>: <list>
+Co-authors: <names and divisions>`],
+  ["TCO and present value",`OPTION: <name>
+Upfront: <$>   Run per year: <$>   People per year: <$>   Exit: <$>
+Years: <n>   Discount rate (from finance): <r%>
+Nominal total: <$>   Present value: <$>
+Unit cost: <$ per unit>
+Most sensitive assumption: <assumption and range>`],
+  ["Pre-mortem",`PRE-MORTEM: <decision>
+It is <date + 1 year>. This decision failed badly.
+Each person, privately: why did it fail?
+Top reasons (grouped):
+1. <reason> -> mitigation / early signal
+2. <reason> -> mitigation / early signal
+Change to the decision or plan: <text>`],
+  ["Decision journal entry",`DECISION: <title>   Date: <date>
+Door type: one-way / two-way, because <reason>
+Options considered: <list>
+What I expect, with probability: <x%> that <outcome> by <date>
+What I know / do not know: <text>
+How I feel about it: <confidence, doubts>
+Review date and reviewer: <date, name>
+REVIEW: what happened, and was the reasoning sound?`],
+  ["Incident learning review",`CASE: <incident, year>   Sources: <primary documents>
+Proximate cause: <text>
+Systemic causes: <list>
+Why it seemed reasonable at the time: <text>
+Could it happen here? Where: <specific exposures>
+Change: <standard / test / control / habit>   Owner: <name>
+How we will know it works: <measure>`],
+  ["Sponsorship plan",`SPONSEE: <name, role, division>
+Goal: <promotion or role, by when>
+What the committee will question: <gaps>
+Stretch assignment: <work> visible to <leaders>
+Where I will name them: <forums>
+Check-ins: <cadence>`],
+  ["Impact narrative",`<RESULT AS A SENTENCE>
+Situation: <company-level problem, in business terms>
+My role: <what I did that others did not>
+Scope: <teams, divisions, firms>
+Result: <measure with baseline>
+Durability: <why it matters in five years>
+Can be confirmed by: <names>`],
+  ["Impact log entry",`<date> | <what happened> | <measure> | <scope> | <who saw it> | <link to evidence>`]
+];
+const FRAMEWORKS = [
+  ["Scope ladder","Placing evidence by level","Team → domain → organisation → company → industry"],
+  ["Three horizons","Balancing a technical portfolio","Run and extend / build the next / options on the future"],
+  ["Rumelt's kernel","Testing strategies inside a vision","Diagnosis, guiding policy, coherent actions"],
+  ["TCO and NPV","Comparing options economically","All costs over the life of a choice, discounted to today"],
+  ["Unit economics","Framing platform value","Cost per unit the business understands, tracked over time"],
+  ["FinOps phases","Making cost a design attribute","Inform, optimise, operate"],
+  ["One-way and two-way doors","Matching decision effort to reversibility","Slow and wide for irreversible; fast and local for reversible"],
+  ["Pre-mortem","Surfacing risks before commitment","Assume failure, explain it, mitigate"],
+  ["Calibrated forecasting","Improving judgement over time","Precise probabilities, small updates, a scored record"],
+  ["Systemic incident analysis","Learning from failures","Proximate versus systemic causes; why it seemed reasonable"],
+  ["Communities of practice","Growing shared judgement","Shared concern, learning by doing together"]
+];
+const GLOSS = [
+  ["Bench strength","How many people could step into senior technical roles, and how soon."],
+  ["Capex","Capital expenditure: spending on assets, spread over their useful life."],
+  ["Discount rate","The rate used to convert future money into today's value; set by finance."],
+  ["Hurdle rate","The minimum return an investment must clear to be approved."],
+  ["NPV","Net present value: discounted benefits minus discounted costs."],
+  ["Normalised deviance","Small warnings ignored until they feel normal."],
+  ["Opex","Operating expenditure: costs expensed in the year they occur."],
+  ["Resulting","Judging a decision only by its outcome."],
+  ["Sponsor","A senior leader who uses their standing to advocate for you."],
+  ["TCO","Total cost of ownership over the life of a choice, including exit."],
+  ["Unit economics","Cost or value per unit the business recognises."]
+];
+const READING = [
+  ["Will Larson","Staff Engineer: Leadership Beyond the Management Track"],["Will Larson","Crafting Engineering Strategy"],["Tanya Reilly","The Staff Engineer's Path"],["Gregor Hohpe","The Software Architect Elevator"],["Richard Rumelt","Good Strategy Bad Strategy"],["Annie Duke","Thinking in Bets"],["Philip Tetlock and Dan Gardner","Superforecasting"],["Kahneman, Sibony, Sunstein","Noise"],["Gary Klein","Sources of Power"],["J.R. Storment and Mike Fuller","Cloud FinOps"],["Sidney Dekker","The Field Guide to Understanding 'Human Error'"],["Diane Vaughan","The Challenger Launch Decision"],["Etienne Wenger","Cultivating Communities of Practice"],["Sylvia Ann Hewlett","Forget a Mentor, Find a Sponsor"]
+];
+const LINKS = [["Principal Architect Practicum (companion)",COMPANION],["FinOps Foundation","https://www.finops.org"],["FINOS","https://www.finos.org"],["EDM Council","https://edmcouncil.org"],["StaffEng","https://staffeng.com"],["Resilience engineering: Learning from Incidents","https://www.learningfromincidents.io"]];
+
+/* ======== added lab: TCO ======== */
+const fmtK = n => "$" + (Math.round(n)).toLocaleString("en-US") + "K";
+function tcoCalc(rows, years, rate){
+  const r = rate/100;
+  return rows.map(o=>{ const [name,up,run,ppl,exit]=o; let nom=up, pv=up;
+    for(let t=1;t<=years;t++){ nom+=run+ppl; pv+=(run+ppl)/Math.pow(1+r,t); }
+    nom+=exit; pv+=exit/Math.pow(1+r,years); return {name,nom,pv}; });
+}
+
+const LVLS = [["1 Tell","I decide and explain"],["2 Sell","I decide and persuade"],["3 Consult","I ask for input, then decide"],["4 Agree","We decide together"],["5 Advise","I advise, you decide"],["6 Inquire","You decide, then tell me"],["7 Delegate","You decide; I don't need to know"]];
+const QUADS = [
+  ["lighter","Keep, make it lighter","High leverage, draining","Valuable but costly to you. Use templates, batch it, time-box it, or pair with someone who enjoys it."],
+  ["protect","Protect and grow","High leverage, energising","Your best work. Block calendar time for it and say no to what crowds it out."],
+  ["drop","Delegate, automate or drop","Low leverage, draining","Start here to free time: hand it off, automate it, replace it with an async update, or decline it."],
+  ["ration","Ration it","Low leverage, energising","Often old individual-contributor work. Keep a small, deliberate dose as your sharpening budget, off the critical path."]];
+const JARGON = {"leverage":"use","leveraging":"using","leveraged":"used","utilise":"use","utilize":"use","utilising":"using","utilizing":"using","utilisation":"use","utilization":"use","facilitate":"help","facilitating":"helping","functionality":"feature","remediate":"fix","remediation":"fix","synergy":"(cut)","synergies":"(cut)","paradigm":"model","holistic":"complete","robust":"say what it withstands","scalable":"say how many it handles","seamless":"say what changes for the user","seamlessly":"say what changes for the user","resiliency":"ability to recover","going forward":"from now on, or cut","at this point in time":"now","in order to":"to","in the event of":"if","prior to":"before","subsequent to":"after","with regard to":"about","with respect to":"about","due to the fact that":"because","a number of":"some, or give the number","best-in-class":"cut, or give evidence","best of breed":"cut, or give evidence","circle back":"return to","deep dive":"review","bandwidth":"time","actionable":"practical","operationalize":"run","operationalise":"run","incentivize":"encourage","incentivise":"encourage","optimize":"improve (say how)","optimise":"improve (say how)","enablement":"support","ecosystem":"set of systems","in terms of":"cut or rephrase","it should be noted that":"cut","may potentially":"may","could potentially":"could","might potentially":"might","reach out":"contact","touch base":"talk","moving forward":"from now on, or cut","pending":"until, or waiting for","non-zero":"some","impactful":"say the effect","learnings":"lessons","align on":"agree"};
+const JRE = new RegExp("\\b(" + Object.keys(JARGON).sort((a,b)=>b.length-a.length).map(k=>k.replace(/[-\s]/g,m=>m===" "?"\\s+":"\\-")).join("|") + ")\\b","gi");
+const PRE = /\b(?:am|is|are|was|were|be|been|being)\s+(?:\w+ly\s+)?(?:\w+ed|\w+en|built|done|made|held|kept|left|lost|met|paid|put|run|sent|set|shown|told|taken|given|found|known|seen)\b/gi;
+const ARE = /\b[A-Z][A-Z0-9]{1,6}s?\b/g;
+const syl = w => { w=w.toLowerCase().replace(/[^a-z]/g,""); if(!w) return 0; if(w.length<=3) return 1; w=w.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/,"").replace(/^y/,""); const g=w.match(/[aeiouy]{1,2}/g); return g?g.length:1; };
+function analyse(text){
+  const clean = text.replace(/\s+/g," ").trim();
+  if(!clean) return null;
+  const sents = clean.split(/(?<=[.!?])\s+(?=["'(\[]?[A-Z0-9])/).filter(s=>s.trim());
+  const words = clean.match(/[A-Za-z0-9][A-Za-z0-9'’-]*/g)||[];
+  const sw = sents.map(s=>(s.match(/[A-Za-z0-9][A-Za-z0-9'’-]*/g)||[]).length);
+  const syll = words.reduce((a,w)=>a+(/^\d/.test(w)?1:syl(w)),0);
+  const n = Math.max(1,words.length), ns = Math.max(1,sents.length);
+  const grade = 0.39*(n/ns) + 11.8*(syll/n) - 15.59;
+  const jargon = [...new Set((clean.match(JRE)||[]).map(x=>x.toLowerCase().replace(/\s+/g," ")))];
+  const passive = sents.filter(s=>{ PRE.lastIndex=0; return PRE.test(s); }).length;
+  const acr = [...new Set((clean.match(ARE)||[]).filter(a=>!/^(I|A|OK|US|UK|CEO|CIO|COO|CFO|CTO|Q[1-4])$/.test(a)))];
+  const first = sents[0]||"";
+  const opensWithAsk = /\b(recommend|propose|need|decide|decision|approve|approval|ask|request|must|should)\b/i.test(first);
+  return {sents, sw, words:words.length, avg:words.length/ns, long:sw.filter(x=>x>25).length, grade, jargon, passive, acr, opensWithAsk, mins:Math.max(1,Math.round(words.length/230))};
+}
+function markup(a){
+  return a.sents.map((s,i)=>{ let h=esc(s);
+    h=h.replace(PRE,x=>`<span class="pv">${x}</span>`);
+    h=h.replace(JRE,x=>`<mark class="jg" title="Try: ${esc(JARGON[x.toLowerCase().replace(/\s+/g," ")]||"")}">${x}</mark>`);
+    h=h.replace(/(^|[\s(>])([A-Z][A-Z0-9]{1,6}s?)(?=[\s,.;:)<-]|$)/g,(x,p,ac)=>/^(I|A|OK|US|UK|CEO|CIO|COO|CFO|CTO|Q[1-4])$/.test(ac)?x:`${p}<span class="ac">${ac}</span>`);
+    return a.sw[i]>25?`<span class="long">${h}</span>`:h; }).join(" ");
+}
+const isLabel = t => /^(agenda|background|overview|introduction|context|current state|current-state architecture|architecture|options|options analysis|vendor comparison|risks?|next steps|summary|recommendation|appendix|q&a|questions|timeline|budget|status)$/i.test(t.trim());
+function titleCheck(t){
+  const w=(t.trim().match(/\S+/g)||[]).length;
+  if(!w) return ["","empty"];
+  if(isLabel(t)||w<=3) return ["Reads as a label. Write the point as a full sentence.","bad"];
+  if(w>15) return [`${w} words. Cut to one message of 15 words or fewer.`,"warn"];
+  return [`${w} words. Good length.`,"ok"];
+}
+
+/* ======== state ======== */
+const KEY = "p2d-progress-v1";
+let S = {read:{},quiz:{},lab:{},proj:{},cap:{},build:{},code:{},comp:{},alloc:{},matrix:{},wsjf:{},quad:{},lvl:{},score:{},tco:{},wr:{}};
+try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(S, JSON.parse(r)); } catch(e){}
+const persist = () => { try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} };
+function save(){ persist(); updateMeter(); renderTabs(); }
+const projN = m => (S.proj[m.id]||[]).length;
+function modDone(m){ return !!(S.read[m.id] && S.lab[m.id] && (S.quiz[m.id]||0)>=4 && projN(m)>=m.project.rubric.length); }
+function pct(){ let t=0,g=0; MODULES.forEach(m=>{ t+=3+m.project.rubric.length; g+=(S.read[m.id]?1:0)+(S.lab[m.id]?1:0)+((S.quiz[m.id]||0)>=4?1:0)+projN(m); }); CAPSTONES.forEach(c=>{ t+=c.rubric.length; g+=(S.cap[c.id]||[]).length; }); return Math.round(g/t*100); }
+function updateMeter(){ document.getElementById("meter").textContent = pct()+"% complete"; }
+function toast(t){ const el=document.getElementById("toast"); el.textContent=t; el.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>el.hidden=true,1800); }
+function copyText(txt, el){ try{ navigator.clipboard.writeText(txt).then(()=>toast("Copied"),()=>{ selectEl(el); toast("Press Ctrl/⌘ + C to copy"); }); }catch(e){ selectEl(el); toast("Press Ctrl/⌘ + C to copy"); } }
+function selectEl(el){ if(!el) return; if (el.select) el.select(); else { const r=document.createRange(); r.selectNodeContents(el); const s=getSelection(); s.removeAllRanges(); s.addRange(r); } }
+
+/* ======== mermaid ======== */
+const mmdReady = typeof mermaid !== "undefined";
+if (mmdReady) mermaid.initialize({startOnLoad:false, securityLevel:"strict", theme:"base", fontFamily:"IBM Plex Sans, system-ui, sans-serif",
+  flowchart:{htmlLabels:true, curve:"basis", padding:12},
+  themeVariables:{background:"#FCFCFD", primaryColor:"#FFFFFF", primaryTextColor:"#121A26", primaryBorderColor:"#17624F", lineColor:"#586374", secondaryColor:"#DCEEE6", tertiaryColor:"#F2F4F6", textColor:"#121A26", clusterBkg:"#F2F4F6", clusterBorder:"#AAB4C1", edgeLabelBackground:"#FCFCFD", titleColor:"#121A26", fontSize:"14px"}});
+let mmdN = 0;
+async function draw(el, code){
+  if (!mmdReady){ el.innerHTML = `<div class="err">The diagram renderer did not load.</div>`; return false; }
+  const id = "mm"+(++mmdN);
+  try { await mermaid.parse(code); const {svg} = await mermaid.render(id, code); el.innerHTML = svg; return true; }
+  catch(e){ document.getElementById(id)?.remove(); document.getElementById("d"+id)?.remove(); el.innerHTML = `<div class="err">${esc(String(e&&e.message||e).split("\n").slice(0,6).join("\n"))}</div>`; return false; }
+}
+
+/* ======== components ======== */
+const LVL = {f:["Foundation","f"],p:["Practitioner","p"],e:["Distinguished","e"]};
+const pill = k => `<span class="lvl ${LVL[k][1]}">${LVL[k][0]}</span>`;
+function example(ex){
+  if (ex.kind === "diagram"){ const i = reg(ex.code);
+    return `<div class="fig"><div class="figcap"><h4>${esc(ex.title)}</h4><button class="btn ghost" data-src>Source</button></div>
+    <div class="canvas" data-mmd="${i}"><span class="loading">Rendering…</span></div>
+    <p class="muted">${esc(ex.caption)}</p>
+    <div class="notice"><b>What to notice</b><ul>${ex.notice.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div>
+    <div class="srcbox" hidden>${pre(ex.code)}</div></div>`; }
+  return `<div class="fig"><h4>${esc(ex.title)}</h4><div class="ba">
+    <div class="before"><span class="eyebrow">Before</span><div class="txt">${esc(ex.before)}</div></div>
+    <div class="after"><span class="eyebrow">After</span><div class="txt">${esc(ex.after)}</div></div></div>
+    <div class="notice"><b>What to notice</b><ul>${ex.notice.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div></div>`;
+}
+function checklist(items, prefix, saved){ return `<ul class="reqs">${items.map((r,i)=>`<li><label><input type="checkbox" id="${prefix}-${i}" data-ck="${prefix}" data-i="${i}" ${saved&&saved.includes(i)?"checked":""}>${esc(r)}</label></li>`).join("")}</ul>`; }
+
+function labHTML(m){
+  const L = m.lab;
+  const head = `<p style="max-width:68ch">${esc(L.brief)}</p>`;
+  if (L.type==="allocate"){
+    const a = S.alloc[m.id] || L.cats.map(c=>c[4]);
+    return head + `<div data-alloc>${L.cats.map((c,i)=>`<div class="slider"><div class="lab"><b>${esc(c[0])}</b><small>${esc(c[1])} · typical ${c[2]}–${c[3]}%</small></div><input type="range" min="0" max="60" step="5" id="al-${i}" value="${a[i]}" aria-label="${esc(c[0])}"><span class="val" data-v="${i}"></span></div>`).join("")}</div>
+      <div class="preview" data-allocout style="white-space:normal"></div>`;
+  }
+  if (L.type==="sort"){
+    return head + `<div data-sort>${L.items.map((it,i)=>`<div class="sortrow" data-row="${i}"><span>${esc(it[0])}</span><select class="sel" id="so-${m.id}-${i}" aria-label="Classify"><option value="">Choose…</option>${L.buckets.map(b=>`<option>${b}</option>`).join("")}</select><div class="fb" hidden></div></div>`).join("")}</div>
+      <div class="btns" style="align-items:center"><button class="btn primary" data-sortcheck>Check</button><span class="score" data-sortscore></span></div>`;
+  }
+  if (L.type==="builder"){
+    const v = S.build[m.id] || {};
+    return head + `<div class="grid2"><div class="stack" style="gap:.7rem" data-build>${L.fields.map(f=>`<div class="field"><label for="b-${m.id}-${f[0]}">${esc(f[1])}</label><textarea id="b-${m.id}-${f[0]}" data-f="${f[0]}" rows="2" placeholder="${esc(f[2])}">${esc(v[f[0]]||"")}</textarea></div>`).join("")}
+      <div class="btns"><button class="btn" data-example>Fill with Northbank example</button><button class="btn" data-clear>Clear</button></div></div>
+      <div class="stack" style="gap:.5rem;min-width:0"><div class="edhead"><span class="eyebrow">Preview</span><button class="btn ghost" data-copyprev>Copy</button></div><div class="preview" data-prev></div>
+      <span class="eyebrow" style="margin-top:.5rem">Self-check</span>${checklist(L.check, m.id+"-chk")}</div></div>`;
+  }
+  if (L.type==="mermaid"){
+    const code = S.code[m.id] ?? L.starter;
+    return head + `<div class="grid2"><div><span class="eyebrow">Your diagram must</span>${checklist(L.reqs, m.id+"-req")}</div><div class="notice">${esc(L.hint)}</div></div>
+      <div class="editor"><div class="stack" style="gap:.4rem"><div class="edhead"><span class="eyebrow">Mermaid source</span><span class="status" data-st>…</span></div><textarea id="ed-${m.id}" spellcheck="false" aria-label="Mermaid source">${esc(code)}</textarea></div>
+      <div class="stack" style="gap:.4rem"><div class="edhead"><span class="eyebrow">Live preview</span><button class="btn ghost" data-copyed>Copy source</button></div><div class="canvas" data-edprev><span class="loading">Rendering…</span></div></div></div>
+      <div class="btns"><button class="btn" data-resetcode>Reset to starter</button></div>`;
+  }
+  if (L.type==="matrix"){
+    const st = S.matrix[m.id] || {w:L.criteria.map(c=>c[1]), s:L.criteria.map(c=>c[2].slice())};
+    return head + `<div class="tbl"><table data-matrix><thead><tr><th>Criterion</th><th>Weight</th>${L.options.map(o=>`<th>${esc(o)}</th>`).join("")}</tr></thead><tbody>
+      ${L.criteria.map((c,ci)=>`<tr><td>${esc(c[0])}</td><td><input class="cell" type="number" min="0" max="5" id="mw-${ci}" data-w="${ci}" value="${st.w[ci]}" aria-label="Weight for ${esc(c[0])}"></td>${L.options.map((o,oi)=>`<td><input class="cell" type="number" min="1" max="5" id="ms-${ci}-${oi}" data-s="${ci}-${oi}" value="${st.s[ci][oi]}" aria-label="${esc(o)} score for ${esc(c[0])}"></td>`).join("")}</tr>`).join("")}
+      <tr><td><b>Weighted total</b></td><td></td>${L.options.map((o,oi)=>`<td class="num" data-tot="${oi}"></td>`).join("")}</tr></tbody></table></div>
+      <div class="preview" data-matout style="white-space:normal"></div><div class="btns"><button class="btn" data-matreset>Reset to example</button></div>`;
+  }
+  if (L.type==="wsjf"){
+    const rows = S.wsjf[m.id] || L.items.map(r=>r.slice());
+    return head + `<div class="tbl"><table data-wsjf><thead><tr><th>Item</th><th>Business value</th><th>Time criticality</th><th>Risk / opportunity</th><th>Job size</th><th>WSJF</th><th>Rank</th></tr></thead><tbody>
+      ${rows.map((r,ri)=>`<tr data-r="${ri}"><td>${esc(r[0])}</td>${[1,2,3,4].map(k=>`<td><input class="cell" type="number" min="1" max="20" id="ws-${ri}-${k}" data-k="${k}" value="${r[k]}" aria-label="${esc(r[0])} score"></td>`).join("")}<td class="num" data-wv></td><td class="num" data-rank></td></tr>`).join("")}
+      </tbody></table></div><div class="btns"><button class="btn" data-wsreset>Reset to example</button></div>
+      <p class="muted" style="font-size:.88rem">Notice how the large, valuable item can rank below smaller ones. Splitting big items often raises their WSJF; ask whether a thin slice could go first.</p>`;
+  }
+  if (L.type==="quad"){
+    const rows = S.quad[m.id] || L.items.map(r=>r.slice());
+    return head + `<div data-quad>${rows.map((r,i)=>`<div class="qrow"><input type="text" class="qname" id="qn-${i}" value="${esc(r[0])}" placeholder="Activity ${i+1}" aria-label="Activity ${i+1}">
+      <label class="rng"><span>Leverage <b data-qlv="${i}">${r[1]}</b></span><input type="range" min="1" max="5" step="1" id="ql-${i}" value="${r[1]}"></label>
+      <label class="rng"><span>Energy <b data-qev="${i}">${r[2]}</b></span><input type="range" min="1" max="5" step="1" id="qe-${i}" value="${r[2]}"></label></div>`).join("")}</div>
+      <p class="muted" style="font-size:.85rem">Leverage: 1 means only you benefit, 5 means many teams benefit. Energy: 1 drains you, 5 energises you. A rating of 3 counts as high.</p>
+      <div data-quadout></div><div class="btns"><button class="btn" data-quadreset>Reset to examples</button></div>`;
+  }
+  if (L.type==="levels"){
+    const st = S.lvl[m.id] || [];
+    return head + `<div class="notice" style="font-size:.88rem"><b>The seven levels</b><ul>${LVLS.map(l=>`<li><b>${l[0]}</b>: ${l[1]}</li>`).join("")}</ul></div>
+      <div data-levels>${L.items.map((it,i)=>`<div class="sortrow" data-lrow="${i}"><span>${esc(it[0])}</span><select class="sel" id="lv-${i}" aria-label="Delegation level for ${esc(it[0])}"><option value="">Choose…</option>${LVLS.map((l,k)=>`<option value="${k+1}" ${st[i]===k+1?"selected":""}>${l[0]}</option>`).join("")}</select><div class="fb" hidden></div></div>`).join("")}</div>
+      <div class="btns" style="align-items:center"><button class="btn primary" data-lvcheck>Check against suggested ranges</button><span class="score" data-lvscore></span></div>
+      <div class="stack" style="gap:.5rem"><div class="edhead"><span class="eyebrow">Your decision board</span><button class="btn ghost" data-copyboard>Copy board</button></div><div class="preview" data-board></div></div>`;
+  }
+  if (L.type==="scorecard"){
+    const rows = S.score[m.id] || L.rows.map(r=>r.slice());
+    return head + `<div class="tbl"><table data-score><thead><tr><th>Measure</th><th>Now</th><th>Target</th><th>Better when</th><th>Status</th></tr></thead><tbody>
+      ${rows.map((r,i)=>`<tr data-r="${i}"><td>${esc(r[0])}<div class="muted" style="font-size:.78rem">${esc(r[1])}</div></td><td><input class="cell" type="number" step="any" id="scn-${i}" data-n="${i}" value="${r[2]}" aria-label="Current ${esc(r[0])}"></td><td><input class="cell" type="number" step="any" id="sct-${i}" data-t="${i}" value="${r[3]}" aria-label="Target ${esc(r[0])}"></td><td>${r[4]}</td><td data-st="${i}"></td></tr>`).join("")}
+      </tbody></table></div><div class="preview" data-scoreout style="white-space:normal"></div><div class="btns"><button class="btn" data-screset>Reset to example</button></div>`;
+  }
+  if (L.type==="writing"){
+    const w = S.wr[m.id] || {text:L.sample, ask:L.ask, titles:L.titles.slice()};
+    return head + `<div class="stack" style="gap:.6rem"><span class="eyebrow">Part 1 · Plain-English checker</span>
+      <div class="field"><label for="wr-text">Your paragraph or page</label><textarea id="wr-text" data-wtext rows="7" style="min-height:150px">${esc(w.text)}</textarea><span class="help">Targets for executive readers: average sentence 20 words or fewer, none over 25, reading grade 11 or lower, little passive voice, no jargon, acronyms defined or removed.</span></div>
+      <div class="btns"><button class="btn" data-wsample>Load the sample</button><button class="btn" data-wclear>Clear</button></div>
+      <div class="wrmetrics" data-wmetrics></div>
+      <div class="stack" style="gap:.35rem"><div class="edhead"><span class="eyebrow">Your text, marked up</span><span class="legend"><span class="long">long sentence</span> <mark class="jg">jargon or filler</mark> <span class="pv">passive voice</span> <span class="ac">acronym</span></span></div><div class="preview wrhl" data-whl></div></div></div>
+      <div class="stack" style="gap:.6rem;margin-top:1.4rem"><span class="eyebrow">Part 2 · Ghost-deck builder</span>
+      <div class="field"><label for="wr-ask">The ask (decision and deadline)</label><input type="text" id="wr-ask" data-wask value="${esc(w.ask||"")}"></div>
+      ${[0,1,2,3,4,5].map(i=>`<div class="field"><label for="wr-t${i}">Slide ${i+1} action title</label><input type="text" id="wr-t${i}" data-wt="${i}" value="${esc((w.titles||[])[i]||"")}" placeholder="${i===0?"State the situation as a sentence":i===5?"Restate the ask and next steps":"One point, as a full sentence"}"><span class="help" data-wtfb="${i}"></span></div>`).join("")}
+      <div class="stack" style="gap:.35rem"><div class="edhead"><span class="eyebrow">Read the titles in order: do they tell the story?</span><button class="btn ghost" data-copydeck>Copy ghost deck</button></div><div class="preview" data-wdeck></div></div></div>`;
+  }
+  if (L.type==="scenario"){
+    return head + L.scen.map((sc,si)=>`<div class="scen" data-scen="${si}"><span class="eyebrow">Situation ${si+1}</span><p><b>${esc(sc.s)}</b></p>
+      ${sc.o.map((o,oi)=>`<label class="opt" data-o="${oi}"><input type="radio" name="sc${si}" id="sc-${si}-${oi}" value="${oi}">${esc(o[0])}</label>`).join("")}<div class="why" hidden></div></div>`).join("") +
+      `<div class="btns" style="align-items:center"><button class="btn primary" data-sccheck>See feedback</button><span class="score" data-scscore></span></div>`;
+  }
+  if (L.type==="tco"){
+    const st = S.tco[m.id] || {rows:L.options.map(r=>r.slice()), years:L.years, rate:L.rate};
+    return head + `<div class="tbl"><table data-tco><thead><tr><th>Option</th><th>Upfront</th><th>Run / year</th><th>People / year</th><th>Exit</th><th>Nominal total</th><th>Present value</th></tr></thead><tbody>
+      ${st.rows.map((r,ri)=>`<tr><td>${esc(r[0])}</td>${[1,2,3,4].map(k=>`<td><input class="cell" type="number" min="0" step="50" id="tc-${ri}-${k}" data-k="${k}" value="${r[k]}" aria-label="${esc(r[0])} cost"></td>`).join("")}<td class="num" data-nom></td><td class="num" data-pv></td></tr>`).join("")}
+      </tbody></table></div>
+      <div class="btns" style="align-items:center"><label class="field" style="flex-direction:row;align-items:center;gap:.5rem"><span>Years</span><input class="cell" type="number" min="1" max="10" id="tc-years" value="${st.years}"></label><label class="field" style="flex-direction:row;align-items:center;gap:.5rem"><span>Discount rate %</span><input class="cell" type="number" min="0" max="30" step="0.5" id="tc-rate" value="${st.rate}"></label></div>
+      <div class="preview" data-tcoout style="white-space:normal"></div><div class="btns"><button class="btn" data-tcoreset>Reset to example</button></div>`;
+  }
+  return "";
+}
+
+/* ======== views ======== */
+const VIEWS = ["home", ...MODULES.map(m=>m.id), "capstones", "reference"];
+let current = "home";
+function renderTabs(){
+  const b=(id,l,d)=>`<button data-go="${id}" aria-current="${current===id}">${d!==undefined?`<span class="dot ${d?"ok":""}"></span>`:""}${l}</button>`;
+  document.getElementById("tabs").innerHTML = b("home","Overview")+`<span class="sep"></span>`+MODULES.map((m,i)=>b(m.id,`${i+1}. ${m.title}`,modDone(m))).join("")+`<span class="sep"></span>`+b("capstones","Capstones")+b("reference","Reference");
+}
+function go(id, top){
+  if (!VIEWS.includes(id)) id="home";
+  current=id; renderTabs(); CODE.length=0;
+  const v=document.getElementById("view");
+  v.innerHTML = id==="home"?viewHome(): id==="capstones"?viewCaps(): id==="reference"?viewRef(): viewModule(MODULES.find(m=>m.id===id));
+  bind(v,id);
+  v.querySelectorAll("[data-mmd]").forEach(el=>draw(el, CODE[+el.dataset.mmd]));
+  try{ if(location.hash.slice(1)!==id) history.replaceState(null,"","#"+id); }catch(e){}
+  if (top!==false) window.scrollTo({top:0});
+  document.querySelector(`nav.tabs [data-go="${id}"]`)?.scrollIntoView({block:"nearest",inline:"center"});
+}
+const nextMod = () => (MODULES.find(m=>!modDone(m))||{id:"capstones"}).id;
+
+function viewHome(){
+  const stages=[["f","Foundation","Understand what distinguished means at your firm, and write the vision that sets your direction."],["p","Practitioner","Build the judgement, economics and cross-company credibility the role depends on, and grow the next principals."],["e","Distinguished","Build recognition outside the firm, and assemble a case a committee will believe."]].map(([k,n,d])=>[k,n,d,MODULES.map((m,i)=>m.lvl===k?i:-1).filter(i=>i>=0)]);
+  return `<section class="sheet"><div class="hero">
+    <div class="stack" style="gap:.5rem"><span class="eyebrow">Self-paced practicum · ${MODULES.length} modules · ${MODULES.length} section projects · ${CAPSTONES.length} capstones</span>
+      <h1>Widen your scope from domain to company to industry</h1>
+      <p class="lede">For principal engineers preparing for distinguished engineer: setting company-wide technical direction, making and reviewing high-stakes decisions, speaking the language of finance, growing the next principals, and building recognition beyond the firm. The running case continues from the companion practicum: you are Northbank's principal architect for CDO technology. Each module has worked examples, a quiz, an interactive lab, and a project you apply to your real work.</p>
+      <div class="btns" style="margin-top:.8rem"><button class="btn primary" data-go="${nextMod()}">${pct()?"Continue":"Start module 1"}</button><button class="btn" data-go="reference">Templates and self-assessment</button></div></div>
+    <div class="los"><span class="eyebrow">The scope ladder · tap each rung</span>
+      <div class="chain" role="group" aria-label="Scope ladder">${LOS.map((l,i)=>`<button data-los="${i}" aria-pressed="${i===0}"><small>${String(i+1).padStart(2,"0")}</small>${l.k}</button>`).join("")}</div>
+      <div class="loscard" id="loscard"></div></div>
+  </div></section>
+
+  <section class="section" style="margin-top:2rem"><div class="sec-head"><h2>Learning path</h2></div>
+    <div class="path">${stages.map(([k,n,d,idx])=>{ const done=idx.filter(i=>modDone(MODULES[i])).length;
+      return `<div class="stage">${pill(k)}<p>${d}</p><ol>${idx.map(i=>`<li><button class="link" data-go="${MODULES[i].id}">${MODULES[i].title}</button></li>`).join("")}</ol><div class="meterline"><div class="bar"><i style="width:${done/idx.length*100}%"></i></div>${done}/${idx.length}</div></div>`;}).join("")}</div></section>
+
+  <section class="section"><div class="sec-head"><h2>Progress register</h2><span class="muted">Saved in this browser.</span></div>
+    <div class="tbl"><table><thead><tr><th>Brief</th><th>Module</th><th>Stage</th><th>Read</th><th>Quiz</th><th>Lab</th><th>Project</th></tr></thead><tbody>
+    ${MODULES.map(m=>`<tr><td class="num">${m.no}</td><td><button class="link" data-go="${m.id}">${m.title}</button><div class="muted" style="font-size:.8rem">${m.time}</div></td><td>${pill(m.lvl)}</td>
+      <td class="chk ${S.read[m.id]?"ok":"no"}">${S.read[m.id]?"✓":"–"}</td><td class="num">${S.quiz[m.id]!==undefined?S.quiz[m.id]+"/5":"–"}</td><td class="chk ${S.lab[m.id]?"ok":"no"}">${S.lab[m.id]?"✓":"–"}</td><td class="num">${projN(m)}/${m.project.rubric.length}</td></tr>`).join("")}
+    ${CAPSTONES.map(c=>`<tr><td class="num">${c.code}</td><td><button class="link" data-go="capstones">${c.title}</button></td><td>${pill("e")}</td><td colspan="4" class="num">${(S.cap[c.id]||[]).length}/${c.rubric.length} rubric items</td></tr>`).join("")}
+    </tbody></table></div>
+    <p class="muted" style="font-size:.88rem">A module is complete when you have read it, scored 4/5 or better, finished the lab, and met every item in its project rubric.</p></section>
+
+  <section class="section"><div class="sec-head"><h2>How to work through it</h2></div><div class="prose"><ol>
+    <li>Take the self-assessment in Reference first. Re-take it after each stage.</li>
+    <li>Do one module every week or two. Projects use your real initiatives; expect them to take longer than the reading.</li>
+    <li>Share projects with your manager or a peer. Feedback is where most of the learning happens.</li>
+    <li>Start a running impact log on day one (Module 9). It feeds every capstone.</li>
+    <li>Capstones 1 to 4 build the evidence; Capstone 5 turns it into your promotion case. Expect this practicum to take 12 to 24 months.</li>
+    <li>If the role itself is new to you, work through the companion <a href="${COMPANION}">Principal Architect Practicum</a> first.</li></ol></div></section>`;
+}
+
+function viewModule(m){
+  const i=MODULES.indexOf(m), prev=MODULES[i-1], next=MODULES[i+1];
+  const status = modDone(m)?"Complete":(S.read[m.id]||S.quiz[m.id]!==undefined||S.lab[m.id]||projN(m))?"In progress":"Not started";
+  return `<article class="sheet">
+    <span class="eyebrow">Module ${i+1} of ${MODULES.length}</span>
+    <h1 style="margin-top:.3rem">${m.title}</h1>
+    <p class="lede" style="margin-top:.6rem">${m.summary}</p>
+    <div class="memo"><div><span class="k">Brief</span><span class="v">${m.no}</span></div><div><span class="k">Stage</span><span class="v">${LVL[m.lvl][0]}</span></div><div><span class="k">Time</span><span class="v">${m.time} + project</span></div><div><span class="k">Status</span><span class="v">${status}</span></div></div>
+
+    <div class="section" style="margin-top:1.8rem"><div class="sec-head"><span class="tag">Objectives</span></div>
+      <ul class="reqs">${m.objectives.map(o=>`<li>→ ${o}</li>`).join("")}</ul>
+      <div class="toc"><a href="#learn">Learn</a><a href="#ex">Examples</a><a href="#quiz">Quiz</a><a href="#lab">Lab</a><a href="#proj">Section project</a></div></div>
+
+    <div class="section" id="learn"><div class="sec-head"><span class="tag">Learn</span></div><div class="prose">${m.learn}</div>
+      <div><button class="btn ${S.read[m.id]?"done":""}" data-read>${S.read[m.id]?"✓ Marked as read":"Mark as read"}</button></div></div>
+
+    <div class="section" id="ex"><div class="sec-head"><span class="tag">Worked example</span></div><div class="stack" style="gap:2rem">${m.examples.map(example).join("")}</div></div>
+
+    <div class="section" id="quiz"><div class="sec-head"><span class="tag">Quiz</span>${S.quiz[m.id]!==undefined?`<span class="muted">Best: ${S.quiz[m.id]}/5</span>`:""}</div>
+      <form class="stack" data-quiz>${m.quiz.map((q,qi)=>`<fieldset class="q"><span class="qn">QUESTION ${qi+1}</span><legend>${esc(q.q)}</legend>${q.o.map((o,oi)=>`<label class="opt"><input type="radio" id="${m.id}-q${qi}-${oi}" name="q${qi}" value="${oi}">${esc(o)}</label>`).join("")}<div class="why" hidden></div></fieldset>`).join("")}
+      <div class="btns" style="align-items:center"><button class="btn primary" type="submit">Check answers</button><button class="btn" type="button" data-qreset>Reset</button><span class="score" data-qscore></span></div></form></div>
+
+    <div class="section" id="lab"><div class="sec-head"><span class="tag">Interactive lab</span><h3 style="margin:0">${m.lab.title}</h3></div>${labHTML(m)}
+      <div><button class="btn ${S.lab[m.id]?"done":""}" data-labdone>${S.lab[m.id]?"✓ Lab complete":"Mark lab complete"}</button></div></div>
+
+    <div class="section" id="proj"><div class="sec-head"><span class="tag">Section project</span><h3 style="margin:0">${m.project.title}</h3></div>
+      <p><b>Deliverable.</b> ${esc(m.project.deliver)} Apply it to your real work.</p>
+      <div class="grid2"><div class="stack" style="gap:.5rem"><span class="eyebrow">Steps</span><ol class="steps">${m.project.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol></div>
+      <div class="stack" style="gap:.5rem"><span class="eyebrow">Rubric · tick when true</span>${checklist(m.project.rubric, "pj-"+m.id, S.proj[m.id])}
+      <div class="meterline" data-pjmeter><div class="bar"><i style="width:${projN(m)/m.project.rubric.length*100}%"></i></div>${projN(m)}/${m.project.rubric.length}</div></div></div></div>
+  </article>
+  <nav class="pager">${prev?`<button class="btn" data-go="${prev.id}">← ${prev.title}</button>`:"<span></span>"}${next?`<button class="btn primary" data-go="${next.id}">${next.title} →</button>`:`<button class="btn primary" data-go="capstones">Capstones →</button>`}</nav>`;
+}
+
+function viewCaps(){
+  return `<section class="sheet stack" style="gap:.6rem"><span class="eyebrow">Distinguished stage</span><h1>Capstone projects</h1>
+    <p class="lede">${["No","One","Two","Three","Four","Five","Six","Seven","Eight"][CAPSTONES.length]||CAPSTONES.length} capstones, each built from your real work and the section projects you have already done. Capstones 1 to 4 build the evidence; Capstone 5 is the promotion case itself. Templates for every deliverable are in Reference.</p></section>
+  <div class="stack" style="gap:1.25rem;margin-top:1.25rem">${CAPSTONES.map(c=>{ const got=S.cap[c.id]||[];
+    return `<article class="cap"><div class="cap-head"><div class="stack" style="gap:.3rem"><span class="domain">${c.code} · ${c.domain}</span><h2>${c.title}</h2></div>
+      <div class="meterline" style="min-width:180px" data-capmeter="${c.id}"><div class="bar"><i style="width:${got.length/c.rubric.length*100}%"></i></div>${got.length}/${c.rubric.length}</div></div>
+      <p style="max-width:68ch">${esc(c.brief)}</p>
+      <div class="grid2"><div class="stack" style="gap:.5rem"><span class="eyebrow">Deliverables</span><ol class="steps">${c.deliver.map(d=>`<li>${esc(d)}</li>`).join("")}</ol></div>
+      <div class="stack" style="gap:.5rem"><span class="eyebrow">Rubric</span>${checklist(c.rubric, "cap-"+c.id, got)}</div></div>
+      <div class="notice"><b>Stretch.</b> ${esc(c.stretch)}</div></article>`;}).join("")}</div>`;
+}
+
+function viewRef(){
+  return `<section class="sheet stack"><span class="eyebrow">Keep this open while you work</span><h1>Reference</h1>
+    <div class="toc"><a href="#r-self">Self-assessment</a><a href="#r-tpl">Templates</a><a href="#r-fw">Frameworks</a><a href="#r-q">Questions to ask</a><a href="#r-gloss">Glossary</a><a href="#r-read">Reading</a></div>
+
+    <div class="section" id="r-self"><div class="sec-head"><span class="tag">Self-assessment</span><h2>Where are you today?</h2></div>
+      <p class="muted" style="max-width:68ch">Rate each competency from 1 (emerging) to 4 (leading). The description shows what level 4 looks like. Ratings save in this browser; re-take after each stage.</p>
+      <div data-comp>${COMP.map((c,i)=>`<div class="comp"><div><b>${c[0]}</b><div class="muted" style="font-size:.85rem">Level 4: ${c[1]}</div></div><div class="lv" role="group" aria-label="${c[0]}">${[1,2,3,4].map(l=>`<button data-c="${i}" data-l="${l}" aria-pressed="${S.comp[i]===l}">${l}</button>`).join("")}</div></div>`).join("")}</div>
+      <div class="preview" data-compout style="white-space:normal"></div></div>
+
+    <div class="section" id="r-tpl"><div class="sec-head"><span class="tag">Templates</span><h2>Copy-ready templates</h2></div>
+      <div class="stack" style="gap:.6rem">${TEMPLATES.map((t,i)=>`<details class="reveal"><summary>${esc(t[0])}</summary><div class="stack" style="gap:.5rem">${pre(t[1])}<div><button class="btn" data-copytpl="${i}">Copy template</button></div></div></details>`).join("")}</div></div>
+
+    <div class="section" id="r-fw"><div class="sec-head"><span class="tag">Frameworks</span><h2>Frameworks as tools, not religion</h2></div>
+      <div class="tbl"><table><thead><tr><th>Framework</th><th>Use it for</th><th>Core idea</th></tr></thead><tbody>${FRAMEWORKS.map(f=>`<tr><td><b>${f[0]}</b></td><td>${f[1]}</td><td>${f[2]}</td></tr>`).join("")}</tbody></table></div>
+      <p class="muted">Pick the lightest tool that answers the question in front of you. Name the framework only when it helps others join in.</p></div>
+
+    <div class="section" id="r-q"><div class="sec-head"><span class="tag">Field guide</span><h2>Questions that do the work</h2></div>
+      <div class="grid2">
+        <div class="stack" style="gap:.4rem"><h4>With the CTO and their staff</h4><ul class="reqs"><li>→ Which technical problem keeps you up at night that no division owns?</li><li>→ Where do you want an independent view, even an unwelcome one?</li><li>→ Which bets in our strategy are we least sure of?</li></ul></div>
+        <div class="stack" style="gap:.4rem"><h4>With finance</h4><ul class="reqs"><li>→ What discount rate and horizon should I use?</li><li>→ How will this show up as capex or opex?</li><li>→ Which unit cost would you track?</li><li>→ What would make you doubt these numbers?</li></ul></div>
+        <div class="stack" style="gap:.4rem"><h4>Outside your domain</h4><ul class="reqs"><li>→ What have you tried that did not work?</li><li>→ Which decision is yours, and how can I help with it?</li><li>→ What would you want me to know before I offer a view?</li></ul></div>
+        <div class="stack" style="gap:.4rem"><h4>With your sponsor</h4><ul class="reqs"><li>→ What would the committee question in my case today?</li><li>→ Where have you seen my work directly, and where not?</li><li>→ Who else should see it?</li></ul></div>
+      </div></div>
+
+    <div class="section" id="r-gloss"><div class="sec-head"><span class="tag">Glossary</span></div><dl class="gloss">${GLOSS.map(g=>`<dt>${g[0]}</dt><dd>${g[1]}</dd>`).join("")}</dl></div>
+
+    <div class="section" id="r-read"><div class="sec-head"><span class="tag">Reading</span><h2>Books and links</h2></div>
+      <div class="grid2"><ul class="reqs">${READING.map(r=>`<li>→ <i>${r[1]}</i> <span class="muted">· ${r[0]}</span></li>`).join("")}</ul>
+      <ul class="reqs">${LINKS.map(l=>`<li>→ <a href="${l[1]}" target="_blank" rel="noopener">${l[0]}</a></li>`).join("")}</ul></div></div>
+  </section>`;
+}
+
+/* ======== binding ======== */
+function bind(v,id){
+  v.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+  v.querySelectorAll(".toc a").forEach(a=>a.addEventListener("click",e=>{ e.preventDefault(); document.getElementById(a.getAttribute("href").slice(1))?.scrollIntoView({behavior:"smooth"}); }));
+  v.querySelectorAll("[data-src]").forEach(b=>b.addEventListener("click",()=>{ const x=b.closest(".fig").querySelector(".srcbox"); x.hidden=!x.hidden; b.textContent=x.hidden?"Source":"Hide source"; }));
+
+  if (id==="home"){
+    const card=v.querySelector("#loscard");
+    const set=i=>{ const l=LOS[i]; v.querySelectorAll("[data-los]").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.los===i));
+      card.innerHTML=`<span class="eyebrow">Northbank example</span><div class="big">${esc(l.ex)}</div><div class="kv"><div><span class="k">Typical level</span>${esc(l.own)}</div><div><span class="k">Evidence looks like</span>${esc(l.art)}</div><div style="grid-column:1/-1"><span class="k">What the work is</span>${esc(l.you)}</div></div>`; };
+    v.querySelectorAll("[data-los]").forEach(b=>b.addEventListener("click",()=>set(+b.dataset.los))); set(0);
+  }
+
+  if (id==="capstones"){
+    v.querySelectorAll("[data-ck]").forEach(cb=>cb.addEventListener("change",()=>{ const cid=cb.dataset.ck.slice(4), c=CAPSTONES.find(x=>x.id===cid);
+      const set=new Set(S.cap[cid]||[]); cb.checked?set.add(+cb.dataset.i):set.delete(+cb.dataset.i); S.cap[cid]=[...set]; save();
+      v.querySelector(`[data-capmeter="${cid}"]`).innerHTML=`<div class="bar"><i style="width:${set.size/c.rubric.length*100}%"></i></div>${set.size}/${c.rubric.length}`; }));
+  }
+
+  if (id==="reference"){
+    const out=v.querySelector("[data-compout]");
+    const render=()=>{ const vals=COMP.map((c,i)=>S.comp[i]); const n=vals.filter(Boolean).length;
+      if(!n){ out.innerHTML=`<span class="muted">Rate at least one competency to see your profile.</span>`; return; }
+      const low=COMP.map((c,i)=>[c[0],vals[i]]).filter(x=>x[1]).sort((a,b)=>a[1]-b[1]).slice(0,2);
+      const map=COMPMAP;
+      out.innerHTML=`<div class="stack" style="gap:.4rem">${COMP.map((c,i)=>`<div style="display:grid;grid-template-columns:minmax(0,11rem) minmax(0,1fr) 1.5rem;gap:.6rem;align-items:center;font-size:.85rem"><span>${c[0]}</span><div class="bar" style="height:10px"><i style="width:${(vals[i]||0)*25}%"></i></div><span class="num">${vals[i]||"–"}</span></div>`).join("")}
+      <p style="margin-top:.5rem"><b>Focus next:</b> ${low.map(x=>`${x[0]} (${map[x[0]]})`).join(" and ")}.</p></div>`; };
+    v.querySelectorAll("[data-c]").forEach(b=>b.addEventListener("click",()=>{ const i=+b.dataset.c, l=+b.dataset.l; S.comp[i]=l; persist();
+      v.querySelectorAll(`[data-c="${i}"]`).forEach(x=>x.setAttribute("aria-pressed",+x.dataset.l===l)); render(); }));
+    render();
+    v.querySelectorAll("[data-copytpl]").forEach(b=>b.addEventListener("click",()=>copyText(TEMPLATES[+b.dataset.copytpl][1], b.closest("details").querySelector("pre"))));
+  }
+
+  const m=MODULES.find(x=>x.id===id); if(!m) return;
+  v.querySelector("[data-read]").addEventListener("click",e=>{ S.read[m.id]=!S.read[m.id]; save(); e.target.classList.toggle("done",!!S.read[m.id]); e.target.textContent=S.read[m.id]?"✓ Marked as read":"Mark as read"; });
+  const lb=v.querySelector("[data-labdone]");
+  const markLab=(on)=>{ S.lab[m.id]=on; save(); lb.classList.toggle("done",on); lb.textContent=on?"✓ Lab complete":"Mark lab complete"; };
+  lb.addEventListener("click",()=>{ markLab(!S.lab[m.id]); if(S.lab[m.id]) toast("Lab recorded"); });
+
+  const form=v.querySelector("[data-quiz]");
+  form.addEventListener("submit",e=>{ e.preventDefault(); let sc=0;
+    m.quiz.forEach((q,qi)=>{ const fs=form.querySelectorAll("fieldset")[qi], sel=form.querySelector(`input[name="q${qi}"]:checked`);
+      fs.querySelectorAll(".opt").forEach((o,oi)=>{ o.classList.remove("right","wrong"); if(oi===q.a) o.classList.add("right"); else if(sel&&+sel.value===oi) o.classList.add("wrong"); });
+      const ok=sel&&+sel.value===q.a; if(ok) sc++; const w=fs.querySelector(".why"); w.hidden=false; w.innerHTML=`<b>${ok?"Correct.":sel?"Not quite.":"No answer."}</b> ${esc(q.why)}`; });
+    form.querySelector("[data-qscore]").textContent=`${sc} / 5`; S.quiz[m.id]=Math.max(S.quiz[m.id]||0,sc); save(); if(sc>=4) toast("Quiz passed"); });
+  form.querySelector("[data-qreset]").addEventListener("click",()=>{ form.reset(); form.querySelectorAll(".opt").forEach(o=>o.classList.remove("right","wrong")); form.querySelectorAll(".why").forEach(w=>w.hidden=true); form.querySelector("[data-qscore]").textContent=""; });
+
+  v.querySelectorAll(`[data-ck="pj-${m.id}"]`).forEach(cb=>cb.addEventListener("change",()=>{ const set=new Set(S.proj[m.id]||[]); cb.checked?set.add(+cb.dataset.i):set.delete(+cb.dataset.i); S.proj[m.id]=[...set]; save();
+    v.querySelector("[data-pjmeter]").innerHTML=`<div class="bar"><i style="width:${set.size/m.project.rubric.length*100}%"></i></div>${set.size}/${m.project.rubric.length}`; }));
+
+  const L=m.lab;
+  if (L.type==="allocate"){
+    const out=v.querySelector("[data-allocout]");
+    const upd=()=>{ const vals=L.cats.map((c,i)=>+v.querySelector(`#al-${i}`).value); S.alloc[m.id]=vals; persist();
+      const tot=vals.reduce((a,b)=>a+b,0)||1; const notes=[];
+      L.cats.forEach((c,i)=>{ const p=Math.round(vals[i]/tot*100); const f=p<c[2]?"lo":p>c[3]?"hi":"ok";
+        v.querySelector(`[data-v="${i}"]`).innerHTML=`${p}%`;
+        if(f!=="ok") notes.push(`<li><b>${c[0]}</b> is ${p}%<span class="flag ${f}">${f==="lo"?"below range":"above range"}</span></li>`); });
+      out.innerHTML=`<p><b>Raw total ${vals.reduce((a,b)=>a+b,0)}</b>, shown as shares of 100%.</p>${notes.length?`<ul style="margin:.4rem 0 0;padding-left:1.1rem">${notes.join("")}</ul><p style="margin-top:.5rem" class="muted">Pick one category to move toward its range next fortnight. Write down what you will delegate or decline to make room.</p>`:`<p style="margin-top:.4rem">Every category is inside its typical range.</p>`}`; };
+    v.querySelectorAll("[data-alloc] input").forEach(r=>r.addEventListener("input",upd)); upd();
+  }
+  if (L.type==="sort"){
+    v.querySelector("[data-sortcheck]").addEventListener("click",()=>{ let sc=0;
+      L.items.forEach((it,i)=>{ const row=v.querySelector(`[data-row="${i}"]`), val=row.querySelector("select").value, fb=row.querySelector(".fb");
+        row.classList.remove("right","wrong"); const ok=val===it[1]; if(ok) sc++; row.classList.add(ok?"right":"wrong"); fb.hidden=false; fb.textContent=(ok?"Correct. ":`Answer: ${it[1]}. `)+it[2]; });
+      v.querySelector("[data-sortscore]").textContent=`${sc} / ${L.items.length}`; if(sc>=L.items.length-2){ markLab(true); toast("Lab recorded"); } });
+  }
+  if (L.type==="builder"){
+    const prev=v.querySelector("[data-prev]");
+    const vals=()=>{ const o={}; v.querySelectorAll("[data-build] [data-f]").forEach(t=>o[t.dataset.f]=t.value.trim()); return o; };
+    const upd=()=>{ const o=vals(); S.build[m.id]=o; persist(); prev.textContent=L.template(o); };
+    v.querySelectorAll("[data-build] [data-f]").forEach(t=>t.addEventListener("input",upd));
+    v.querySelector("[data-example]").addEventListener("click",()=>{ L.fields.forEach(f=>v.querySelector(`[data-f="${f[0]}"]`).value=f[2]); upd(); });
+    v.querySelector("[data-clear]").addEventListener("click",()=>{ v.querySelectorAll("[data-build] [data-f]").forEach(t=>t.value=""); upd(); });
+    v.querySelector("[data-copyprev]").addEventListener("click",()=>copyText(prev.textContent, prev));
+    upd();
+  }
+  if (L.type==="mermaid"){
+    const ta=v.querySelector(`#ed-${m.id}`), pv=v.querySelector("[data-edprev]"), st=v.querySelector("[data-st]"); let t;
+    const run=async()=>{ const ok=await draw(pv,ta.value); st.textContent=ok?"Renders":"Syntax error"; st.className="status "+(ok?"ok":"bad"); };
+    ta.addEventListener("input",()=>{ S.code[m.id]=ta.value; persist(); clearTimeout(t); t=setTimeout(run,450); });
+    v.querySelector("[data-resetcode]").addEventListener("click",()=>{ ta.value=L.starter; S.code[m.id]=ta.value; persist(); run(); });
+    v.querySelector("[data-copyed]").addEventListener("click",()=>copyText(ta.value, ta));
+    run();
+  }
+  if (L.type==="matrix"){
+    const out=v.querySelector("[data-matout]");
+    const upd=()=>{ const w=L.criteria.map((c,ci)=>Math.max(0,+v.querySelector(`#mw-${ci}`).value||0));
+      const s=L.criteria.map((c,ci)=>L.options.map((o,oi)=>Math.min(5,Math.max(1,+v.querySelector(`#ms-${ci}-${oi}`).value||1))));
+      S.matrix[m.id]={w,s}; persist();
+      const tot=L.options.map((o,oi)=>s.reduce((a,row,ci)=>a+row[oi]*w[ci],0)); const max=Math.max(...tot), wsum=w.reduce((a,b)=>a+b,0)||1;
+      tot.forEach((x,oi)=>{ const td=v.querySelector(`[data-tot="${oi}"]`); td.textContent=`${x} (${(x/wsum).toFixed(2)})`; td.classList.toggle("win",x===max); });
+      const win=L.options[tot.indexOf(max)]; const sorted=[...tot].sort((a,b)=>b-a); const margin=sorted[0]-sorted[1];
+      const sens=L.criteria.map((c,ci)=>c[0]).filter((c,ci)=>{ const t2=L.options.map((o,oi)=>s.reduce((a,row,k)=>a+row[oi]*(k===ci?w[k]+1:w[k]),0)); const t3=L.options.map((o,oi)=>s.reduce((a,row,k)=>a+row[oi]*(k===ci?Math.max(0,w[k]-1):w[k]),0));
+        return t2.indexOf(Math.max(...t2))!==tot.indexOf(max) || t3.indexOf(Math.max(...t3))!==tot.indexOf(max); });
+      out.innerHTML=`<p><b>Leading option: ${esc(win)}</b>, by ${margin} weighted points.</p><p style="margin-top:.35rem">${sens.length?`Sensitivity points: changing the weight of <b>${sens.map(esc).join("</b>, <b>")}</b> by one would change the winner. Focus the stakeholder discussion there.`:"No single one-point weight change flips the result. The recommendation is fairly robust."}</p>`; };
+    v.querySelectorAll("[data-matrix] input").forEach(i=>i.addEventListener("input",upd));
+    v.querySelector("[data-matreset]").addEventListener("click",()=>{ delete S.matrix[m.id]; persist(); go(m.id,false); document.getElementById("lab")?.scrollIntoView(); });
+    upd();
+  }
+  if (L.type==="wsjf"){
+    const upd=()=>{ const rows=[...v.querySelectorAll("[data-wsjf] tbody tr")].map((tr,ri)=>{ const vals=[1,2,3,4].map(k=>Math.max(1,+tr.querySelector(`[data-k="${k}"]`).value||1)); return [L.items[ri][0],...vals]; });
+      S.wsjf[m.id]=rows; persist();
+      const ws=rows.map(r=>(r[1]+r[2]+r[3])/r[4]); const order=ws.map((x,i)=>[x,i]).sort((a,b)=>b[0]-a[0]);
+      v.querySelectorAll("[data-wsjf] tbody tr").forEach((tr,ri)=>{ tr.querySelector("[data-wv]").textContent=ws[ri].toFixed(1); const rk=order.findIndex(o=>o[1]===ri)+1; const c=tr.querySelector("[data-rank]"); c.textContent=rk; c.classList.toggle("win",rk===1); }); };
+    v.querySelectorAll("[data-wsjf] input").forEach(i=>i.addEventListener("input",upd));
+    v.querySelector("[data-wsreset]").addEventListener("click",()=>{ delete S.wsjf[m.id]; persist(); go(m.id,false); document.getElementById("lab")?.scrollIntoView(); });
+    upd();
+  }
+  if (L.type==="quad"){
+    const out=v.querySelector("[data-quadout]");
+    const upd=()=>{ const rows=L.items.map((it,i)=>[v.querySelector(`#qn-${i}`).value.trim(), +v.querySelector(`#ql-${i}`).value, +v.querySelector(`#qe-${i}`).value]);
+      S.quad[m.id]=rows; persist();
+      rows.forEach((r,i)=>{ v.querySelector(`[data-qlv="${i}"]`).textContent=r[1]; v.querySelector(`[data-qev="${i}"]`).textContent=r[2]; });
+      const Q={protect:[],lighter:[],ration:[],drop:[]};
+      rows.filter(r=>r[0]).forEach(r=>{ const hl=r[1]>=3, he=r[2]>=3; Q[hl?(he?"protect":"lighter"):(he?"ration":"drop")].push(r[0]); });
+      out.innerHTML=`<div class="quadwrap"><span class="axis-y">↑ More leverage</span><div class="quad">${QUADS.map(q=>`<div class="q-${q[0]}"><b>${q[1]}</b><span class="hint">${q[2]}</span><ul>${Q[q[0]].length?Q[q[0]].map(x=>`<li>${esc(x)}</li>`).join(""):`<li class="muted">None</li>`}</ul><span class="hint">${q[3]}</span></div>`).join("")}</div><span class="axis-x">More energising →</span></div>
+        ${Q.drop.length?`<p style="margin-top:.6rem"><b>First move:</b> pick one item from "Delegate, automate or drop" and name who or what takes it over.</p>`:""}`; };
+    v.querySelectorAll("[data-quad] input").forEach(i=>i.addEventListener("input",upd));
+    v.querySelector("[data-quadreset]").addEventListener("click",()=>{ delete S.quad[m.id]; persist(); go(m.id,false); document.getElementById("lab")?.scrollIntoView(); });
+    upd();
+  }
+  if (L.type==="levels"){
+    const board=v.querySelector("[data-board]");
+    const vals=()=>L.items.map((it,i)=>+v.querySelector(`#lv-${i}`).value||0);
+    const render=()=>{ const s=vals(); S.lvl[m.id]=s; persist();
+      const grp=[["TEAM DECIDES (Inquire or Delegate)",[6,7]],["TEAM DECIDES, I ADVISE (Advise)",[5]],["WE DECIDE TOGETHER (Consult or Agree)",[3,4]],["I DECIDE (Tell or Sell)",[1,2]]];
+      const unset=L.items.filter((it,i)=>!s[i]).length;
+      board.textContent=`DECISION BOARD: <team name>\n\n`+grp.map(([h,ls])=>{ const its=L.items.filter((it,i)=>ls.includes(s[i])); return `${h}\n${its.length?its.map((it,i)=>`- ${it[0]}`).join("\n"):"- (none yet)"}`; }).join("\n\n")+(unset?`\n\nNot yet set: ${unset}`:"")+`\n\nReviewed: <date>. Levels rise as trust grows.`; };
+    v.querySelectorAll("[data-levels] select").forEach(sel=>sel.addEventListener("change",render));
+    v.querySelector("[data-lvcheck]").addEventListener("click",()=>{ const s=vals(); let sc=0;
+      L.items.forEach((it,i)=>{ const row=v.querySelector(`[data-lrow="${i}"]`), fb=row.querySelector(".fb"); const ok=s[i]>=it[1]&&s[i]<=it[2]; if(ok) sc++;
+        row.classList.remove("right","wrong"); row.classList.add(ok?"right":"wrong"); fb.hidden=false;
+        const rng=it[1]===it[2]?LVLS[it[1]-1][0]:`${LVLS[it[1]-1][0]} to ${LVLS[it[2]-1][0]}`;
+        fb.textContent=(ok?"Within range. ":s[i]?`Suggested: ${rng}. `:`Not set. Suggested: ${rng}. `)+it[3]; });
+      v.querySelector("[data-lvscore]").textContent=`${sc} / ${L.items.length}`; if(sc>=L.items.length-2){ markLab(true); toast("Lab recorded"); } });
+    v.querySelector("[data-copyboard]").addEventListener("click",()=>copyText(board.textContent, board));
+    render();
+  }
+  if (L.type==="scorecard"){
+    const out=v.querySelector("[data-scoreout]");
+    const rate=(cur,tgt,dir)=>{ if(dir==="lower"){ if(cur<=tgt) return "g"; if(tgt===0) return cur<=2?"a":"r"; return cur<=tgt*1.25?"a":"r"; } if(cur>=tgt) return "g"; return cur>=tgt*0.75?"a":"r"; };
+    const upd=()=>{ const rows=L.rows.map((r,i)=>[r[0],r[1],+v.querySelector(`#scn-${i}`).value||0,+v.querySelector(`#sct-${i}`).value||0,r[4]]);
+      S.score[m.id]=rows; persist(); const c={g:0,a:0,r:0}; const reds=[];
+      rows.forEach((r,i)=>{ const st=rate(r[2],r[3],r[4]); c[st]++; if(st==="r") reds.push(r[0]);
+        v.querySelector(`[data-st="${i}"]`).innerHTML=`<span class="flag ${st==="g"?"ok":st==="a"?"lo":"hi"}">${st==="g"?"Green":st==="a"?"Amber":"Red"}</span>`; });
+      out.innerHTML=`<p><b>${c.g} green, ${c.a} amber, ${c.r} red.</b></p>${reds.length?`<p style="margin-top:.35rem">For each red, write an owner and one action before your next review: ${reds.map(r=>`<b>${esc(r)}</b>`).join(", ")}.</p>`:`<p style="margin-top:.35rem">Nothing is red. Check that your targets are ambitious enough to drive improvement.</p>`}<p class="muted" style="margin-top:.35rem;font-size:.85rem">Amber means within 25% of the target. Compare trends within your domain, not between teams.</p>`; };
+    v.querySelectorAll("[data-score] input").forEach(i=>i.addEventListener("input",upd));
+    v.querySelector("[data-screset]").addEventListener("click",()=>{ delete S.score[m.id]; persist(); go(m.id,false); document.getElementById("lab")?.scrollIntoView(); });
+    upd();
+  }
+  if (L.type==="writing"){
+    const ta=v.querySelector("[data-wtext]"), met=v.querySelector("[data-wmetrics]"), hl=v.querySelector("[data-whl]"), deck=v.querySelector("[data-wdeck]"), ask=v.querySelector("[data-wask]");
+    const state=()=>({text:ta.value, ask:ask.value, titles:[0,1,2,3,4,5].map(i=>v.querySelector(`[data-wt="${i}"]`).value)});
+    const runText=()=>{ const a=analyse(ta.value);
+      if(!a){ met.innerHTML=`<p class="muted">Paste or type some text to check it.</p>`; hl.innerHTML=""; return; }
+      const row=(k,val,ok,note)=>`<div class="wm ${ok?"ok":"bad"}"><span class="k">${k}</span><span class="v">${val}</span><span class="n">${ok?"✓ ":"✗ "}${note}</span></div>`;
+      const pg=Math.round(a.passive/Math.max(1,a.sents.length)*100);
+      met.innerHTML=`<div class="wmgrid">
+        ${row("Average sentence",`${a.avg.toFixed(1)} words`,a.avg<=20,"target 20 or fewer")}
+        ${row("Sentences over 25 words",a.long,a.long===0,"target none")}
+        ${row("Reading grade",Math.max(0,a.grade).toFixed(1),a.grade<=11,"target 11 or lower")}
+        ${row("Passive sentences",`${a.passive} (${pg}%)`,pg<=10,"target 1 in 10 or fewer")}
+        ${row("Jargon and filler",a.jargon.length,a.jargon.length===0,a.jargon.length?a.jargon.slice(0,6).map(j=>`${j} → ${JARGON[j]}`).join("; "):"none found")}
+        ${row("Acronyms",a.acr.length,a.acr.length===0,a.acr.length?`define or remove: ${a.acr.slice(0,8).join(", ")}`:"none found")}
+        ${row("Opening sentence",a.opensWithAsk?"States an ask":"No ask found",a.opensWithAsk,a.opensWithAsk?"good":"lead with the ask or conclusion")}
+        <div class="wm"><span class="k">Length</span><span class="v">${a.words} words</span><span class="n">about ${a.mins} min to read</span></div></div>`;
+      hl.innerHTML=markup(a);
+      const pass=a.avg<=20&&a.long===0&&a.grade<=11&&pg<=10&&a.jargon.length===0;
+      if(pass&&!S.lab[m.id]&&ta.value!==L.sample){ markLab(true); toast("Meets every core target · lab recorded"); } };
+    const runDeck=()=>{ const s=state(); const lines=[];
+      s.titles.forEach((t,i)=>{ const [msg,cls]=titleCheck(t); const el=v.querySelector(`[data-wtfb="${i}"]`); el.textContent=msg; el.className="help tfb "+cls; if(t.trim()) lines.push(`${i+1}. ${t.trim()}`); });
+      const askWords=/\b(need|approve|approval|decide|decision|ask|request|recommend|by \d|by (mon|tue|wed|thu|fri)|deadline)\b/i;
+      const filled=s.titles.map(t=>t.trim()).filter(Boolean);
+      const atStart=filled.slice(0,3).some(t=>askWords.test(t)), atEnd=filled.length&&askWords.test(filled[filled.length-1]);
+      const labels=filled.filter(t=>titleCheck(t)[1]==="bad").length;
+      deck.textContent=`ASK: ${s.ask.trim()||"(write the ask)"}\n\n${lines.join("\n")||"(write your titles)"}\n\nAPPENDIX: supporting detail\n\n— Checks —\n${labels?`✗ ${labels} title(s) read as labels`:"✓ No label titles"}\n${filled.length>6?"✗ More than six main slides":`✓ ${filled.length} main slide(s)`}\n${atStart?"✓ The ask or recommendation appears early":"✗ Put the ask or recommendation in the first three slides"}\n${atEnd?"✓ The last slide restates the ask":"✗ End by restating the ask"}`; };
+    const saveAll=()=>{ S.wr[m.id]=state(); persist(); };
+    let t; ta.addEventListener("input",()=>{ saveAll(); clearTimeout(t); t=setTimeout(runText,300); });
+    v.querySelectorAll("[data-wt],[data-wask]").forEach(i=>i.addEventListener("input",()=>{ saveAll(); runDeck(); }));
+    v.querySelector("[data-wsample]").addEventListener("click",()=>{ ta.value=L.sample; saveAll(); runText(); });
+    v.querySelector("[data-wclear]").addEventListener("click",()=>{ ta.value=""; saveAll(); runText(); ta.focus(); });
+    v.querySelector("[data-copydeck]").addEventListener("click",()=>copyText(deck.textContent, deck));
+    runText(); runDeck();
+  }
+  if (L.type==="tco"){
+    const out=v.querySelector("[data-tcoout]");
+    const upd=()=>{ const trs=[...v.querySelectorAll("[data-tco] tbody tr")];
+      const rows=trs.map((tr,ri)=>[L.options[ri][0],...[1,2,3,4].map(k=>Math.max(0,+tr.querySelector(`[data-k="${k}"]`).value||0))]);
+      const years=Math.min(10,Math.max(1,+v.querySelector("#tc-years").value||1)), rate=Math.max(0,+v.querySelector("#tc-rate").value||0);
+      S.tco[m.id]={rows,years,rate}; persist();
+      const res=tcoCalc(rows,years,rate); const minPv=Math.min(...res.map(x=>x.pv));
+      trs.forEach((tr,ri)=>{ tr.querySelector("[data-nom]").textContent=fmtK(res[ri].nom); const c=tr.querySelector("[data-pv]"); c.textContent=fmtK(res[ri].pv); c.classList.toggle("win",res[ri].pv===minPv); });
+      const best=res.find(x=>x.pv===minPv);
+      const labels=["upfront","run","people","exit"]; let top=null;
+      rows.forEach((r,ri)=>[1,2,3,4].forEach(k=>{ const alt=rows.map(x=>x.slice()); alt[ri][k]=r[k]*1.3; const a=tcoCalc(alt,years,rate); const w=a.findIndex(x=>x.pv===Math.min(...a.map(y=>y.pv)));
+        const delta=Math.abs(a[ri].pv-res[ri].pv); if(!top||delta>top.delta) top={delta,name:r[0],what:labels[k-1],flips:a[w].name!==best.name}; }));
+      const people=rows.map((r,ri)=>r[3]*years/Math.max(1,res[ri].nom));
+      out.innerHTML=`<p><b>Lowest present-value cost: ${esc(best.name)}</b> at ${fmtK(best.pv)} over ${years} years at ${rate}%.</p>
+        <p style="margin-top:.35rem">Most sensitive input: <b>${esc(top.name)}, ${top.what} cost</b>. A 30% overrun moves its present value by ${fmtK(top.delta)}${top.flips?", <b>enough to change the cheapest option</b>":", without changing the cheapest option"}.</p>
+        <p style="margin-top:.35rem">People costs are ${rows.map((r,ri)=>`${Math.round(people[ri]*100)}% of ${esc(r[0])}`).join(", ")} in nominal terms. Check that these estimates come from real staffing plans.</p>
+        <p class="muted" style="margin-top:.35rem;font-size:.85rem">Cost only. Add benefits to get NPV, and ask finance for the firm's discount rate.</p>`; };
+    v.querySelectorAll("[data-tco] input, #tc-years, #tc-rate").forEach(i=>i.addEventListener("input",upd));
+    v.querySelector("[data-tcoreset]").addEventListener("click",()=>{ delete S.tco[m.id]; persist(); go(m.id,false); document.getElementById("lab")?.scrollIntoView(); });
+    upd();
+  }
+  if (L.type==="scenario"){
+    v.querySelector("[data-sccheck]").addEventListener("click",()=>{ let strong=0;
+      L.scen.forEach((sc,si)=>{ const box=v.querySelector(`[data-scen="${si}"]`), sel=box.querySelector("input:checked"), why=box.querySelector(".why");
+        box.querySelectorAll(".opt").forEach((o,oi)=>{ o.classList.remove("strong","ok","weak"); if(sel&&+sel.value===oi) o.classList.add(sc.o[oi][1]); else if(sc.o[oi][1]==="strong") o.classList.add("strong"); });
+        why.hidden=false; if(!sel){ why.innerHTML=`<b>No answer.</b> Strongest: ${esc(sc.o.find(o=>o[1]==="strong")[0])}`; return; }
+        const o=sc.o[+sel.value]; if(o[1]==="strong") strong++; why.innerHTML=`<b>${o[1]==="strong"?"Strong.":o[1]==="ok"?"Workable, with costs.":"Weak."}</b> ${esc(o[2])}`; });
+      v.querySelector("[data-scscore]").textContent=`${strong} / ${L.scen.length} strong`; if(strong>=3){ markLab(true); toast("Lab recorded"); } });
+  }
+}
+
+document.getElementById("tabs").addEventListener("click",e=>{ const b=e.target.closest("[data-go]"); if(b) go(b.dataset.go); });
+updateMeter();
+go((location.hash||"#home").slice(1), false);
+</script>
+</body></html>
