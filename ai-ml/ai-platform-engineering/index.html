@@ -1,0 +1,1514 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>AI Platform Engineering</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,500;0,600;1,500&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: same brief-style system as the other practicums; the home page walks the AI platform stack layer by layer. */
+:root{
+  --bg:#F2F4F6; --sheet:#FFFFFF; --ink:#121A26; --muted:#586374; --rule:#D8DEE5; --rule-strong:#AAB4C1;
+  --accent:#17624F; --accent-ink:#FFFFFF; --accent-soft:#DCEEE6;
+  --amber:#9C5E16; --amber-soft:#F8EAD3; --risk:#B23A2B; --risk-soft:#F8E1DD;
+  --canvas:#FCFCFD; --canvas-dot:#DCE1E7;
+  --f-display:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C1118; --sheet:#141B25; --ink:#E3E8EF; --muted:#97A2B2; --rule:#263142; --rule-strong:#3D4C60;
+  --accent:#5CC5A0; --accent-ink:#052219; --accent-soft:#12342A;
+  --amber:#E5AE5C; --amber-soft:#33260F; --risk:#EE7B68; --risk-soft:#3A1C17;
+  --canvas:#E9EDF1; --canvas-dot:#CBD3DC; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1118; --sheet:#141B25; --ink:#E3E8EF; --muted:#97A2B2; --rule:#263142; --rule-strong:#3D4C60;
+  --accent:#5CC5A0; --accent-ink:#052219; --accent-soft:#12342A;
+  --amber:#E5AE5C; --amber-soft:#33260F; --risk:#EE7B68; --risk-soft:#3A1C17;
+  --canvas:#E9EDF1; --canvas-dot:#CBD3DC; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.62;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sheet)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:600;line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.1rem,6vw,3.4rem);letter-spacing:-.01em}
+h2{font-size:clamp(1.5rem,4vw,2rem)}
+h3{font-size:1.3rem;margin-top:.5rem}
+h4{font-size:1.08rem}
+p{margin:0}
+code,pre{font-family:var(--f-mono);font-size:.85em}
+:not(pre)>code{background:var(--accent-soft);padding:.05em .35em;border-radius:3px}
+.wrap{max-width:1000px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.eyebrow{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:1rem}
+.prose{display:flex;flex-direction:column;gap:.85rem;max-width:68ch}
+.prose ul,.prose ol{margin:0;padding-left:1.25rem;display:flex;flex-direction:column;gap:.35rem}
+.prose blockquote{margin:0;border-left:3px solid var(--accent);padding:.3rem 0 .3rem 1rem;font-family:var(--f-display);font-style:italic;font-size:1.05rem}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--sheet);border-bottom:1px solid var(--rule)}
+.top .wrap{display:flex;flex-direction:column;gap:.35rem;padding-block:.6rem .5rem}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:1rem}
+.brand b{font-family:var(--f-display);font-size:1.15rem;font-weight:600}
+.brand .meter{font-family:var(--f-mono);font-size:.74rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.navscroll{overflow-x:auto;scrollbar-width:none;margin-inline:-4px}
+.navscroll::-webkit-scrollbar{display:none}
+nav.tabs{display:flex;gap:4px;padding:2px 4px;width:max-content}
+nav.tabs button{font:600 .8rem/1 var(--f-body);color:var(--muted);background:none;border:1px solid transparent;border-radius:999px;padding:.5rem .75rem;cursor:pointer;white-space:nowrap;display:flex;gap:.4rem;align-items:center}
+nav.tabs button:hover{color:var(--ink);border-color:var(--rule)}
+nav.tabs button[aria-current="true"]{background:var(--ink);color:var(--sheet)}
+nav.tabs .dot{width:7px;height:7px;border-radius:50%;background:var(--rule-strong)}
+nav.tabs .dot.ok{background:var(--accent)}
+nav.tabs .sep{width:1px;background:var(--rule);margin:4px 2px}
+main{padding-block:1.5rem 4rem}
+
+.sheet{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);padding:clamp(16px,3.5vw,34px)}
+.section{display:flex;flex-direction:column;gap:1.1rem}
+.section+.section{margin-top:2.2rem;padding-top:2rem;border-top:1px solid var(--rule)}
+.sec-head{display:flex;align-items:baseline;gap:.75rem;flex-wrap:wrap}
+.sec-head .tag{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:.12rem .45rem;border-radius:3px}
+
+/* memo header block */
+.memo{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:3px double var(--ink);border-bottom:3px double var(--ink);margin-top:1.25rem}
+.memo>div{padding:.5rem .7rem;border-right:1px solid var(--rule);min-width:0}
+.memo>div:last-child{border-right:0}
+.memo .k{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:block}
+.memo .v{font-weight:600;font-variant-numeric:tabular-nums}
+@media (max-width:560px){.memo{grid-template-columns:repeat(2,minmax(0,1fr))}.memo>div:nth-child(2){border-right:0}.memo>div:nth-child(-n+2){border-bottom:1px solid var(--rule)}}
+
+.lvl{display:inline-flex;align-items:center;font:600 .7rem/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:.3rem .5rem;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.lvl.f{color:var(--accent)} .lvl.p{color:var(--amber)} .lvl.e{color:var(--risk)}
+
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:var(--r)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:.6rem .75rem;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--bg);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.num{font-variant-numeric:tabular-nums;font-family:var(--f-mono);font-size:.85rem}
+
+.canvas{background-color:var(--canvas);background-image:radial-gradient(var(--canvas-dot) 1px,transparent 1.2px);background-size:16px 16px;border:1px solid var(--rule-strong);border-radius:var(--r);overflow:auto;padding:16px;min-height:120px;color:#121A26;display:flex;align-items:flex-start;justify-content:center}
+.canvas .loading{font-family:var(--f-mono);font-size:.8rem;color:#586374;align-self:center}
+.canvas .err{font-family:var(--f-mono);font-size:.78rem;color:#B23A2B;white-space:pre-wrap;width:100%}
+.fig{display:flex;flex-direction:column;gap:.6rem;min-width:0}
+.figcap{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:baseline;justify-content:space-between}
+.notice{background:var(--bg);border-left:3px solid var(--accent);padding:.6rem .85rem;border-radius:0 var(--r) var(--r) 0;font-size:.93rem}
+.notice ul{margin:.25rem 0 0;padding-left:1.1rem;display:flex;flex-direction:column;gap:.2rem}
+pre.src{background:var(--bg);border:1px solid var(--rule);border-radius:var(--r);padding:.85rem 1rem;overflow-x:auto;margin:0;line-height:1.55;font-size:.8rem;white-space:pre}
+.ba{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem}
+@media (max-width:760px){.ba{grid-template-columns:minmax(0,1fr)}}
+.ba>div{border:1px solid var(--rule);border-radius:var(--r);padding:1rem;display:flex;flex-direction:column;gap:.5rem;min-width:0}
+.ba .before{border-top:3px solid var(--risk)} .ba .after{border-top:3px solid var(--accent)}
+.ba .txt{font-size:.92rem;white-space:pre-wrap}
+
+.btns{display:flex;flex-wrap:wrap;gap:.5rem}
+.btn{font:600 .85rem/1 var(--f-body);border:1px solid var(--rule-strong);background:var(--sheet);color:var(--ink);padding:.6rem .9rem;border-radius:var(--r);cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{border-color:transparent;padding-inline:.4rem;color:var(--accent)}
+.btn.done{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+
+/* hero + line of sight */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(1rem,4vw,2.5rem);align-items:start}
+@media (max-width:820px){.hero{grid-template-columns:minmax(0,1fr)}}
+.lede{font-size:1.08rem;max-width:56ch}
+.los{display:flex;flex-direction:column;gap:.7rem;min-width:0}
+.chain{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--ink);border-radius:var(--r);overflow:hidden}
+.chain button{flex:1 1 auto;font:600 .78rem/1.15 var(--f-body);background:var(--sheet);color:var(--ink);border:0;border-right:1px solid var(--ink);padding:.6rem .5rem;cursor:pointer;min-width:84px;position:relative}
+.chain button:last-child{border-right:0}
+.chain button small{display:block;font:500 .62rem/1 var(--f-mono);letter-spacing:.08em;color:var(--muted);margin-bottom:.25rem}
+.chain button[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+.chain button[aria-pressed="true"] small{color:var(--sheet);opacity:.7}
+@media (max-width:560px){.chain button{flex:1 1 30%;border-bottom:1px solid var(--ink)}}
+.loscard{border:1px solid var(--rule);border-radius:var(--r);padding:1rem;display:flex;flex-direction:column;gap:.65rem;background:var(--sheet)}
+.loscard .big{font-family:var(--f-display);font-size:1.25rem;font-weight:600;line-height:1.3}
+.kv{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.6rem 1rem;font-size:.9rem}
+@media (max-width:480px){.kv{grid-template-columns:minmax(0,1fr)}}
+.kv .k{font-family:var(--f-mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block}
+
+.path{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+@media (max-width:760px){.path{grid-template-columns:minmax(0,1fr)}}
+.stage{border:1px solid var(--rule);border-radius:var(--r);padding:1rem;display:flex;flex-direction:column;gap:.5rem;background:var(--sheet)}
+.stage ol{margin:0;padding-left:1.1rem;font-size:.92rem}
+.bar{height:6px;background:var(--rule);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .4s}
+.meterline{display:flex;align-items:center;gap:.6rem;font-family:var(--f-mono);font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.meterline .bar{flex:1;min-width:80px}
+button.link{background:none;border:0;padding:0;color:var(--ink);font:600 .95rem var(--f-body);cursor:pointer;text-align:left}
+button.link:hover{color:var(--accent);text-decoration:underline}
+.chk{font-family:var(--f-mono);font-size:.8rem}
+.chk.ok{color:var(--accent)} .chk.no{color:var(--rule-strong)}
+
+.q{border:1px solid var(--rule);border-radius:var(--r);padding:1rem;display:flex;flex-direction:column;gap:.6rem;margin:0}
+.q .qn{font-family:var(--f-mono);font-size:.7rem;color:var(--muted);letter-spacing:.08em}
+.q legend{font-weight:600;padding:0}
+.opt{display:flex;gap:.6rem;align-items:flex-start;padding:.5rem .6rem;border:1px solid var(--rule);border-radius:var(--r);cursor:pointer;font-size:.95rem}
+.opt input{margin-top:.3rem;accent-color:var(--accent)}
+.opt.right{border-color:var(--accent);background:var(--accent-soft)}
+.opt.wrong{border-color:var(--risk);background:var(--risk-soft)}
+.why{font-size:.9rem;padding:.6rem .8rem;border-radius:var(--r);background:var(--bg)}
+.score{font-family:var(--f-display);font-size:1.35rem;font-weight:600}
+
+.reqs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.4rem}
+.reqs label{display:flex;gap:.55rem;align-items:flex-start;font-size:.93rem;cursor:pointer}
+.reqs input{margin-top:.32rem;accent-color:var(--accent)}
+.steps{margin:0;padding-left:1.3rem;display:flex;flex-direction:column;gap:.5rem}
+.steps li::marker{font-family:var(--f-mono);color:var(--accent);font-weight:600}
+details.reveal{border:1px solid var(--rule);border-radius:var(--r);padding:.6rem .85rem}
+details.reveal summary{cursor:pointer;font-weight:600;font-size:.92rem}
+details.reveal[open] summary{margin-bottom:.6rem}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+@media (max-width:760px){.grid2{grid-template-columns:minmax(0,1fr)}}
+
+/* lab widgets */
+.field{display:flex;flex-direction:column;gap:.25rem}
+.field label{font-weight:600;font-size:.88rem}
+.field .help{font-size:.8rem;color:var(--muted)}
+.field textarea,.field input[type=text],select.sel,input.cell{font:400 .92rem/1.45 var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--rule-strong);border-radius:var(--r);padding:.5rem .65rem;width:100%}
+.field textarea{min-height:64px;resize:vertical}
+.preview{border:2px solid var(--ink);border-radius:var(--r);padding:1rem 1.1rem;font-size:.93rem;white-space:pre-wrap;background:var(--sheet);min-width:0;overflow-wrap:anywhere}
+.editor{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:.75rem}
+@media (max-width:820px){.editor{grid-template-columns:minmax(0,1fr)}}
+.editor textarea{width:100%;min-height:300px;resize:vertical;font:400 .8rem/1.55 var(--f-mono);background:var(--bg);color:var(--ink);border:1px solid var(--rule-strong);border-radius:var(--r);padding:.8rem}
+.edhead{display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap}
+.status{font-family:var(--f-mono);font-size:.72rem}
+.status.ok{color:var(--accent)} .status.bad{color:var(--risk)}
+.sortrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,220px);gap:.6rem;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--rule)}
+.sortrow:last-child{border-bottom:0}
+@media (max-width:520px){.sortrow{grid-template-columns:minmax(0,1fr)}}
+.sortrow .fb{grid-column:1/-1;font-size:.85rem}
+.sortrow.right .fb{color:var(--accent)} .sortrow.wrong .fb{color:var(--risk)}
+.slider{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 3.2rem;gap:.75rem;align-items:center;padding:.45rem 0;border-bottom:1px solid var(--rule)}
+@media (max-width:560px){.slider{grid-template-columns:minmax(0,1fr) 3.2rem}.slider input{grid-column:1/-1;grid-row:2}}
+.slider input{accent-color:var(--accent);width:100%}
+.slider .val{font-family:var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+.slider .lab small{display:block;color:var(--muted);font-size:.78rem}
+.flag{font:600 .68rem/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:.2rem .4rem;border-radius:3px;margin-left:.35rem}
+.flag.lo{background:var(--amber-soft);color:var(--amber)} .flag.hi{background:var(--risk-soft);color:var(--risk)} .flag.ok{background:var(--accent-soft);color:var(--accent)}
+input.cell{width:4.2rem;text-align:center;padding:.35rem;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+td.win{background:var(--accent-soft);font-weight:700}
+.scen{border:1px solid var(--rule);border-radius:var(--r);padding:1rem;display:flex;flex-direction:column;gap:.6rem}
+.scen .opt.strong{border-color:var(--accent);background:var(--accent-soft)}
+.scen .opt.weak{border-color:var(--risk);background:var(--risk-soft)}
+.scen .opt.ok{border-color:var(--amber);background:var(--amber-soft)}
+
+.cap{border:1px solid var(--rule);border-radius:var(--r);padding:clamp(14px,3vw,26px);display:flex;flex-direction:column;gap:1rem;background:var(--sheet)}
+.cap-head{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:flex-start}
+.domain{font:600 .7rem/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.toc{display:flex;flex-wrap:wrap;gap:.4rem}
+.toc a{font:600 .8rem/1 var(--f-body);text-decoration:none;border:1px solid var(--rule);padding:.45rem .65rem;border-radius:999px;color:var(--ink)}
+.pager{display:flex;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-top:1.5rem}
+dl.gloss{display:grid;grid-template-columns:minmax(130px,max-content) minmax(0,1fr);gap:.5rem 1.2rem;margin:0}
+dl.gloss dt{font-weight:700} dl.gloss dd{margin:0}
+@media (max-width:560px){dl.gloss{grid-template-columns:minmax(0,1fr)} dl.gloss dd{margin-bottom:.4rem}}
+.comp{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:.4rem 1rem;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--rule)}
+.comp:last-child{border-bottom:0}
+@media (max-width:620px){.comp{grid-template-columns:minmax(0,1fr)}}
+.comp .lv{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.comp .lv button{font:600 .72rem/1 var(--f-mono);padding:.5rem 0;border:1px solid var(--rule-strong);background:var(--sheet);color:var(--muted);border-radius:4px;cursor:pointer}
+.comp .lv button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sheet);padding:.6rem 1rem;border-radius:var(--r);font-size:.88rem;z-index:50}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* added labs */
+.qrow{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr);gap:.5rem 1rem;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--rule)}
+@media (max-width:640px){.qrow{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.qrow .qname{grid-column:1/-1}}
+.qname{font:400 .92rem/1.4 var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--rule-strong);border-radius:var(--r);padding:.45rem .6rem;width:100%;min-width:0}
+.rng{display:flex;flex-direction:column;gap:.15rem;font-size:.78rem;color:var(--muted)}
+.rng b{color:var(--ink);font-family:var(--f-mono)}
+.rng input{accent-color:var(--accent);width:100%}
+.quadwrap{display:grid;grid-template-columns:1.4rem minmax(0,1fr);gap:.4rem;margin-top:.8rem}
+.axis-y{writing-mode:vertical-rl;transform:rotate(180deg);font:600 .68rem/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center}
+.axis-x{grid-column:2;text-align:right;font:600 .68rem/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.quad{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.6rem}
+@media (max-width:560px){.quad{grid-template-columns:minmax(0,1fr)}}
+.quad>div{border:1px solid var(--rule);border-radius:var(--r);padding:.8rem;display:flex;flex-direction:column;gap:.35rem;min-width:0;background:var(--sheet)}
+.quad .q-protect{border-top:3px solid var(--accent)} .quad .q-lighter{border-top:3px solid var(--amber)} .quad .q-ration{border-top:3px solid var(--rule-strong)} .quad .q-drop{border-top:3px solid var(--risk)}
+.quad ul{margin:0;padding-left:1.1rem;font-size:.9rem}
+.quad .hint{font-size:.8rem;color:var(--muted)}
+.wmgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.5rem}
+.wm{border:1px solid var(--rule);border-left:3px solid var(--rule-strong);border-radius:var(--r);padding:.5rem .7rem;display:flex;flex-direction:column;gap:.1rem;min-width:0}
+.wm.ok{border-left-color:var(--accent)} .wm.bad{border-left-color:var(--risk)}
+.wm .k{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.wm .v{font-weight:700;font-variant-numeric:tabular-nums}
+.wm .n{font-size:.8rem;color:var(--muted);overflow-wrap:anywhere}
+.wm.bad .n{color:var(--risk)}
+.wrhl{white-space:normal;line-height:1.8}
+.wrhl .long,.legend .long{background:var(--amber-soft);box-shadow:0 0 0 1px var(--amber) inset;border-radius:2px}
+mark.jg{background:var(--risk-soft);color:inherit;border-bottom:2px solid var(--risk);border-radius:2px;padding:0 1px}
+.pv{border-bottom:2px dashed var(--amber)}
+.ac{font-family:var(--f-mono);font-size:.9em;background:var(--accent-soft);border-radius:2px;padding:0 2px}
+.legend{font-size:.75rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.legend>*{padding:0 .25rem}
+.tfb.ok{color:var(--accent)} .tfb.warn{color:var(--amber)} .tfb.bad{color:var(--risk)}
+
+/* calculators and flashcards */
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.75rem 1rem;align-items:end}
+.calc .field span{font-weight:600;font-size:.85rem}
+input.cell.wide{width:100%;text-align:left;padding:.5rem .65rem}
+.kvgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.5rem}
+.kvgrid>div{border:1px solid var(--rule);border-left:3px solid var(--accent);border-radius:var(--r);padding:.5rem .7rem;display:flex;flex-direction:column;gap:.1rem;min-width:0}
+.kvgrid .k{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.kvgrid b{font-size:1.15rem;font-variant-numeric:tabular-nums}
+.kvgrid small{font-size:.78rem;color:var(--muted);overflow-wrap:anywhere}
+.flash{border:2px solid var(--ink);border-radius:var(--r);padding:1.5rem 1.25rem;min-height:170px;display:flex;flex-direction:column;gap:.6rem;justify-content:center;align-items:center;text-align:center;cursor:pointer;background:var(--sheet);user-select:none}
+.flash .fterm{font-family:var(--f-display);font-size:1.6rem;font-weight:600}
+.flash .fdef{font-size:1rem;max-width:52ch}
+</style>
+
+<header class="top"><div class="wrap">
+  <div class="brand"><b>AI Platform Engineering Practicum</b><span class="meter" id="meter">0% complete</span></div>
+  <div class="navscroll"><nav class="tabs" id="tabs" aria-label="Practicum sections"></nav></div>
+</div></header>
+<main class="wrap" id="view"></main>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<script>
+"use strict";
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const pre = s => `<pre class="src"><code>${esc(s.trim())}</code></pre>`;
+const CODE = []; const reg = c => (CODE.push(c.trim()), CODE.length - 1);
+const COMPANION = "../agentic-systems/index.html";
+
+/* ======== diagrams (running case: Northbank's AI platform team) ======== */
+const D = {};
+D.stack = `flowchart TB
+  subgraph DX["Developer experience"]
+    T1["Templates and golden paths"] --- T2["Onboarding guides"] --- T3["Test and eval harnesses"]
+  end
+  subgraph GW["Gateway and policy"]
+    G1["One API, authN/Z"] --- G2["Quotas and metering"] --- G3["Routing and guardrails"]
+  end
+  subgraph SV["Serving"]
+    S1["LLM serving engines"] --- S2["Classic ML and embeddings"] --- S3["Managed model APIs"]
+  end
+  subgraph CP["Compute and scheduling"]
+    C1["GPU node pools"] --- C2["Queues and quotas"] --- C3["Batch and training jobs"]
+  end
+  subgraph DM["Data and models"]
+    M1["Model registry"] --- M2["Governed data access"] --- M3["Vector and feature stores"]
+  end
+  DX --> GW --> SV --> CP
+  SV --> DM
+  OPS["Operations: SLOs, observability, security, cost"] -.-> GW
+  OPS -.-> SV
+  OPS -.-> CP`;
+D.infer = `flowchart LR
+  R["Request<br/>prompt tokens"] --> P["Prefill<br/>all prompt tokens at once<br/>compute-bound"]
+  P -->|"first token: TTFT"| K[("KV cache<br/>grows per token")]
+  K --> Dc["Decode<br/>one token per step<br/>memory-bandwidth-bound"]
+  Dc -->|"each step: TPOT"| K
+  Dc --> O["Streamed output"]
+  B["Continuous batching<br/>new requests join every step"] -.-> Dc`;
+D.gpu = `flowchart TB
+  subgraph CL["OpenShift / Kubernetes cluster"]
+    subgraph NP1["Serving pool · H100 · reserved"]
+      A1["vLLM 70B<br/>TP=2"] --- A2["vLLM 70B<br/>TP=2"]
+    end
+    subgraph NP2["Shared pool · A100 MIG"]
+      B1["Embeddings<br/>1g.10gb"] --- B2["Rerankers<br/>2g.20gb"] --- B3["Dev notebooks<br/>1g.10gb"]
+    end
+    subgraph NP3["Batch pool · preemptible"]
+      C1["Kueue ClusterQueue<br/>batch inference, fine-tuning"]
+    end
+  end
+  OP["GPU Operator<br/>driver, device plugin, DCGM"] -.-> NP1
+  OP -.-> NP2
+  OP -.-> NP3`;
+D.gateway = `flowchart LR
+  App["LOB application"] --> GW["Model gateway<br/>auth, quota, routing"]
+  GW --> IG["Input guardrails<br/>PII, injection, policy"]
+  IG --> LB["Inference-aware<br/>load balancer"]
+  LB --> V1["vLLM replica A<br/>queue 2, KV 40%"]
+  LB --> V2["vLLM replica B<br/>queue 9, KV 92%"]
+  LB -.->|"fallback tier"| MP["Managed model API"]
+  V1 --> OG["Output guardrails<br/>PII, schema, grounding"]
+  OG --> App
+  AS["Autoscaler<br/>queue depth, KV use"] -.-> V1
+  AS -.-> V2`;
+D.burn = `flowchart LR
+  E["Bad events"] --> F["Burn rate =<br/>error rate / (1 - SLO)"]
+  F --> P1{"14.4x over 1h<br/>and 5m"}
+  F --> P2{"6x over 6h<br/>and 30m"}
+  F --> T1{"1x over 3d<br/>and 6h"}
+  P1 -->|"2% of budget gone"| Pg["Page"]
+  P2 -->|"5% of budget gone"| Pg
+  T1 -->|"10% of budget gone"| Tk["Ticket"]`;
+D.trust = `flowchart LR
+  U["User and app<br/>(entitlements)"] -->|"OIDC token"| GW["Gateway"]
+  GW -->|"workload identity"| RET["Retrieval service<br/>filters by user entitlements"]
+  RET --> VS[("Vector store<br/>classified data")]
+  GW --> MS["Model server"]
+  REG[("Model registry<br/>signed, scanned weights")] --> MS
+  SEC[("Secret store")] -.->|"short-lived creds"| GW
+  GW --> LOG[("Logs<br/>redacted, retention set")]
+  classDef tb fill:#F8EAD3,stroke:#9C5E16
+  class RET,MS,LOG tb`;
+D.pipeline = `flowchart LR
+  C["Commit"] --> B["Build<br/>pinned deps"]
+  B --> S["Scan, SBOM,<br/>sign"]
+  S --> T["Unit, contract,<br/>integration tests"]
+  T --> E["Eval gate<br/>quality and safety"]
+  E --> G["GitOps PR<br/>to env repo"]
+  G --> CN["Canary<br/>metric analysis"]
+  CN -->|"healthy"| PR["Promote"]
+  CN -->|"burn rate up"| RB["Auto rollback"]`;
+D.readiness = `flowchart LR
+  I["Intake<br/>use case, data class"] --> N["NFRs<br/>numbers, not adjectives"]
+  N --> Dd["Design doc<br/>options, trade-offs"]
+  Dd --> W["Walking skeleton<br/>thin slice to prod-like"]
+  W --> L["Load test and<br/>game day"]
+  L --> PRR["Production<br/>readiness review"]
+  PRR --> P["Pilot"] --> GA["GA and<br/>early-life support"]`;
+D.adopt = `flowchart LR
+  P["Policy<br/>approved tools, data rules"] --> E["Enable<br/>training, playbooks, champions"]
+  E --> G["Guardrails as code<br/>CI checks, scanners"]
+  G --> M["Measure<br/>DORA, defects, surveys"]
+  M -->|"adjust"| P`;
+
+/* ======== modules ======== */
+const MODULES = [
+{ id:"a1", no:"AI-01", lvl:"f", title:"AI foundation services as a product", time:"60 min",
+  summary:"An AI platform is a product whose customers are application teams. Learn what a foundation services team owns, how it partners with the teams that build on it, and how it measures success.",
+  objectives:["Describe the layers of an AI foundation services platform","Split responsibilities between the platform and application teams","Choose an interaction mode for each partnership, and when to change it","Write a platform contract: API, SLOs, support model and deprecation policy"],
+  learn:`
+<h3>What "foundation services" means</h3>
+<p>An AI foundation services team builds the shared capabilities that every AI use case needs, so application teams do not each rebuild them. In most large firms that includes model hosting and serving (LLMs, embeddings, classic ML), a model gateway, GPU compute for training and batch work, governed data access for retrieval, evaluation and guardrail services, and the observability, security and cost controls around all of it.</p>
+<p>The test of a foundation service is reuse. If only one team can use it, it is an application component that happens to live on the platform.</p>
+<h3>The platform is a product</h3>
+<p>Treat application teams as customers. That means knowing who they are, what they are trying to ship, and what slows them down. Useful product measures for an AI platform:</p>
+<ul>
+<li><b>Time to first inference:</b> how long from "we want to use model X" to a working call from the team's own code.</li>
+<li><b>Adoption:</b> share of AI workloads running on the platform rather than on one-off stacks.</li>
+<li><b>Reliability as experienced by tenants:</b> SLO attainment per tenant, not just platform-wide averages.</li>
+<li><b>Unit cost:</b> cost per million tokens or per thousand predictions, tracked over time.</li>
+<li><b>Support load:</b> tickets per tenant per month. Rising tickets usually mean a missing self-service path.</li>
+</ul>
+<h3>Interaction modes</h3>
+<p>Team Topologies describes three ways teams work together. <b>Collaboration</b>: two teams work closely for a time to discover something new, such as co-developing the first retrieval integration with a line of business. <b>X-as-a-service</b>: the platform offers a stable, documented capability that teams consume with little contact. <b>Facilitating</b>: an enabling team helps another team build a skill. Collaboration is expensive, so time-box it and plan the exit: the goal of co-development is a reusable capability that the next ten teams consume as a service.</p>
+<h3>Self-hosted and managed, side by side</h3>
+<p>Most enterprise AI platforms are hybrid. Some models are self-hosted on the firm's GPUs (for data control, cost at scale, or fine-tuned weights). Others are reached through managed services from cloud providers. The platform's job is to make the choice invisible to callers where possible: one API, one identity model, one set of quotas and logs, with routing deciding where a request goes.</p>
+<h3>The platform contract</h3>
+<p>Every foundation service should publish a short contract: what the API is, what SLOs it meets, what tenants must do (quotas, data classification, retries with backoff), how to get support, and how versions are deprecated. Contracts turn "the platform is flaky" into a measurable conversation.</p>
+<h3>In a regulated firm</h3>
+<p>Expect a model inventory, approval workflows for new models and use cases, and evidence requirements for audits. Build these into the platform (registry metadata, automated evidence, logged approvals) rather than leaving each team to produce them by hand. A platform that makes compliance the easy path gets adopted.</p>`,
+  examples:[{kind:"diagram", title:"The AI foundation services stack", code:D.stack, caption:"A typical layering. Operations concerns cut across every layer rather than sitting on top.", notice:["Application teams should mostly touch the top two layers.","Serving hides whether a model is self-hosted or managed.","SLOs, security and cost are properties of every layer, not a separate team's afterthought."]},
+    {kind:"ba", title:"A roadmap item, rewritten as an outcome", before:"Q3: Deploy vLLM on the GPU cluster. Integrate with the gateway. Write documentation.", after:"Q3: A line-of-business team can call a self-hosted 70B model through the gateway in under one day, at p95 time to first token under 800 ms for 2K-token prompts. Two pilot teams (payments operations, fraud analytics) are live; onboarding guide and reference client published.", notice:["The rewrite names who benefits and how fast.","It states a measurable service level.","It names pilot teams, so the platform is co-developed rather than built in isolation."]}],
+  quiz:[
+    {q:"What best distinguishes a foundation service from an application component?",o:["It runs on Kubernetes","Multiple teams can reuse it through a stable interface","It uses a GPU","The platform team wrote it"],a:1,why:"Reuse through a stable contract is the defining property. Where it runs is incidental."},
+    {q:"A platform team co-develops the first retrieval integration with one line of business. What should they plan from the start?",o:["Keeping the collaboration going indefinitely","An exit: turning the result into a self-service capability other teams consume","Handing ownership of the platform to that team","Building a separate stack for each team"],a:1,why:"Collaboration mode is expensive and should be time-boxed. Its purpose is discovery that becomes X-as-a-service."},
+    {q:"Which measure best captures whether the platform is easy to adopt?",o:["Number of GPUs in the cluster","Time to first inference for a new team","Lines of platform code","Number of models in the registry"],a:1,why:"It measures the customer's experience end to end, including docs, access and approvals."},
+    {q:"Why route both self-hosted and managed models behind one gateway?",o:["Managed models are always cheaper","Callers get one API, identity model, quota and logging regardless of where the model runs","Self-hosted models cannot be called directly","It removes the need for SLOs"],a:1,why:"A single front door makes the hosting decision a platform concern, not something every caller codes around."},
+    {q:"Support tickets per tenant are rising. What is the most likely platform cause?",o:["Tenants are careless","A missing or unclear self-service path","Too many SLOs","GPU drivers"],a:1,why:"Repeated tickets usually point at a gap in docs, tooling or automation that the platform can close once."}],
+  lab:{type:"sort", title:"Who owns it?",
+    brief:"For each responsibility, decide whether the platform team, the application team, or both (a shared responsibility with a clear split) should own it.",
+    buckets:["Platform team","Shared","Application team"],
+    items:[
+      ["Patching GPU drivers and the serving engine","Platform team","Infrastructure lifecycle belongs to the platform so every tenant benefits once."],
+      ["Writing the prompts and retrieval logic for a customer-service assistant","Application team","Use-case logic and domain knowledge sit with the team that owns the outcome."],
+      ["Per-tenant token quotas and usage metering","Platform team","Quotas protect every tenant and must be enforced centrally."],
+      ["Defining acceptable quality for the assistant's answers","Shared","The application team defines quality for its use case; the platform supplies the evaluation tooling and gates."],
+      ["Classifying the data sent in prompts","Shared","The app team knows its data; the platform enforces what each classification may use and log."],
+      ["Retry with exponential backoff when the gateway returns 429","Application team","Clients must honour back-pressure; the platform documents it in the contract."],
+      ["Choosing which serving engine runs a hosted model","Platform team","Engine choice is an implementation detail behind the platform contract."],
+      ["Incident response when a tenant's latency SLO is breached","Shared","The platform owns the service; the app team owns its user impact and comms. Agree roles in advance."]]},
+  talk:[["In two minutes, explain what an AI foundation services platform is and why a large firm builds one.","Shared capabilities (serving, gateway, GPU compute, data access, eval and guardrails, observability); avoids every team rebuilding; consistent security and compliance; unit cost at scale; measured by adoption, time to first inference, SLOs."],
+    ["How do you partner with an application team without becoming their dedicated engineering team?","Time-boxed collaboration with an explicit exit; co-develop the first integration, then extract a reusable capability; publish a contract and docs; move to X-as-a-service; measure time to first inference for the next team."],
+    ["What goes into a platform contract?","API and versioning; SLOs and how they are measured; tenant obligations (quotas, retries, data classes); support model and escalation; deprecation policy and notice periods."]],
+  project:{title:"Platform contract for one AI foundation service", deliver:"A one-to-two page contract for a service you run or know well (for example, model hosting or a gateway).", steps:["Pick one service and list its current tenants","Write the API summary and versioning policy","State two or three SLOs with how each is measured","List tenant obligations: quotas, retries, data classification","Describe support hours, channels and escalation","Write the deprecation policy with notice periods","Review it with one tenant team and revise"],
+    rubric:["SLOs are numeric and measurable","Tenant obligations are explicit","Deprecation includes a notice period","A tenant team has reviewed it","Product measures (adoption, time to first inference) are named"]}
+},
+
+{ id:"a2", no:"AI-02", lvl:"f", title:"How LLM inference works", time:"90 min",
+  summary:"The mechanics behind every serving decision: prefill and decode, the KV cache, continuous batching, latency metrics, quantization and parallelism. Do the GPU memory maths yourself.",
+  objectives:["Explain prefill and decode, and why they stress GPUs differently","Calculate model weight and KV cache memory for a deployment","Define TTFT, TPOT and throughput, and the trade-off between them","Describe how continuous batching, PagedAttention, quantization and tensor parallelism change capacity"],
+  learn:`
+<h3>Two phases per request</h3>
+<p><b>Prefill</b> processes the whole prompt in one forward pass. It is compute-bound: thousands of tokens are multiplied through the model in parallel. It produces the first output token, so it sets <b>time to first token (TTFT)</b>.</p>
+<p><b>Decode</b> then generates one token at a time. Each step reads the full model weights and the request's cached keys and values from GPU memory, but does little arithmetic per byte. Decode is memory-bandwidth-bound, and its per-step time is <b>time per output token (TPOT)</b>, also called inter-token latency.</p>
+<p>End-to-end latency is roughly <code>TTFT + (output tokens − 1) × TPOT</code>. Long prompts hurt TTFT; long answers hurt total latency.</p>
+<h3>The KV cache</h3>
+<p>To avoid recomputing attention over earlier tokens, the server keeps each layer's key and value vectors for every token in the sequence. Per token, the cache costs:</p>
+<p><code>2 × layers × KV heads × head dimension × bytes per value</code></p>
+<p>A Llama-3.1-70B-shaped model has 80 layers, 8 KV heads (grouped-query attention) and head dimension 128. At 16-bit precision that is 2 × 80 × 8 × 128 × 2 = 327,680 bytes, or 320 KiB per token. A single 8K-token conversation holds about 2.7 GB of cache. Concurrency is usually limited by KV cache memory, not by compute.</p>
+<p>Weights cost <code>parameters × bytes per parameter</code>: a 70B model is about 141 GB at BF16, 70 GB at FP8, and about 35 GB at 4-bit.</p>
+<h3>Batching is where throughput comes from</h3>
+<p>Because decode is bandwidth-bound, serving many sequences in the same step costs little extra time per step: weights are read once for the whole batch. <b>Continuous batching</b> (also called in-flight batching) lets new requests join and finished ones leave at every step instead of waiting for a whole batch to finish. <b>PagedAttention</b>, introduced by vLLM, stores the KV cache in fixed-size blocks like virtual memory pages, so memory is not wasted on reserved-but-unused space and more sequences fit.</p>
+<p>The trade-off: larger batches raise throughput (tokens per second per GPU) but raise TPOT for each user. Serving is tuned to the largest batch that still meets the latency SLO.</p>
+<h3>Other levers</h3>
+<ul>
+<li><b>Quantization</b> (FP8, INT8, INT4 schemes such as AWQ or GPTQ) shrinks weights and, optionally, the KV cache. FP8 on Hopper-class GPUs is often close to lossless; 4-bit needs evaluation on your own tasks before production.</li>
+<li><b>Tensor parallelism</b> splits each layer across GPUs in one node over NVLink, for models that do not fit on one GPU or to cut latency. <b>Pipeline parallelism</b> splits layers across nodes. <b>Data parallelism</b> means more replicas. Mixture-of-experts models add <b>expert parallelism</b>.</li>
+<li><b>Prefix caching</b> reuses the KV cache for shared prompt prefixes such as long system prompts, cutting TTFT.</li>
+<li><b>Chunked prefill</b> splits long prompts so they do not stall decode for everyone else.</li>
+<li><b>Speculative decoding</b> drafts several tokens with a small model and verifies them in one pass of the large model.</li>
+<li><b>Disaggregated serving</b> runs prefill and decode on separate GPU pools so each can be sized and tuned independently.</li>
+</ul>
+<h3>Serving engines</h3>
+<p>Common LLM engines include vLLM, SGLang and NVIDIA TensorRT-LLM; NVIDIA Triton Inference Server hosts many model types. Kubernetes-native layers such as KServe (the basis of Red Hat OpenShift AI's model serving) and llm-d package these engines with autoscaling and routing. Classic ML and embedding models usually need dynamic batching and sometimes run well on CPU; do not put every model on a GPU by default.</p>`,
+  examples:[{kind:"diagram", title:"One request through an LLM server", code:D.infer, caption:"Prefill fills the KV cache and produces the first token. Decode reads the cache every step and adds to it.", notice:["TTFT is dominated by prefill and queueing.","Every decode step reads all weights plus this request's KV cache.","Continuous batching shares each weight read across many sequences."]},
+    {kind:"ba", title:"Sizing a 70B deployment, before and after the maths", before:"\"A 70B model needs 140 GB, so two 80 GB H100s will do.\"", after:"Weights at BF16: about 141 GB. Two H100s give 160 GB, and at 90% memory utilisation about 144 GB, leaving roughly 3 GB before runtime overhead: almost no room for KV cache, so almost no concurrency.\nOptions: four H100s at BF16 (about 139 GB of KV cache, around 50 concurrent 8K sequences), or two H100s with FP8 weights and FP8 KV cache (around 50 concurrent 8K sequences) after a quality evaluation.", notice:["Weights fitting is not the same as serving fitting.","KV cache size sets concurrency, and concurrency sets cost per token.","Quantization is a capacity decision that needs a quality check."]}],
+  quiz:[
+    {q:"Which phase is usually memory-bandwidth-bound?",o:["Prefill","Decode","Tokenization","Both equally"],a:1,why:"Decode does little arithmetic per byte read: it streams weights and KV cache from memory for one token per sequence per step."},
+    {q:"A model has 32 layers, 8 KV heads, head dimension 128, 16-bit KV. What is the KV cache per token?",o:["32 KiB","64 KiB","128 KiB","1 MiB"],a:2,why:"2 × 32 × 8 × 128 × 2 bytes = 131,072 bytes = 128 KiB."},
+    {q:"Users complain the first word takes too long to appear, but streaming is fast after that. What do you investigate first?",o:["TPOT","TTFT: queueing and prefill, such as long prompts or no prefix caching","Output token count","Tokenizer vocabulary"],a:1,why:"Slow first token with fast streaming points at queueing or prefill, not decode."},
+    {q:"What does continuous batching change?",o:["It sends each request to its own GPU","Requests join and leave the running batch at every decode step","It disables the KV cache","It batches requests by user"],a:1,why:"It avoids waiting for the slowest sequence in a static batch, raising utilisation and throughput."},
+    {q:"Why evaluate before deploying a 4-bit quantized model?",o:["4-bit models do not run on GPUs","Quality loss varies by model and task and must be measured on your own workloads","It is required by Kubernetes","It changes the API"],a:1,why:"Quantization trades memory for possible accuracy loss. Measure on your tasks; do not assume."}],
+  lab:{type:"kv", title:"GPU memory and concurrency calculator",
+    brief:"Size a deployment. Pick a model shape, precision, GPU and tensor-parallel degree, then see whether it fits and how many sequences the KV cache can hold. Challenge: serve the 70B-class model to 32 concurrent 8K-token sequences on no more than two GPUs.",
+    challenge:{model:"70b", conc:32, ctx:8192, maxGpus:2}},
+  talk:[["Walk me through what happens on a GPU when an LLM answers a prompt.","Tokenize; prefill computes all prompt tokens in parallel (compute-bound) and fills KV cache; first token = TTFT; decode one token per step, reading weights and KV cache (bandwidth-bound) = TPOT; continuous batching shares weight reads; stream tokens out."],
+    ["How would you size GPUs for a new 70B model?","Weights = params × bytes; KV per token = 2 × layers × KV heads × head dim × bytes; leave memory headroom and runtime overhead; KV budget ÷ (context × KV per token) = concurrency; choose TP degree and precision; validate with a load test against the latency SLO."],
+    ["When would you not put a model on a GPU?","Small classic ML or embedding models with low traffic; CPU with dynamic batching can meet latency at lower cost; GPUs only where the throughput or latency needs it."]],
+  project:{title:"Serving baseline for one model", deliver:"A one-page serving baseline: memory maths, chosen configuration and measured numbers for one model you run or plan to run.", steps:["Pick a model and write down its shape: parameters, layers, KV heads, head dimension","Calculate weight and KV cache memory at two precisions","Choose GPU type and tensor-parallel degree, with the reasoning","Deploy it (a small model on a single GPU or CPU is fine for practice)","Measure TTFT and TPOT at three concurrency levels","Record the engine settings that matter (max sequences, memory utilisation, context length)","Publish the baseline where other engineers will find it"],
+    rubric:["Memory maths is shown, not asserted","At least two configurations are compared","Measured TTFT and TPOT are recorded at several concurrency levels","Engine settings are captured so others can reproduce it","Quality impact of any quantization is noted"]}
+},
+
+{ id:"a3", no:"AI-03", lvl:"p", title:"GPU platforms on Kubernetes", time:"90 min",
+  summary:"How GPUs reach pods, how to share and schedule them across serving, batch and training, and how to keep an expensive fleet busy without starving anyone.",
+  objectives:["Explain the GPU software stack on Kubernetes and OpenShift","Choose between whole GPUs, MIG, time-slicing and DRA for a workload","Design node pools, quotas and queues for serving, batch and training","Pick the right GPU metrics and avoid the 'utilisation' trap"],
+  learn:`
+<h3>How a pod gets a GPU</h3>
+<p>A node needs the GPU driver, the NVIDIA container toolkit, and the <b>device plugin</b>, which advertises <code>nvidia.com/gpu</code> as an extended resource. Pods request it as a whole number in <code>resources.limits</code>. The <b>NVIDIA GPU Operator</b> installs and upgrades all of this as a set, along with GPU Feature Discovery (node labels for GPU model and memory) and the <b>DCGM exporter</b> for metrics. On OpenShift it is installed from OperatorHub, typically alongside the Node Feature Discovery operator.</p>
+<p><b>Dynamic Resource Allocation (DRA)</b>, stable in Kubernetes since 1.34, lets workloads claim devices with richer selection (model, memory, partition) than a single integer count. Expect GPU drivers to move toward DRA over time.</p>
+<h3>Sharing GPUs</h3>
+<ul>
+<li><b>Whole GPUs:</b> simplest and fully isolated. Right for large-model serving and training.</li>
+<li><b>MIG (Multi-Instance GPU):</b> on A100, H100 and later, splits one GPU into up to seven hardware-isolated instances with their own memory and compute. Good for embeddings, small models and notebooks.</li>
+<li><b>Time-slicing:</b> several pods take turns on one GPU. No memory or fault isolation: one pod can exhaust memory for all. Fine for dev, risky for production.</li>
+<li><b>MPS:</b> lets processes share a GPU concurrently with some limits; useful for many small inference processes.</li>
+</ul>
+<h3>Scheduling different kinds of work</h3>
+<div class="tbl"><table><thead><tr><th>Workload</th><th>Needs</th><th>Typical setup</th></tr></thead><tbody>
+<tr><td>Online serving</td><td>Latency, availability</td><td>Reserved pool, min replicas, priority class high, spread across zones</td></tr>
+<tr><td>Batch inference</td><td>Throughput, low cost</td><td>Queued, preemptible, runs in idle capacity</td></tr>
+<tr><td>Training and fine-tuning</td><td>All-or-nothing groups of GPUs, long runs</td><td>Gang scheduling, checkpointing, topology-aware placement</td></tr>
+</tbody></table></div>
+<p>Use taints on GPU nodes so only GPU workloads land there, node affinity for GPU model, <code>ResourceQuota</code> on <code>requests.nvidia.com/gpu</code> per namespace, and priority classes with preemption so serving can reclaim capacity from batch. <b>Kueue</b> adds job queueing on top: ClusterQueues hold quota, LocalQueues give teams an entry point, and cohorts let idle quota be borrowed and reclaimed. Training jobs need <b>gang scheduling</b> so a job does not hold four of eight GPUs while waiting forever for the rest.</p>
+<h3>Topology matters</h3>
+<p>Tensor parallelism wants GPUs connected by NVLink in the same node. Multi-node training wants fast interconnect (InfiniBand or RoCE, GPUDirect RDMA). Scheduling that ignores topology can halve performance without any error.</p>
+<h3>Getting weights onto the node</h3>
+<p>A 70B model is over 100 GB. Pulling it from object storage on every scale-up makes cold starts take many minutes. Options: node-local caches, pre-pulled OCI model images (KServe "modelcar"), shared read-only volumes, and model streaming loaders. Cold start time is a capacity-planning input, not a footnote.</p>
+<h3>Measuring the fleet</h3>
+<p>DCGM's <code>GPU_UTIL</code> reports the share of time any kernel was running, so a GPU doing tiny amounts of work can show 100%. Prefer SM activity and tensor-core activity, memory used, and the serving engine's own metrics (queue depth, KV cache use, tokens per second). The most expensive GPU is the idle one: track allocated-but-idle hours per tenant.</p>`,
+  examples:[{kind:"diagram", title:"Northbank's GPU node pools", code:D.gpu, caption:"Three pools with different sharing and scheduling rules, managed by one operator.", notice:["Serving gets whole GPUs and reserved capacity.","Small models share MIG slices with hardware isolation.","Batch and fine-tuning queue for idle capacity and can be preempted."]}],
+  quiz:[
+    {q:"What advertises nvidia.com/gpu to the Kubernetes scheduler?",o:["The kubelet by default","The NVIDIA device plugin","The CNI plugin","CoreDNS"],a:1,why:"The device plugin registers GPUs as an extended resource. The GPU Operator installs it."},
+    {q:"Which sharing method gives hardware memory isolation between tenants?",o:["Time-slicing","MIG","Running two containers in one pod","Overcommitting requests"],a:1,why:"MIG partitions memory and compute in hardware. Time-slicing shares everything."},
+    {q:"A distributed fine-tuning job holds 4 of the 8 GPUs it needs and waits indefinitely. What is missing?",o:["A bigger node","Gang (all-or-nothing) scheduling, for example through Kueue","More replicas","A liveness probe"],a:1,why:"Without gang scheduling, partial allocations can deadlock and waste capacity."},
+    {q:"DCGM shows 100% GPU utilisation but throughput is low. What is the most likely explanation?",o:["The GPU is saturated","The utilisation metric counts time any kernel runs, not how much of the GPU is busy","The driver is broken","DCGM is misconfigured"],a:1,why:"Look at SM and tensor activity and engine metrics; GPU_UTIL alone is misleading."},
+    {q:"Why does cold start time matter for GPU serving capacity?",o:["It does not","Scale-up can take minutes while weights load, so you need headroom or warm capacity for peaks","It affects only training","It only matters on CPU"],a:1,why:"If new replicas take ten minutes, autoscaling cannot absorb a sudden peak without spare capacity."}],
+  lab:{type:"scenario", title:"GPU platform decisions",
+    brief:"Choose the strongest response to each situation on Northbank's GPU platform.",
+    scen:[
+      {s:"Twelve teams want GPUs for notebooks and small embedding experiments. You have four spare A100s.",o:[["Give each team a whole A100 on a rota","weak","Most of each GPU sits idle and teams wait for their turn."],["Partition the A100s with MIG and offer small slices through a namespace quota","strong","Hardware isolation, many concurrent users, and quotas keep it fair."],["Enable time-slicing and let everyone share all four","ok","Cheap, but one user can exhaust memory for everyone. Acceptable for dev only, with clear warnings."]]},
+      {s:"Batch scoring jobs sometimes take GPUs that the online fraud model needs during peaks.",o:[["Ask batch teams to run only at night","ok","Helps, but relies on people and wastes daytime idle capacity."],["Give serving a higher priority class with preemption, and run batch through a Kueue queue that borrows idle quota","strong","Serving reclaims capacity automatically; batch uses whatever is idle."],["Buy more GPUs for serving","weak","Expensive, and the contention returns as batch grows."]]},
+      {s:"A new 70B deployment with tensor parallelism of 4 is 40% slower than the vendor benchmark.",o:[["Check pod placement: are the four GPUs in one node and NVLink-connected?","strong","Tensor parallelism across PCIe or across nodes is a common silent slowdown."],["Increase replicas","weak","Does not fix per-replica slowness and costs more."],["Switch serving engines immediately","ok","May help eventually, but rules out the cheaper, likelier cause last."]]},
+      {s:"Scaling the chat model from 4 to 8 replicas takes 15 minutes, so morning peaks breach the SLO.",o:[["Raise the autoscaler's CPU threshold","weak","CPU is not the bottleneck, and it does not shorten cold start."],["Cache weights on nodes or in pre-pulled model images, and scale ahead of the known morning peak","strong","Shortens cold start and uses predictable demand."],["Accept the breach as unavoidable","weak","The cause is known and fixable."]]}]},
+  talk:[["How would you share a pool of GPUs across many teams safely?","Classify workloads; MIG for small isolated work; whole GPUs for large serving; time-slicing only in dev; namespace quotas on nvidia.com/gpu; priority classes and preemption; Kueue for batch with borrowing; chargeback on allocated GPU hours."],
+    ["Training, batch inference and online serving: how do their platform needs differ?","Serving: latency, availability, reserved and spread. Batch: throughput, cheap, preemptible, queued. Training: gang scheduling, topology, checkpointing, long runs."],
+    ["What GPU metrics do you put on a fleet dashboard?","SM and tensor activity, memory used, allocated-but-idle hours per tenant, engine queue depth and KV use, tokens per second, Xid and ECC errors, cost per tenant."]],
+  project:{title:"GPU tenancy design", deliver:"A short design for how your cluster (or a homelab stand-in) shares GPUs across serving, batch and experimentation.", steps:["List workload classes with their latency, throughput and isolation needs","Choose a sharing method for each class, with reasons","Define node pools, taints and labels","Write the quota and priority scheme, including preemption","Describe how batch and training jobs are queued","Plan how model weights reach nodes and estimate cold start","Pick fleet metrics and the idle-capacity report"],
+    rubric:["Each workload class has an isolation choice and reason","Quotas and priorities are explicit","Gang scheduling is addressed for training","Cold start is estimated in minutes","Metrics avoid relying on GPU_UTIL alone"]}
+},
+
+{ id:"a4", no:"AI-04", lvl:"p", title:"Gateways, routing, autoscaling and guardrails", time:"90 min",
+  summary:"The control plane in front of models: one API with identity and quotas, inference-aware routing, autoscaling on the right signals, guardrails, and evaluation workflows that gate change.",
+  objectives:["List the responsibilities of a model gateway","Explain why round-robin load balancing fails for LLMs and what replaces it","Choose autoscaling signals and handle slow scale-up","Place guardrails and evaluation gates, and decide fail-open or fail-closed"],
+  learn:`
+<h3>What the gateway owns</h3>
+<ul>
+<li><b>One API</b>, usually OpenAI-compatible, for self-hosted and managed models alike.</li>
+<li><b>Identity and authorisation:</b> which tenant and which user, and which models each may call.</li>
+<li><b>Quotas and rate limits</b> in tokens per minute as well as requests, because one request can cost a hundred times another.</li>
+<li><b>Routing:</b> by model name, cost tier, region or data classification, with <b>fallback</b> to another provider or a smaller model when the primary is degraded.</li>
+<li><b>Retries with budgets:</b> retry on transient errors, but cap retries so a partial outage does not turn into a retry storm.</li>
+<li><b>Metering</b> for chargeback and capacity planning, and a <b>logging policy</b> for prompts and outputs.</li>
+</ul>
+<h3>Routing inside a model pool</h3>
+<p>Round-robin assumes requests cost about the same. LLM requests vary by orders of magnitude, so round-robin piles long requests onto busy replicas. Inference-aware routing picks a replica by its queue depth and KV cache use, and by <b>prefix affinity</b> (send requests with the same long system prompt to the replica that already has it cached). The Kubernetes Gateway API Inference Extension and projects such as llm-d implement this pattern with an endpoint picker that reads model-server metrics.</p>
+<h3>Autoscaling on the right signal</h3>
+<p>CPU is irrelevant and GPU utilisation is misleading. Better signals come from the engine: requests waiting in the queue (vLLM exposes <code>num_requests_waiting</code>), KV cache utilisation, or in-flight concurrency per replica. HPA with custom metrics or KEDA can scale on them; KServe's serverless mode can scale on concurrency. Scale-up is slow because nodes, images and weights take time, so combine reactive scaling with minimum replicas sized for the normal peak, scheduled scaling for known patterns, and warm spare capacity. Scale-to-zero suits development and low-tier models, not interactive production.</p>
+<h3>Guardrails</h3>
+<p><b>Input guardrails</b> detect prompt injection attempts, redact or block sensitive data, and enforce topic policy. <b>Output guardrails</b> check for sensitive data leakage, toxic content, schema validity for structured output, and groundedness against retrieved sources. Put shared, policy-level checks in the gateway or a guardrail service so every tenant gets them; leave use-case checks to the application. Every guardrail adds latency, so give them a budget. Decide <b>fail-open or fail-closed</b> per check and per data class: a PII filter on a restricted-data route should fail closed.</p>
+<h3>Evaluation workflows</h3>
+<p>Treat a model, prompt or guardrail change like a code change. Keep versioned evaluation datasets per use case, run them in CI as a <b>regression gate</b>, and use LLM-as-judge scoring only after checking it agrees with human ratings on a sample. In production, use shadow traffic and canaries per model version, and watch online signals such as guardrail block rates, user feedback and refusal rates.</p>`,
+  examples:[{kind:"diagram", title:"Request path through the control plane", code:D.gateway, caption:"The load balancer reads replica state; the autoscaler reads the same signals; guardrails wrap the model call.", notice:["Replica B is busy, so new requests go to A.","Fallback to a managed API is a routing decision, invisible to the app.","Output guardrails run before the response leaves the platform."]}],
+  quiz:[
+    {q:"Why rate-limit LLM traffic in tokens rather than only requests?",o:["Tokens are easier to count","Request cost varies enormously with prompt and output length","Requests cannot be counted","It is required by the OpenAI API"],a:1,why:"A 30K-token request can cost as much as hundreds of small ones. Token budgets reflect real capacity use."},
+    {q:"Which autoscaling signal is most useful for an LLM server?",o:["CPU utilisation","Pod memory","Requests waiting in the engine queue or KV cache utilisation","Network bytes"],a:2,why:"They measure the actual bottleneck: requests waiting for batch slots or cache space."},
+    {q:"What does prefix-affinity routing improve?",o:["Security","TTFT, by reusing cached prompt prefixes on the same replica","Model accuracy","Log retention"],a:1,why:"Requests sharing a long system prompt skip recomputing it if they land where it is cached."},
+    {q:"A PII-redaction guardrail on a route carrying restricted data times out. What should happen?",o:["Send the request without redaction","Fail closed: reject or queue the request","Retry indefinitely","Route to a managed model"],a:1,why:"For restricted data the safe failure is to block. Decide fail-open or fail-closed in advance per data class."},
+    {q:"When is LLM-as-judge evaluation trustworthy enough to gate releases?",o:["Always","After checking it agrees with human ratings on a representative sample","Never","Only for code generation"],a:1,why:"Judges have their own biases. Calibrate against humans, then monitor agreement over time."}],
+  lab:{type:"sort", title:"Which layer handles it?",
+    brief:"Place each concern in the layer that should own it on Northbank's platform.",
+    buckets:["Gateway","Inference server","Autoscaler","Guardrail service","Evaluation pipeline"],
+    items:[
+      ["Enforcing 200K tokens per minute for the payments tenant","Gateway","Quotas are tenant-level policy enforced at the front door."],
+      ["Paged KV cache allocation and continuous batching","Inference server","Engine internals."],
+      ["Adding replicas when requests waiting exceed 5 per replica","Autoscaler","Scaling on an engine queue signal."],
+      ["Blocking responses that contain account numbers","Guardrail service","A shared, policy-level output check."],
+      ["Failing a release when answer accuracy on the golden set drops 3 points","Evaluation pipeline","A regression gate on quality."],
+      ["Falling back to a managed model when the self-hosted pool is degraded","Gateway","Routing and fallback are gateway decisions."],
+      ["Prefix caching of the shared system prompt","Inference server","The engine stores and reuses KV blocks."],
+      ["Detecting indirect prompt injection in retrieved documents","Guardrail service","Input checks on content entering the model's context."],
+      ["Comparing a new model version on shadow traffic","Evaluation pipeline","Online evaluation before promotion."]]},
+  talk:[["Design a model gateway for an enterprise. What does it do?","OpenAI-compatible API; tenant identity and model authorisation; token-based quotas; routing by model, tier, region, data class; fallback; retry budgets; metering and chargeback; logging policy with redaction; guardrail hooks; SLOs per route."],
+    ["How do you autoscale LLM serving?","Scale on queue depth, KV use or concurrency; HPA custom metrics or KEDA; min replicas for normal peak; scheduled scaling; warm capacity because cold start is minutes; scale-to-zero only for low tiers."],
+    ["How do you stop a model or prompt change from silently degrading quality?","Versioned eval sets per use case; CI regression gate; calibrated LLM-as-judge plus human samples; shadow and canary per version; online signals; rollback."]],
+  project:{title:"Gateway and scaling policy", deliver:"A policy document for one model route: quotas, routing, fallback, autoscaling and guardrails.", steps:["Pick a model route and its tenants","Set token and request quotas per tenant with reasons","Define routing and fallback rules","Choose autoscaling signals, thresholds and minimum replicas","List guardrails with latency budget and fail-open or fail-closed for each","Define the evaluation gate for model or prompt changes","Review it with a security partner and one tenant"],
+    rubric:["Quotas are token-based","Fallback behaviour is defined","Autoscaling uses an engine signal and accounts for cold start","Each guardrail has a failure mode decision","An evaluation gate blocks regressions"]}
+},
+
+{ id:"a5", no:"AI-05", lvl:"p", title:"Performance engineering and capacity", time:"90 min",
+  summary:"Load test LLM services properly, find the knee of the curve, tune the levers that matter, and turn the results into a capacity and cost model.",
+  objectives:["Design a realistic, token-aware load test","Find the maximum concurrency that meets an SLO and report goodput","Use profiling to find the real bottleneck","Build a capacity model with Little's law and compute cost per million tokens"],
+  learn:`
+<h3>Start with the workload profile</h3>
+<p>Before testing, write down the distributions that drive cost: input tokens, output tokens, arrival rate by hour, share of requests with a shared prefix, streaming or not. A load test with fixed 100-token prompts says nothing about a retrieval workload with 6K-token prompts.</p>
+<h3>Load testing LLMs</h3>
+<ul>
+<li>Use real or realistic prompt distributions, including the long tail.</li>
+<li>Prefer <b>open-loop</b> tests (requests arrive at a set rate regardless of responses) for capacity questions. Closed-loop tests with a fixed number of users hide queueing: this is <b>coordinated omission</b>.</li>
+<li>Measure TTFT, TPOT and end-to-end latency at p50, p95 and p99, plus tokens per second and error rate.</li>
+<li>Report <b>goodput</b>: requests per second that met the SLO, not just total throughput.</li>
+<li>Sweep concurrency or rate until latency bends sharply upward. That <b>knee</b> is your per-replica capacity at the SLO.</li>
+</ul>
+<p>Tools include vLLM's benchmark scripts, GuideLLM, NVIDIA GenAI-Perf, k6 and Locust. Whatever the tool, save the config and raw results so tests are reproducible.</p>
+<h3>Find the real bottleneck</h3>
+<p>Profile before tuning. Common surprises: tokenization or JSON handling on a single CPU thread in the gateway, TLS or connection limits, a guardrail model slower than the main model, and network hops between zones. On the GPU side, use the engine's metrics first, then tools such as Nsight Systems or the PyTorch profiler.</p>
+<h3>The levers</h3>
+<div class="tbl"><table><thead><tr><th>Lever</th><th>Helps</th><th>Watch for</th></tr></thead><tbody>
+<tr><td>Larger batch (max sequences)</td><td>Throughput, cost per token</td><td>TPOT rises</td></tr>
+<tr><td>Quantization (FP8)</td><td>Fits more KV cache, faster decode</td><td>Quality; needs evaluation</td></tr>
+<tr><td>Prefix caching</td><td>TTFT for shared prompts</td><td>Only helps with real prefix reuse</td></tr>
+<tr><td>Speculative decoding</td><td>TPOT at low batch sizes</td><td>Gains shrink at high load</td></tr>
+<tr><td>Tensor parallel degree</td><td>Latency for large models</td><td>Fewer replicas per GPU</td></tr>
+<tr><td>Routing small tasks to small models</td><td>Cost</td><td>Needs a quality check per task</td></tr>
+<tr><td>Response caching at the gateway</td><td>Repeated identical requests</td><td>Staleness, data leakage across users</td></tr>
+</tbody></table></div>
+<h3>Capacity modelling</h3>
+<p><b>Little's law</b>: average concurrency = arrival rate × average time in system. At 20 requests per second and 12 seconds per request, 240 requests are in flight. Divide by the per-replica concurrency that meets the SLO, then add headroom for spikes, zone failure and cold start. Size for the peak, report cost against the average.</p>
+<p>Cost per million output tokens = hourly GPU cost ÷ million output tokens served per hour. It is the number that lets you compare self-hosting with a managed API, and it falls as utilisation rises.</p>`,
+  examples:[{kind:"ba", title:"A load test summary, rewritten", before:"Load test passed. vLLM handled 500 users. Average latency 3.2 s. GPU utilisation 98%.", after:"70B FP8 on 2×H100, open-loop, production prompt mix (median 1.8K in, 350 out).\nKnee at 48 concurrent sequences per replica: p95 TTFT 0.7 s, p95 TPOT 38 ms, goodput 3.9 req/s at the SLO (p95 TTFT < 1 s, p95 TPOT < 50 ms). Above 56, p95 TTFT exceeds 2 s.\nBottleneck: KV cache full above 56 sequences; requests queue. Next lever: FP8 KV cache (est. +40% concurrency), pending eval.\nRaw results and config: perf/2026-11-chat-70b/", notice:["Names the workload mix and test method.","Reports percentiles and goodput against an SLO, not averages.","States the bottleneck and the next lever."]}],
+  quiz:[
+    {q:"Why can a closed-loop load test with fixed virtual users understate latency?",o:["It sends too many requests","Users wait for responses before sending more, so arrival slows exactly when the system is slow (coordinated omission)","It ignores streaming","It uses the wrong tokenizer"],a:1,why:"Open-loop arrival at a set rate shows the queueing real traffic would see."},
+    {q:"What is goodput?",o:["Total tokens per second","Throughput of requests that met the latency SLO","GPU utilisation","Cache hit rate"],a:1,why:"Throughput that misses the SLO is not useful capacity."},
+    {q:"Arrival rate is 10 requests per second and each takes 6 seconds. How many requests are in flight on average?",o:["1.7","16","60","600"],a:2,why:"Little's law: 10 × 6 = 60."},
+    {q:"Raising max batch size doubled throughput but p95 TPOT now breaks the SLO. What does that tell you?",o:["The GPU is broken","You are past the knee: pick the largest batch that still meets the SLO","Batching does not work","Lower the SLO"],a:1,why:"Batch size trades per-user latency for throughput. The SLO sets the limit."},
+    {q:"Which number best compares self-hosting with a managed API?",o:["GPU count","Cost per million tokens at realistic utilisation, including people and headroom","Peak tokens per second","Model size"],a:1,why:"It normalises for traffic and includes the cost of idle capacity."}],
+  lab:{type:"cap", title:"Capacity and cost model",
+    brief:"Use Little's law to size replicas for peak traffic, then see the cost per million output tokens at average traffic. Challenge: get cost below $3.00 per million output tokens while keeping at least 25% headroom. Use the engineering levers (per-replica concurrency from batching or quantization, GPUs per replica, latency), not by cutting headroom.",
+    target:3.00, minHead:25},
+  talk:[["How do you load test an LLM service?","Workload profile from production; realistic token distributions; open-loop arrival; sweep rate to find the knee; TTFT/TPOT/e2e percentiles; goodput vs SLO; error rates; reproducible configs; profile the bottleneck."],
+    ["Your LLM endpoint is too slow. Where do you start?","Split TTFT vs TPOT; check queueing; engine metrics (queue, KV use, preemptions); profile gateway CPU, guardrails, network; then levers: batching, prefix caching, quantization, TP degree, routing smaller models."],
+    ["How do you build a capacity plan for a new GenAI use case?","Peak and average arrival rates; token distributions; Little's law; per-replica concurrency at SLO from load test; headroom for spikes, zone loss and cold start; GPUs; cost per million tokens; review quarterly."]],
+  project:{title:"Load test and capacity report", deliver:"A load test report and capacity model for one model service.", steps:["Write the workload profile from real or expected traffic","Build an open-loop test with that profile","Sweep load and find the knee against your SLO","Profile at the knee and name the bottleneck","Try one lever and measure the change","Build the capacity model: replicas, GPUs and headroom for the expected peak","Compute cost per million output tokens at average traffic"],
+    rubric:["Uses a realistic prompt distribution","Reports percentiles and goodput","Names the bottleneck with evidence","Capacity model shows its assumptions","Cost per million tokens is calculated"]}
+}
+];
+const MODULES_A = MODULES;
+
+MODULES.push(
+{ id:"a6", no:"AI-06", lvl:"p", title:"SLOs, observability and incident response", time:"90 min",
+  summary:"Define service levels that match what AI users feel, alert on error-budget burn instead of noise, instrument the whole request path, and run incidents and root-cause analysis that make the platform better.",
+  objectives:["Choose SLIs for an AI service, including latency and quality","Calculate error budgets and multi-window burn-rate alerts","Design metrics, traces and logs for model traffic, with a prompt logging policy","Run an incident and write a root-cause analysis with useful actions"],
+  learn:`
+<h3>SLIs that match the user's experience</h3>
+<p>An SLI is a ratio of good events to all events. For an LLM route, useful SLIs are:</p>
+<ul>
+<li><b>Availability:</b> share of requests that did not fail with a server error or timeout (client errors and quota rejections usually excluded, but tracked).</li>
+<li><b>Responsiveness:</b> share of streaming requests with TTFT under a threshold, and share with TPOT under a threshold. For non-streaming calls, end-to-end latency per 1K output tokens.</li>
+<li><b>Quality signals:</b> evaluation pass rate on sampled traffic, guardrail block rate, refusal rate. These are often tracked as indicators before they become formal SLOs.</li>
+</ul>
+<p>Set SLOs per route and tier: an interactive assistant and an overnight batch summariser should not share targets. An <b>SLA</b> is a contract with consequences; keep internal SLOs tighter than any SLA.</p>
+<h3>Error budgets</h3>
+<p>The error budget is <code>1 − SLO</code>. A 99.9% availability SLO over 30 days allows 0.1% bad requests, or 43.2 minutes of full outage. An <b>error budget policy</b> says what happens as it is spent: for example, freeze risky changes when 75% is gone and spend engineering time on reliability until it recovers.</p>
+<h3>Alert on burn rate</h3>
+<p>Burn rate is how fast the budget is being spent: <code>observed error rate ÷ (1 − SLO)</code>. A burn rate of 1 spends exactly the budget over the window. The Google SRE Workbook recommends multi-window alerts for a 30-day window: page at <b>14.4×</b> over 1 hour (2% of budget spent) and at <b>6×</b> over 6 hours (5%), and open a ticket at <b>1×</b> over 3 days (10%). Each long window is paired with a short one (5 minutes, 30 minutes, 6 hours) so alerts stop soon after the problem does.</p>
+<h3>Observability for model traffic</h3>
+<ul>
+<li><b>Metrics:</b> RED (rate, errors, duration) at the gateway; engine metrics (queue depth, KV cache use, preemptions, tokens per second, TTFT and TPOT histograms); GPU metrics from DCGM; all labelled by tenant, model and version.</li>
+<li><b>Traces:</b> one trace across app, gateway, guardrails, retrieval and model, using OpenTelemetry. The OpenTelemetry generative AI semantic conventions define attributes such as model name and input and output token counts.</li>
+<li><b>Logs:</b> structured, with a written <b>prompt logging policy</b>: what is captured, what is redacted, who can read it, and how long it is kept. Prompts often contain the most sensitive data in the system.</li>
+</ul>
+<h3>Incidents</h3>
+<p>Agree roles before you need them: an incident commander, an operations lead and a communications lead. Declare early, mitigate first (roll back, shed load, fail over to another model), diagnose second. Common AI platform incidents: out-of-memory on unexpectedly long contexts, KV cache thrash and request preemption, one tenant's batch job starving others, a model version that regresses quality, GPU hardware errors (Xid or ECC), a managed provider outage, and a cold-start storm after a node pool upgrade.</p>
+<h3>Root-cause analysis</h3>
+<p>Write blameless reviews. Separate the trigger from the contributing factors, and ask why the system made the failure easy. Good actions change the system: a test, a guardrail, an alert, an automated check, a default. "Be more careful" is not an action. Track actions to closure and review them as a set each quarter.</p>`,
+  examples:[{kind:"diagram", title:"Multi-window burn-rate alerting", code:D.burn, caption:"Fast burns page quickly; slow burns create tickets before the budget runs out.", notice:["Each threshold maps to a share of the 30-day budget.","Short windows make alerts reset quickly after recovery.","No alert fires on a brief blip that barely touches the budget."]},
+    {kind:"ba", title:"A runbook step, rewritten", before:"If latency is high, check the GPUs and restart vLLM if needed.", after:"Symptom: p95 TTFT alert on chat-70b.\n1. Open the chat-70b dashboard. If num_requests_waiting > 10 on all replicas, this is capacity: scale to max replicas and enable the fallback route (link). Go to step 4.\n2. If one replica is slow, check its KV cache use and preemptions. If preemptions > 0, cordon the node and delete the pod.\n3. If a single tenant's traffic doubled, apply that tenant's emergency quota (link).\n4. Post status in the incident channel every 15 minutes until p95 TTFT is under target for 30 minutes.", notice:["Starts from the alert the responder actually sees.","Each step has a check and an action.","Mitigation comes before diagnosis."]}],
+  quiz:[
+    {q:"A route has a 99.5% availability SLO over 30 days. What is the error budget expressed as full-outage time?",o:["43 minutes","3.6 hours","7.2 hours","36 hours"],a:1,why:"0.5% of 30 days = 0.005 × 720 hours = 3.6 hours."},
+    {q:"With a 99.9% SLO, what error rate over one hour corresponds to a 14.4× burn rate?",o:["0.1%","1.44%","14.4%","0.0144%"],a:1,why:"14.4 × 0.1% = 1.44%. Sustained for an hour, that spends 2% of the 30-day budget."},
+    {q:"Why pair each long alert window with a short one?",o:["To page more often","So the alert stops soon after the problem is fixed","To save storage","It is required by Prometheus"],a:1,why:"The long window gives significance; the short window confirms it is still happening."},
+    {q:"Which is the strongest action item from a root-cause analysis?",o:["Engineers will be more careful with config changes","Add a CI check that rejects max context settings above what the KV cache can hold","Hold a meeting about the incident","Restart pods weekly"],a:1,why:"It changes the system so the same mistake is caught automatically."},
+    {q:"Why does an AI platform need a written prompt logging policy?",o:["Prompts are always public","Prompts often hold the most sensitive data in the system, so capture, redaction, access and retention must be decided","Logs are free","To improve model accuracy"],a:1,why:"Unplanned prompt logging is a common data exposure."}],
+  lab:{type:"slo", title:"Error budget and burn-rate calculator",
+    brief:"Set an SLO and traffic, see the error budget, how much is spent so far, and the alert thresholds. Then answer the check question to complete the lab."},
+  talk:[["How would you define SLOs for an LLM inference service?","Per route and tier; availability excluding client errors; TTFT and TPOT thresholds as good-event ratios; quality indicators (eval pass rate, guardrail blocks); 28–30 day windows; error budget policy agreed with tenants."],
+    ["Explain burn-rate alerting to a team that pages on every latency spike.","Error budget = 1 − SLO; burn rate = error rate ÷ budget rate; page on fast burn (14.4× 1h, 6× 6h), ticket on slow burn (1× 3d); short windows to reset; fewer, more meaningful pages."],
+    ["Walk through how you ran (or would run) an incident on a model platform.","Declare; roles (IC, ops, comms); mitigate first (rollback, shed load, fallback); status cadence; diagnose with dashboards and traces; resolve; blameless RCA; contributing factors; system-changing actions tracked to closure."]],
+  project:{title:"SLOs and alerting for one route", deliver:"SLO definitions, burn-rate alerts and one runbook for a model route you operate or can stand up.", steps:["Write two or three SLIs as good-event ratios","Set SLO targets and the window, with reasons","Write the error budget policy","Implement multi-window burn-rate alerts (Prometheus rules or equivalent)","Build the dashboard: gateway RED, engine and GPU metrics by tenant","Write the runbook for the most likely alert","Test an alert end to end with a fault injection"],
+    rubric:["SLIs are good-event ratios","Error budget policy names concrete actions","Alerts use burn rate with paired windows","Runbook starts from the alert and lists checks and actions","An alert was tested by injecting a fault"]}
+},
+
+{ id:"a7", no:"AI-07", lvl:"p", title:"Secure by design for AI platforms", time:"90 min",
+  summary:"Identity, secrets, supply chain, vulnerability management and sensitive data handling for model platforms, plus the new risks LLMs bring: prompt injection, data leakage and unbounded consumption.",
+  objectives:["Threat model an AI platform's data flows and trust boundaries","Apply workload identity, least privilege and entitlement-aware retrieval","Secure the model and software supply chain, including model artifacts","Map LLM-specific risks to controls using the OWASP Top 10 for LLM applications"],
+  learn:`
+<h3>Start from the data flows</h3>
+<p>Draw where prompts, retrieved documents, model weights, outputs and logs travel, and mark each trust boundary. Most AI platform incidents happen at boundaries: retrieved data reaching a user who should not see it, prompts landing in a log store with wide access, or a model artifact from an unvetted source running on the cluster.</p>
+<h3>Identity and access</h3>
+<ul>
+<li>Use <b>workload identity</b> (Kubernetes service accounts federated through OIDC, or SPIFFE) instead of long-lived shared API keys.</li>
+<li>Authorise at the gateway per tenant and per model, and pass the <b>end user's identity</b> through to downstream services.</li>
+<li>Enforce data entitlements <b>at retrieval time, with the user's entitlements</b>, not the service account's. A retrieval service that can read everything will eventually return everything.</li>
+<li>Apply least privilege to agents and tools: an LLM that can call an API is a user of that API and needs its own scoped permissions.</li>
+</ul>
+<h3>Secrets</h3>
+<p>Keep secrets in a managed store such as HashiCorp Vault or a cloud secret manager, sync them with the External Secrets Operator or the Secrets Store CSI driver, prefer short-lived credentials, and rotate automatically. Scan repositories, images and logs for leaked secrets. Never bake keys into images or pass them where a crash dump or debug log will print them.</p>
+<h3>Supply chain</h3>
+<ul>
+<li>Pin dependencies, generate <b>SBOMs</b> (CycloneDX or SPDX), sign images with Sigstore cosign, and record <b>SLSA</b> provenance.</li>
+<li>Enforce at admission with policy (Kyverno, OPA Gatekeeper, or OpenShift's built-in controls): only signed images from approved registries.</li>
+<li><b>Model artifacts are code.</b> Python pickle files can execute arbitrary code when loaded. Prefer the safetensors format, scan artifacts before admission, pin by hash, and serve only from an approved model registry.</li>
+</ul>
+<h3>Vulnerability remediation</h3>
+<p>Set remediation timelines by severity and exposure, keep a small set of maintained base images, rebuild on a schedule rather than only on alerts, and use VEX statements to record when a reported vulnerability does not affect you. GPU images are large and slow to rebuild, so automate the pipeline before you need an emergency patch.</p>
+<h3>Sensitive data</h3>
+<p>Classify data per route and decide what each class may do: which models (self-hosted only, or approved managed providers with zero data retention terms), what may be logged, and where it may be processed. Redact before logging, encrypt in transit and at rest, set retention, and never use tenant data to fine-tune without explicit approval.</p>
+<h3>LLM-specific risks</h3>
+<p>The OWASP Top 10 for LLM Applications (2025) lists: prompt injection, sensitive information disclosure, supply chain, data and model poisoning, improper output handling, excessive agency, system prompt leakage, vector and embedding weaknesses, misinformation, and unbounded consumption. Prompt injection cannot be fully prevented by filters, so contain its impact: least privilege for tools, human approval for consequential actions, treat model output as untrusted input to downstream systems, and keep secrets out of system prompts. Quotas and token limits address unbounded consumption.</p>
+<h3>In a regulated firm</h3>
+<p>Expect model risk management requirements (in US banking, the Federal Reserve's SR 11-7 guidance), frameworks such as the NIST AI Risk Management Framework, and NIST SP 800-218A for secure development of generative AI. Make evidence a by-product of the platform: approvals in the registry, signed artifacts, logged evaluations.</p>`,
+  examples:[{kind:"diagram", title:"Trust boundaries on a retrieval route", code:D.trust, caption:"Amber components handle classified data and need the strictest controls.", notice:["The retrieval service filters by the user's entitlements, carried from the original token.","Weights come only from a signed, scanned registry.","Logs are redacted and have a retention period."]}],
+  quiz:[
+    {q:"A retrieval service uses its own broad service account to fetch documents for any user. What is the risk?",o:["Slow queries","Users can receive documents they are not entitled to see","Higher GPU cost","None if the gateway authenticates users"],a:1,why:"Entitlements must be enforced at retrieval time with the user's identity, or the model becomes a data leak."},
+    {q:"Why treat a pickle-format model file as untrusted code?",o:["It is larger","Loading pickle can execute arbitrary code","It cannot be versioned","It is slower"],a:1,why:"Prefer safetensors, scan artifacts, and serve from an approved registry."},
+    {q:"What is the most realistic defence against prompt injection?",o:["A perfect input filter","Contain impact: least privilege for tools, human approval for consequential actions, and treating output as untrusted","Longer system prompts","Higher temperature"],a:1,why:"Filters help but can be bypassed. Limit what a successful injection can do."},
+    {q:"Which OWASP LLM risk do per-tenant token quotas mainly address?",o:["System prompt leakage","Unbounded consumption","Misinformation","Data poisoning"],a:1,why:"Quotas and limits stop runaway cost and denial of service."},
+    {q:"Which is the best place to keep an API key for a managed model provider?",o:["In the container image","In a ConfigMap","In a secret store, synced as a short-lived or rotated secret","In the system prompt"],a:2,why:"Managed stores with rotation and audit, never images, ConfigMaps or prompts."}],
+  lab:{type:"sort", title:"Match each risk to its primary control",
+    brief:"For each risk on Northbank's platform, choose the control family that addresses it first.",
+    buckets:["Identity and access","Secrets management","Supply chain","Data protection","Runtime guardrails"],
+    items:[
+      ["A shared API key used by six services leaks in a public repo","Secrets management","Per-service, short-lived credentials from a secret store, with scanning and rotation."],
+      ["A model downloaded from a public hub contains a malicious pickle payload","Supply chain","Approved registry, safetensors, scanning and hash pinning."],
+      ["An analyst gets loan files from another region through the assistant","Identity and access","Entitlement-aware retrieval using the user's identity."],
+      ["Full prompts with customer names are kept in debug logs for a year","Data protection","Redaction, logging policy and retention."],
+      ["A support agent tool lets the model issue refunds when a document tells it to","Runtime guardrails","Limit agency and require human approval; treat retrieved text as untrusted."],
+      ["An unsigned image from a personal registry runs in the serving namespace","Supply chain","Admission policy: signed images from approved registries only."],
+      ["The model returns an account number from its context window to the wrong user","Runtime guardrails","Output checks for sensitive data, alongside entitlement-aware retrieval."],
+      ["A batch job's service account can delete production model deployments","Identity and access","Least-privilege RBAC per workload."]]},
+  talk:[["How do you secure a multi-tenant LLM platform?","Threat model flows and boundaries; workload identity and per-tenant authZ; user entitlements at retrieval; secrets in a store with rotation; signed images, SBOMs, admission policy; safe model formats and registry; data classification rules; redacted logging; guardrails; quotas; audit evidence."],
+    ["What is different about securing AI workloads compared with ordinary services?","Model artifacts can be code; prompts carry sensitive data; outputs are untrusted; prompt injection; excessive agency for tools; unbounded consumption; retrieval can bypass entitlements; quality and misuse risks."],
+    ["How do you run vulnerability remediation for large GPU images?","Few maintained base images; automated scheduled rebuilds; severity and exposure-based timelines; VEX for non-applicable CVEs; canary deploys; measure time to remediate."]],
+  project:{title:"Threat model and control map", deliver:"A threat model for one AI route with a control for each significant threat.", steps:["Draw the data flow with trust boundaries","List threats per boundary, using STRIDE and the OWASP LLM Top 10","Rate each threat by likelihood and impact","Map each high or medium threat to a control and an owner","Check identity: whose identity reaches the data?","Check supply chain: where do images and weights come from?","Review with a security partner and record decisions"],
+    rubric:["Data flow shows trust boundaries","LLM-specific threats are included","Each significant threat has a control and owner","Retrieval uses user entitlements","Model artifact provenance is addressed"]}
+},
+
+{ id:"a8", no:"AI-08", lvl:"p", title:"Golden paths, CI/CD and infrastructure as code", time:"90 min",
+  summary:"Package the platform so teams can ship safely without asking: templates, reference implementations, test harnesses and baselines, delivered through pipelines and GitOps that make the right way the easy way.",
+  objectives:["Define what belongs in a golden path and what makes one adopted","Build reference implementations and test harnesses that stay current","Design a CI/CD pipeline with security and evaluation gates and progressive delivery","Manage platform infrastructure as code with review, drift detection and policy"],
+  learn:`
+<h3>What a golden path is</h3>
+<p>A golden path (or paved road) is the opinionated, supported way to do a common job, such as "host a fine-tuned model" or "add retrieval to an app". It is optional, but so much easier than the alternative that most teams choose it. A good one contains:</p>
+<ul>
+<li>A <b>template</b> repository or scaffolder entry (for example in a developer portal such as Backstage).</li>
+<li>Deployment manifests or a Helm chart with safe defaults: resource requests, probes, autoscaling, network policy.</li>
+<li>Infrastructure modules for the pieces the team needs.</li>
+<li>A CI pipeline already wired with tests, scans and gates.</li>
+<li>A dashboard, alerts and a runbook that work on day one.</li>
+<li>An <b>onboarding guide</b> that gets a new team to a first successful call quickly.</li>
+</ul>
+<h3>Reference implementations and baselines</h3>
+<p>A reference implementation is real, tested, running code that shows the pattern end to end, not a diagram. Keep it in CI so it breaks when the platform changes. Pair it with <b>baselines</b>: known-good configurations per model size and GPU type with measured TTFT, TPOT and throughput (Module 2), and for training, known-good job specs with measured throughput. Baselines turn "how many GPUs do we need?" from a meeting into a lookup.</p>
+<h3>Test harnesses</h3>
+<ul>
+<li><b>Contract tests</b> for the gateway API so client libraries and the platform do not drift.</li>
+<li>A <b>load test harness</b> teams can point at their route with their own prompt mix (Module 5).</li>
+<li>An <b>evaluation harness</b> that runs a team's golden dataset against a model or prompt change (Module 4).</li>
+<li><b>Fault injection</b> for game days: kill a replica, fill the KV cache, fail the managed provider.</li>
+</ul>
+<h3>Pipelines</h3>
+<p>Build with pinned dependencies, scan, generate an SBOM and sign. Run unit, contract and integration tests, then an evaluation gate for model or prompt changes. Deploy through <b>GitOps</b> (Argo CD, or OpenShift GitOps, or Flux): the pipeline opens a change to an environment repository, and the controller reconciles the cluster. Use <b>progressive delivery</b> such as Argo Rollouts canaries with automated analysis on error rate and latency, and roll back automatically when burn rate rises. Treat model versions as deployable artifacts with their own promotion, separate from code.</p>
+<h3>Infrastructure as code</h3>
+<p>Use Terraform or OpenTofu, or Kubernetes-native tools such as Crossplane, with versioned modules, reviewed plans, remote state with locking, drift detection, and policy as code (OPA, Sentinel or Kyverno) that blocks unsafe changes before apply. Review infrastructure changes like code: a plan in the pull request, an owner, and a rollback.</p>
+<h3>Measure the paths</h3>
+<p>Track time to first inference, share of services on the current template version, change failure rate for golden-path services versus others, and tickets per tenant. If teams fork the template, find out why and fold the reason back in.</p>`,
+  examples:[{kind:"diagram", title:"A model service pipeline", code:D.pipeline, caption:"Security and quality gates run before anything reaches a cluster; GitOps and canary analysis handle the rollout.", notice:["Evaluation is a gate, like tests.","Deployment is a pull request to an environment repo.","Rollback is automatic and tied to the same SLO signals as alerting."]}],
+  quiz:[
+    {q:"What most distinguishes a golden path from a mandated standard?",o:["It is written in YAML","It is optional but so much easier that teams choose it","It has no tests","Only the platform team uses it"],a:1,why:"Adoption is earned by making the supported way the easy way."},
+    {q:"How do you stop a reference implementation going stale?",o:["Review it annually","Run it in CI against the current platform so it breaks when the platform changes","Mark it as deprecated","Store it in a wiki"],a:1,why:"If it is tested continuously, it stays true."},
+    {q:"In GitOps, how does a pipeline deploy?",o:["kubectl apply from the CI runner","It changes an environment repository, and a controller reconciles the cluster to it","SSH to nodes","Manual approval only"],a:1,why:"Git becomes the source of truth and audit trail; the controller corrects drift."},
+    {q:"Why give model versions their own promotion path?",o:["Models are not artifacts","Model changes alter behaviour without code changes and need their own evaluation and rollback","To save storage","Kubernetes requires it"],a:1,why:"A new model version can change quality and capacity; promote and roll back it deliberately."},
+    {q:"Teams keep forking the serving template. What should the platform team do?",o:["Block forks","Find out what they changed and why, and fold common reasons back into the template","Ignore it","Write more documentation"],a:1,why:"Forks are product feedback."}],
+  lab:{type:"builder", title:"Golden path spec",
+    brief:"Draft the spec for one golden path. Fill in each field, or load the Northbank example, and copy the preview into your design doc.",
+    fields:[["name","Golden path name","Host a fine-tuned LLM behind the gateway"],["who","Who it is for","Application teams with a fine-tuned 7B to 70B model and an approved use case"],["outcome","Outcome and target time","First authenticated call through the gateway within one day of approval"],["includes","What it includes","Scaffolder template; Helm chart (vLLM, HPA on queue depth, probes, PDB, network policy); Terraform for model bucket and registry entry; CI with SBOM, signing, eval gate; Grafana dashboard; burn-rate alerts; runbook"],["defaults","Safe defaults","FP8 for 70B on H100 after eval; min 2 replicas across zones; max context 16K; prompt logging off; restricted data blocked"],["harness","Test harnesses","Gateway contract tests; load test with team's prompt mix; eval harness on team's golden set; game-day script"],["baseline","Baselines provided","8B on 1×L40S and 70B FP8 on 2×H100: TTFT, TPOT and knee concurrency"],["measure","How we will measure it","Time to first inference; % of model services on the current template version; change failure rate vs non-template services"]],
+    template:o=>`GOLDEN PATH: ${o.name||"<name>"}
+For: ${o.who||"<who>"}
+Outcome: ${o.outcome||"<outcome and time>"}
+
+Includes:
+${o.includes||"<components>"}
+
+Safe defaults:
+${o.defaults||"<defaults>"}
+
+Test harnesses:
+${o.harness||"<harnesses>"}
+
+Baselines:
+${o.baseline||"<baselines>"}
+
+Measures:
+${o.measure||"<measures>"}`,
+    check:["A new team could follow it without asking the platform team","Defaults are safe for the most sensitive data the path allows","It includes observability and a runbook on day one","At least one baseline has measured numbers","Success is measured by adoption and speed"]},
+  talk:[["What makes a golden path successful?","Solves a common job end to end; optional but easiest; safe defaults; observability and runbook included; tested reference implementation; onboarding guide; measured by time to first success and adoption; forks treated as feedback."],
+    ["Describe a CI/CD pipeline for a model service.","Pinned build; scans, SBOM, signing; unit, contract, integration tests; eval gate; GitOps PR to env repo; canary with automated analysis; automatic rollback on burn rate; separate model version promotion."],
+    ["How do you manage platform infrastructure as code at scale?","Versioned modules; plans reviewed in PRs; remote state with locking; drift detection; policy as code; environments promoted; owners per module; automated tests for modules."]],
+  project:{title:"Ship one golden path", deliver:"A working golden path for one common job, used by at least one team other than yours.", steps:["Pick the most common request your platform receives","Write the spec (use the lab)","Build the template, chart and pipeline","Write the onboarding guide and time a new user through it","Add the dashboard, alerts and runbook","Publish one measured baseline","Onboard one team and record their time to first success"],
+    rubric:["It works end to end from a clean start","Onboarding was timed with a real user","Pipeline includes security and evaluation gates","Dashboard and alerts work on day one","Another team uses it"]}
+},
+
+{ id:"a9", no:"AI-09", lvl:"p", title:"From requirements to design to production", time:"75 min",
+  summary:"Turn an application team's request into numeric non-functional requirements, a design with real options, a delivery plan built on thin slices, and a production readiness review that catches problems before customers do.",
+  objectives:["Run an intake that surfaces the requirements teams forget to state","Write non-functional requirements as numbers","Plan delivery as a walking skeleton and milestones","Run a production readiness review and plan early-life support"],
+  learn:`
+<h3>Intake: ask what they did not say</h3>
+<p>Application teams describe features. You need the constraints. Ask: who uses it and how many, at what peak; what latency they will tolerate; what data goes in and its classification; what happens to the business if it is wrong or down for an hour; which regions; what it may cost per month; who supports it at 2 a.m.; when it must launch and why.</p>
+<h3>Non-functional requirements are numbers</h3>
+<div class="tbl"><table><thead><tr><th>Area</th><th>Adjective (not useful)</th><th>Requirement (useful)</th></tr></thead><tbody>
+<tr><td>Performance</td><td>Fast</td><td>p95 TTFT under 1 s for prompts up to 4K tokens</td></tr>
+<tr><td>Scale</td><td>Scalable</td><td>40 requests per second at peak, 3× growth in 12 months</td></tr>
+<tr><td>Availability</td><td>Highly available</td><td>99.9% monthly; survives loss of one zone</td></tr>
+<tr><td>Security</td><td>Secure</td><td>Confidential data; self-hosted models only; prompts not logged</td></tr>
+<tr><td>Cost</td><td>Cost-effective</td><td>Under $40K per month at forecast volume</td></tr>
+<tr><td>Recovery</td><td>Resilient</td><td>Recovery time 30 min; fallback to smaller model acceptable</td></tr>
+</tbody></table></div>
+<h3>The design document</h3>
+<p>Context and goals; non-goals; requirements; at least two real options (including "use what exists") with trade-offs; the chosen design; risks and mitigations; operational plan; open questions. Keep it short enough to be read before the review. Use the review to explore failure modes: what happens when the model is slow, the cache is full, the provider is down, a tenant sends 10× traffic, or the data is wrong?</p>
+<h3>Plan delivery in thin slices</h3>
+<p>Build a <b>walking skeleton</b> first: the thinnest end-to-end path, from the app through the gateway to a model and back, deployed to a production-like environment with monitoring. Then add capability in milestones that each produce something a user or operator can test. This surfaces integration, identity and network problems in week two instead of week ten.</p>
+<h3>Production readiness review</h3>
+<p>A readiness review checks evidence, not intentions. Typical items: SLOs defined and dashboards live; alerts tested by fault injection; runbooks for top alerts; on-call rota and escalation; load test at expected peak plus headroom; capacity plan; failover and rollback tested; security review and threat model closed; data classification and logging policy approved; evaluation results signed off by the business owner; cost forecast agreed.</p>
+<h3>Launch and early life</h3>
+<p>Launch in stages: internal pilot, limited release, general availability. Agree <b>exit criteria</b> for each stage in advance. Plan an early-life support period with the platform and app teams watching the same dashboard, a daily check-in, and a lower threshold for rollback.</p>`,
+  examples:[{kind:"diagram", title:"From intake to early-life support", code:D.readiness, caption:"Risk is retired early by the walking skeleton and load test, not at the readiness review.", notice:["NFRs are numbers before design starts.","The walking skeleton reaches a production-like environment early.","The readiness review checks evidence gathered along the way."]},
+    {kind:"ba", title:"A requirement, rewritten", before:"The fraud team needs a fast, secure, scalable LLM summary of case notes that is always available.", after:"Summarise case notes (median 3K tokens, max 12K) for 300 investigators.\nPeak 8 req/s weekday mornings; p95 end-to-end under 6 s for 250-token summaries; 99.5% monthly availability; degraded mode: show raw notes.\nRestricted data: self-hosted models only, prompts not logged, outputs retained 90 days with case.\nQuality: 95% of sampled summaries rated acceptable by investigators on a 200-case golden set.\nBudget: under $15K per month. Launch: pilot with 20 investigators by March.", notice:["Every adjective became a number or a rule.","Degraded mode is designed, not discovered.","Quality has an owner and a test set."]}],
+  quiz:[
+    {q:"Which is a usable non-functional requirement?",o:["The system must be scalable","p95 TTFT under 1 s at 40 requests per second for prompts up to 4K tokens","Latency should be low","Use the best GPU"],a:1,why:"It is measurable and testable."},
+    {q:"What is a walking skeleton?",o:["A design document template","The thinnest end-to-end slice deployed to a production-like environment","A load test","A project plan"],a:1,why:"It exposes integration, identity and network issues early."},
+    {q:"What should a production readiness review mainly check?",o:["That the team intends to write runbooks","Evidence: tested alerts, load test results, rollback tested, reviews closed","Code style","The project budget only"],a:1,why:"Readiness is shown by evidence gathered during delivery."},
+    {q:"Why include 'use what exists' as an option in a design doc?",o:["It is always chosen","It forces the new design to justify its cost against the cheapest alternative","Reviewers require it","It shortens the doc"],a:1,why:"A real baseline option exposes whether new work is needed."},
+    {q:"What makes a staged launch safer?",o:["Launching on Fridays","Exit criteria for each stage agreed in advance","Skipping the pilot","More features in the first release"],a:1,why:"Agreed criteria prevent pressure-driven promotion to the next stage."}],
+  lab:{type:"builder", title:"Requirements and readiness sheet",
+    brief:"Turn a request into numbers and a readiness plan. Fill in the fields or load the Northbank example, then copy the preview.",
+    fields:[["usecase","Use case and users","Summarise fraud case notes for 300 investigators"],["load","Load and growth","Peak 8 req/s weekday mornings; median prompt 3K tokens, max 12K; 2× growth in 12 months"],["perf","Performance","p95 end-to-end under 6 s for 250-token summaries"],["avail","Availability and degraded mode","99.5% monthly; survive one zone loss; degraded mode shows raw notes"],["data","Data and security","Restricted; self-hosted only; prompts not logged; outputs retained 90 days with case"],["quality","Quality and owner","95% acceptable on 200-case golden set; owner: fraud operations lead"],["cost","Cost","Under $15K per month at forecast volume"],["skeleton","Walking skeleton","Case UI → gateway → 8B model → summary, in pre-prod with dashboards, by week 2"],["prr","Readiness evidence required","Load test at 16 req/s; alert fault-injected; rollback tested; threat model closed; eval sign-off; on-call rota"]],
+    template:o=>`USE CASE: ${o.usecase||"<use case>"}
+
+NON-FUNCTIONAL REQUIREMENTS
+Load:          ${o.load||"<load>"}
+Performance:   ${o.perf||"<performance>"}
+Availability:  ${o.avail||"<availability>"}
+Data:          ${o.data||"<data>"}
+Quality:       ${o.quality||"<quality>"}
+Cost:          ${o.cost||"<cost>"}
+
+DELIVERY
+Walking skeleton: ${o.skeleton||"<skeleton>"}
+
+PRODUCTION READINESS EVIDENCE
+${o.prr||"<evidence>"}`,
+    check:["Every requirement is a number or a rule","Degraded mode is defined","Quality has an owner and a test set","The skeleton reaches a production-like environment early","Readiness lists evidence, not intentions"]},
+  talk:[["An application team asks for 'a chatbot over our policies'. What do you do next?","Intake questions: users, peak, latency, data class, impact of wrong answers, regions, budget, support, deadline; NFRs as numbers; options including existing services; walking skeleton; eval set with business owner."],
+    ["What is on your production readiness checklist for an AI service?","SLOs and dashboards; alerts tested; runbooks; on-call; load test at peak + headroom; capacity plan; rollback and failover tested; threat model and data review closed; logging policy; eval sign-off; cost forecast."],
+    ["How do you run a good design review?","Doc read in advance; focus on requirements, options and failure modes; ask what happens when dependencies fail or traffic spikes; record decisions and open questions; owners and dates."]],
+  project:{title:"Requirements to readiness for one request", deliver:"An NFR sheet, short design doc and readiness checklist for a real or realistic request.", steps:["Run an intake conversation and record answers","Write NFRs as numbers","Write the design doc with at least two options","Plan the walking skeleton and milestones","List readiness evidence for launch","Define stage exit criteria for pilot and GA","Hold a review and record decisions"],
+    rubric:["NFRs are numeric","Options include using what exists","Failure modes were reviewed","Walking skeleton is planned early","Exit criteria exist for each launch stage"]}
+},
+
+{ id:"a10", no:"AI-10", lvl:"e", title:"Leading AI-assisted engineering", time:"90 min",
+  summary:"Drive adoption of approved AI coding and operations tools across teams while keeping quality, security and data handling under control: policy, validation standards, guardrails as code, measurement and coaching.",
+  objectives:["Describe where AI assistance helps engineering teams and where it fails","Write validation standards that keep authors accountable for AI output","Put guardrails in code: CI checks for security, dependencies and tests","Measure outcomes with delivery and quality metrics, not usage counts","Coach senior engineers on compliant, effective use"],
+  learn:`
+<h3>Where it helps and where it fails</h3>
+<p>AI assistants are useful for boilerplate and scaffolding, test generation, refactoring with good test coverage, explaining unfamiliar code, first-pass code review, log and trace summarisation during incidents, drafting runbooks and postmortems, and migration chores. They fail in predictable ways: plausible but wrong logic, insecure patterns, outdated or invented APIs, <b>invented package names</b> that attackers can register (sometimes called slopsquatting), licence issues in generated code, and confident root-cause stories during incidents that the evidence does not support.</p>
+<h3>Evidence says: measure, do not assume</h3>
+<p>Results vary widely. A 2025 randomised study by METR found experienced open-source developers took longer on tasks in their own repositories with AI tools, while believing they had been faster. DORA's 2024 research associated higher AI adoption with small declines in delivery stability, and its later research frames AI as an amplifier of a team's existing practices. The lesson for a leader: run pilots with baselines and measure outcomes.</p>
+<h3>Policy</h3>
+<ul>
+<li>Use only <b>enterprise-approved tools</b> with contractual terms on data retention and training, audit logs and central admin.</li>
+<li>Define what data may go into prompts by classification. Never secrets or credentials; customer data only in tools approved for it.</li>
+<li>Agentic tools that run commands get sandboxed environments, scoped permissions, no production credentials, and human approval for anything consequential.</li>
+</ul>
+<h3>Validation standards</h3>
+<ul>
+<li><b>The author is accountable</b> for every line they submit, however it was produced.</li>
+<li>AI-assisted changes get the same peer review, and reviewers should know where AI was used on risky changes (a pull request label or note).</li>
+<li>Generated code needs tests that the author has read and that would fail if the code were wrong.</li>
+<li>Security checks run on everything: SAST, secrets scanning, dependency verification against approved registries (catches invented packages), licence scanning.</li>
+<li>Performance-sensitive code gets benchmarks, not just tests.</li>
+<li>Incident analyses drafted with AI are checked against logs, metrics and timelines before they are shared.</li>
+</ul>
+<h3>Guardrails as code</h3>
+<p>Standards that rely on memory decay. Put them in pre-commit hooks, CI pipelines and repository rules: required checks, coverage thresholds on changed lines, dependency allow-lists, secret scanning, required reviewers for sensitive paths. This makes compliance the default path, the same principle as a golden path.</p>
+<h3>Measure outcomes</h3>
+<p>Track the DORA measures (deployment frequency, lead time for changes, change failure rate, failed deployment recovery time), review time, escaped defects, security findings per change, and developer experience surveys. Avoid targets on lines of code generated or suggestion acceptance rates: they are easy to game and say nothing about outcomes.</p>
+<h3>Driving adoption</h3>
+<p>Start with pilot teams and named champions, publish playbooks for specific tasks (test generation, refactoring, incident summaries) with examples of good validation, run short hands-on sessions, and share both wins and failures. Senior engineers set the norm: when they review AI output critically in public, and say when the tool was wrong, others copy that behaviour.</p>`,
+  examples:[{kind:"diagram", title:"An adoption loop", code:D.adopt, caption:"Policy, enablement, automated guardrails and measurement, revisited as evidence comes in.", notice:["Guardrails sit in code, not in a document people must remember.","Measurement feeds back into policy and playbooks.","Enablement is task-specific, not generic training."]},
+    {kind:"ba", title:"A team norm, rewritten", before:"Engineers may use AI tools but should be careful and check the output.", after:"AI-assisted changes:\n• Approved tools only; no secrets or restricted data in prompts.\n• Author owns every line and can explain it in review.\n• New logic ships with tests the author has read; changed-line coverage at least 80%.\n• CI blocks: unknown dependencies, secrets, high-severity SAST findings.\n• Label PRs 'ai-assisted' when AI wrote substantial logic in auth, payments or data access paths.\n• Monthly: review change failure rate and escaped defects for labelled vs unlabelled PRs.", notice:["'Be careful' became specific, checkable rules.","Most rules are enforced by CI, not memory.","The team measures whether the norm works."]}],
+  quiz:[
+    {q:"An assistant suggests importing a package nobody on the team recognises. What control catches this best?",o:["Trusting the assistant","CI dependency verification against an approved registry or allow-list","Code formatting","More prompts"],a:1,why:"Invented package names can be registered by attackers. Verify dependencies automatically."},
+    {q:"Which metric is the poorest target for an AI coding programme?",o:["Change failure rate","Lead time for changes","Suggestion acceptance rate","Escaped defects"],a:2,why:"Acceptance rate measures usage, not outcomes, and is easy to game."},
+    {q:"Who is accountable for an AI-generated function that ships with a bug?",o:["The tool vendor","The reviewer only","The author who submitted it, as with any code","No one"],a:2,why:"Accountability does not change with how code was produced."},
+    {q:"What did METR's 2025 study of experienced open-source developers find?",o:["They were 50% faster","They were slower with AI tools on their own repositories, while believing they were faster","No measurable effect on perception","AI tools were banned"],a:1,why:"Perceived and measured productivity can diverge. Measure."},
+    {q:"An agentic coding tool will run shell commands in a developer's environment. What is the most important control?",o:["A longer system prompt","Sandboxing with scoped permissions, no production credentials, and approval for consequential actions","Faster laptops","Disabling logs"],a:1,why:"Limit what the tool can reach and do, and keep a human in the loop for risky actions."}],
+  lab:{type:"scenario", title:"Leading the rollout",
+    brief:"You are leading adoption of approved AI-assisted engineering practices across Northbank's platform teams. Choose the strongest response.",
+    scen:[
+      {s:"A director wants a dashboard showing lines of code generated by AI per team, to prove value.",o:[["Build it as asked","weak","It measures usage, invites gaming, and says nothing about quality or speed."],["Propose outcome measures: lead time, change failure rate and escaped defects, compared with a baseline from before the pilot","strong","Ties adoption to delivery and quality outcomes the director actually cares about."],["Refuse to measure anything","weak","Leaves the programme without evidence."]]},
+      {s:"An engineer pastes a production stack trace containing customer identifiers into a consumer chatbot to debug faster.",o:[["Ban AI tools for the whole team","weak","Pushes usage underground and loses the benefits."],["Handle it through the data incident process, remind the team of the data rules, and make the approved tool the easiest option, with redaction help in the incident tooling","strong","Treats it seriously, fixes the system, and removes the reason for the workaround."],["Ignore it since the bug was fixed","weak","Data handling rules exist for exactly this."]]},
+      {s:"Review times have doubled since AI adoption because pull requests got much larger.",o:[["Tell reviewers to approve faster","weak","Moves risk downstream."],["Set a pull request size guideline, require AI-assisted changes to be split by concern, and use AI first-pass review for mechanical checks","strong","Keeps reviews human-sized and uses the tool where it is reliable."],["Stop reviewing AI-generated code","weak","Removes the main validation step."]]},
+      {s:"A senior lead says AI tools are useless and refuses to use them; their team follows their lead.",o:[["Mandate usage targets for the team","weak","Compliance without conviction, and targets on usage are the wrong measure."],["Ask them to run a two-week pilot on one task type they find tedious, with their own success criteria, and share results either way","strong","Respects their judgement, produces evidence, and makes them a credible voice whatever the result."],["Leave the team out entirely","ok","Avoids conflict, but loses a sceptic whose standards could improve the programme."]]},
+      {s:"An AI-drafted incident root-cause analysis blames a recent config change, and the team is ready to publish it.",o:[["Publish: the draft reads well","weak","Plausible narratives are the failure mode to watch for."],["Check each claim against logs, metrics and the deploy timeline before publishing; note what the tool got wrong","strong","Validates output against evidence and teaches the norm."],["Rewrite it entirely by hand","ok","Safe, but discards useful drafting work instead of validating it."]]}]},
+  talk:[["How would you drive adoption of AI-assisted engineering across several teams?","Approved tools and data rules; pilot teams with baselines; champions; task-specific playbooks; guardrails in CI; author accountability; measure DORA and defects; share wins and failures; iterate policy."],
+    ["What validation standards do you set for AI-generated code?","Author accountable and able to explain it; same review; tests that would fail if wrong; SAST, secrets, dependency and licence checks in CI; benchmarks for hot paths; labels for risky areas; evidence checks for AI-drafted analyses."],
+    ["How do you coach a senior engineer who is sceptical, or one who is over-trusting?","Sceptic: small pilot on a tedious task, their criteria, share results. Over-trusting: pair on review, show failure modes, require tests and evidence, make validation visible. Both: model the behaviour yourself."]],
+  project:{title:"AI-assisted engineering playbook", deliver:"A playbook and guardrail set for one or more teams, piloted for at least four weeks with before-and-after measures.", steps:["Write the policy: approved tools, data rules, agent permissions","Write validation standards for code, tests and AI-drafted analyses","Implement at least three guardrails in CI or repo rules","Write two task-specific playbooks with good and bad examples","Record baseline delivery and quality metrics","Pilot for four weeks with a champion per team","Report outcomes, including what did not work, and revise"],
+    rubric:["Data handling rules are explicit by classification","At least three guardrails are enforced automatically","Baseline and pilot metrics are compared","Playbooks include examples of validation","The report includes failures as well as wins"]}
+}
+);
+
+/* ======== capstones ======== */
+const CAPSTONES = [
+{ id:"cA", code:"CP-1", domain:"Serving", title:"A reference inference service, end to end",
+  brief:"Stand up a small but complete LLM serving stack on Kubernetes or OpenShift (a homelab or a single GPU node is fine; CPU with a tiny model works for practice): engine, gateway, autoscaling on an engine signal, dashboards, SLOs, and a load test report.",
+  deliver:["Serving engine deployment with documented settings (Module 2)","Gateway with token quotas and a fallback route (Module 4)","Autoscaling on queue depth or KV cache use","Dashboard and burn-rate alerts (Module 6)","Load test report with knee and goodput (Module 5)","Architecture note and baseline published"],
+  rubric:["Runs end to end from a clean install using code in a repository","Autoscaling uses an engine signal, not CPU","Load test is open-loop with a realistic prompt mix","Alerts were tested with a fault","Someone else reproduced it from the notes"],
+  stretch:"Add inference-aware routing with the Gateway API Inference Extension or llm-d and measure the TTFT difference against round-robin."},
+{ id:"cB", code:"CP-2", domain:"Enablement", title:"A golden path another team adopts",
+  brief:"Turn CP-1 into a golden path: template, chart, pipeline with security and evaluation gates, onboarding guide and baselines, and get another team or engineer to use it.",
+  deliver:["Golden path spec (Module 8 lab)","Template and Helm chart with safe defaults","CI pipeline: SBOM, signing, tests, eval gate","GitOps deployment with canary analysis","Onboarding guide, timed with a new user","Two baselines with measured numbers"],
+  rubric:["A new user reached a first call without help","Pipeline blocks unsigned images and failed evals","Canary rollback was demonstrated","Baselines include TTFT, TPOT and knee concurrency","Feedback from the first user was folded back in"],
+  stretch:"Publish it as an open-source template or an article explaining the design choices."},
+{ id:"cC", code:"CP-3", domain:"Reliability and security", title:"Production readiness review and game day",
+  brief:"Run a full readiness review on a model service, including a threat model, and then a game day that injects the failures most likely to happen.",
+  deliver:["NFR sheet and design doc (Module 9)","Threat model and control map (Module 7)","Readiness checklist with evidence links","Game day plan: at least four injected failures","Game day report with timings and findings","Action list with owners"],
+  rubric:["Every readiness item links to evidence","Threat model covers LLM-specific risks","At least four failures were injected, including provider or replica loss","Time to detect and mitigate was measured","Actions change the system, not behaviour alone"],
+  stretch:"Repeat the game day a month later and show the improvement."},
+{ id:"cD", code:"CP-4", domain:"Leadership", title:"An AI-assisted engineering programme with evidence",
+  brief:"Lead a pilot of AI-assisted engineering practices across at least two teams, with policy, automated guardrails, task playbooks and before-and-after measures.",
+  deliver:["Policy and validation standards (Module 10)","Guardrails in CI across pilot repositories","Two or more task playbooks","Baseline and pilot metrics","Pilot report with recommendations","Coaching notes from sessions with senior engineers"],
+  rubric:["Data rules are explicit and enforced where possible","Outcome metrics are used, not usage counts","At least one sceptic took part","The report includes what did not work","A decision on wider rollout was made from the evidence"],
+  stretch:"Write a short internal talk or public article on what you learned about validating AI output."}
+];
+
+/* ======== reference data ======== */
+const LOS = [
+  {k:"Developer experience", ex:"A team scaffolds a model service from the portal and makes its first authenticated call the same day.", own:"Platform team, with app-team feedback", you:"Make the supported way the easy way: templates, guides, harnesses.", art:"Golden paths, reference implementations, onboarding guides"},
+  {k:"Gateway and policy", ex:"Payments gets 200K tokens per minute on the 70B route, falls back to a managed model during an outage, and sees its own usage.", own:"Platform team", you:"One front door: identity, quotas, routing, guardrails, metering.", art:"Gateway config, quota policy, routing rules"},
+  {k:"Serving", ex:"The 70B chat model runs on vLLM with FP8 on 2×H100 replicas; embeddings run on MIG slices.", own:"Platform team", you:"Run engines at the knee of the curve, with baselines for every model.", art:"Serving baselines, engine settings, eval results"},
+  {k:"Compute and scheduling", ex:"Serving reclaims GPUs from overnight batch scoring automatically; fine-tuning jobs queue in Kueue.", own:"Platform and infrastructure teams", you:"Share an expensive fleet fairly and keep it busy.", art:"Node pools, quotas, priority classes, queues"},
+  {k:"Data and models", ex:"An investigator's assistant only retrieves case files the investigator may see; every model in use is in the registry with its approvals.", own:"Shared with data and governance teams", you:"Governed access to data and approved, signed model artifacts.", art:"Model registry, entitlement-aware retrieval, data rules"},
+  {k:"Operations", ex:"A burn-rate page fires on the chat route; the runbook's first step sheds batch load and restores the SLO in eight minutes.", own:"Everyone, led by the platform team", you:"SLOs, observability, security and cost as properties of every layer.", art:"SLOs, dashboards, runbooks, RCAs, cost reports"}
+];
+const COMP = [
+  ["Model serving and inference","You can size a deployment from first principles and tune an engine to the knee of its curve"],
+  ["GPU platforms on Kubernetes","You design GPU sharing, quotas and queues that keep the fleet busy and tenants isolated"],
+  ["Gateways, routing and guardrails","You design the control plane in front of models, including fallback and evaluation gates"],
+  ["Performance and capacity","Your load tests are realistic and your capacity models are trusted by finance"],
+  ["Reliability and incidents","Your SLOs reflect users, your alerts are meaningful, and your RCAs change the system"],
+  ["Secure by design","You threat model AI flows and build controls into the platform as defaults"],
+  ["Developer enablement","Teams adopt your golden paths because they are the easiest way to ship"],
+  ["Requirements to production","You turn vague requests into numbers, designs and launches without surprises"],
+  ["Leading AI-assisted engineering","You set validation standards, enforce them in code, and coach seniors with evidence"]
+];
+const COMPMAP = {"Model serving and inference":"Module 2","GPU platforms on Kubernetes":"Module 3","Gateways, routing and guardrails":"Module 4","Performance and capacity":"Module 5","Reliability and incidents":"Module 6","Secure by design":"Module 7","Developer enablement":"Module 8","Requirements to production":"Module 9","Leading AI-assisted engineering":"Module 10"};
+const TEMPLATES = [
+  ["Platform contract",`SERVICE: <name>   Owner: <team>   Version policy: <semver, support window>
+API: <endpoint, protocol, auth>
+SLOs: <SLI> >= <target> over <window>, measured at <point>
+Tenant obligations: quotas <...>; retries with backoff on 429/503; data classes allowed <...>
+Support: <hours, channel, escalation, severity definitions>
+Deprecation: <notice period>, <migration help>
+Contact: <channel>`],
+  ["Serving baseline",`MODEL: <name>  Shape: <params, layers, KV heads, head dim>
+Hardware: <GPU x N, TP=N>   Engine: <engine version>
+Precision: weights <...>, KV <...>   Max context: <tokens>
+Memory: weights <GB>, KV per token <KiB>, KV budget <GB>
+Settings: <max sequences, memory utilisation, prefix caching, chunked prefill>
+Measured (prompt mix <...>): knee <N seqs>, p95 TTFT <ms>, p95 TPOT <ms>, goodput <req/s>
+Quality check: <eval set, result>   Date: <date>`],
+  ["Load test report",`SERVICE: <route>   Date: <date>   Config: <link>
+Workload: input tokens <p50/p95>, output tokens <p50/p95>, arrival <open-loop rate>
+SLO: <p95 TTFT>, <p95 TPOT>, <error rate>
+Results by load step: <rate> | TTFT p50/p95/p99 | TPOT p95 | goodput | errors
+Knee: <value>   Bottleneck: <evidence>
+Next lever and expected effect: <...>`],
+  ["Capacity model",`Peak arrival: <req/s>   Average: <req/s>
+Mean time in system at SLO: <s>   In flight at peak (Little's law): <N>
+Per-replica concurrency at SLO: <N>   Headroom: <%> (spikes, zone loss, cold start)
+Replicas: <N>   GPUs per replica: <N>   GPUs: <N>
+Cost: <$/GPU-hour> -> <$/month>   Cost per 1M output tokens at average: <$>`],
+  ["SLO and error budget policy",`ROUTE: <name>   Window: <28/30 days>
+SLI 1: good = <...> / valid = <...>   Target: <%>
+SLI 2: ...
+Alerts: page 14.4x (1h & 5m), page 6x (6h & 30m), ticket 1x (3d & 6h)
+Budget policy: at 50% spent <...>; at 75% <freeze risky changes>; at 100% <reliability work only>
+Review: <monthly, with tenants>`],
+  ["Runbook entry",`ALERT: <name>   Severity: <...>   Dashboard: <link>
+What it means for users: <...>
+1. Check <signal>. If <condition>, do <action>. Link: <...>
+2. ...
+Mitigations: <rollback / shed load / fallback route / emergency quota>
+Escalate to: <team, when>
+Comms: <channel, cadence>`],
+  ["Root-cause analysis",`INCIDENT: <title>   Date: <...>   Duration: <...>   Impact: <users, SLO budget spent>
+Timeline: <detect, declare, mitigate, resolve>
+Trigger: <...>
+Contributing factors: <list>
+Why it made sense at the time: <...>
+What went well: <...>
+Actions (system changes): <action> | owner | due | how we'll know it worked`],
+  ["Design document",`TITLE   Author   Reviewers   Status
+Context and goals / Non-goals
+Requirements (numbers): performance, scale, availability, data, quality, cost
+Options (include "use what exists"): summary, pros, cons, cost
+Decision and rationale
+Failure modes: slow model, full cache, provider down, 10x tenant, bad data
+Operations: SLOs, alerts, runbooks, on-call
+Delivery: walking skeleton, milestones
+Open questions`],
+  ["Production readiness checklist",`[ ] SLOs defined and dashboards live
+[ ] Burn-rate alerts tested by fault injection
+[ ] Runbooks for top alerts
+[ ] On-call rota and escalation
+[ ] Load test at peak + headroom (link)
+[ ] Capacity plan and cost forecast agreed
+[ ] Rollback and failover tested
+[ ] Threat model closed; security review done
+[ ] Data classification and logging policy approved
+[ ] Evaluation results signed off by business owner
+[ ] Launch stages with exit criteria`],
+  ["AI-assisted change checklist",`[ ] Approved tool; no secrets or restricted data in prompts
+[ ] I can explain every line in review
+[ ] Tests I have read would fail if the code were wrong
+[ ] No new dependencies outside the approved registry
+[ ] SAST and secret scans clean
+[ ] Benchmarked if on a hot path
+[ ] Labelled 'ai-assisted' if substantial logic in a sensitive path`]
+];
+const FRAMEWORKS = [
+  ["Team Topologies","Platform team interactions","Collaboration, X-as-a-service, facilitating; platform as product"],
+  ["Prefill / decode model","Reasoning about LLM latency and memory","Prefill is compute-bound (TTFT); decode is bandwidth-bound (TPOT)"],
+  ["Little's law","Capacity planning","In flight = arrival rate x time in system"],
+  ["USE and RED","Choosing metrics","Utilisation, saturation, errors for resources; rate, errors, duration for services"],
+  ["SLOs and error budgets","Balancing reliability and change","Budget = 1 - SLO; policy says what happens as it is spent"],
+  ["Multi-window burn rate","Alerting","Page on fast burns, ticket on slow; paired short windows"],
+  ["STRIDE","Threat modelling","Spoofing, tampering, repudiation, information disclosure, denial of service, elevation of privilege"],
+  ["OWASP Top 10 for LLM Apps","LLM-specific risks","Injection, disclosure, supply chain, poisoning, output handling, agency, prompt leakage, embeddings, misinformation, consumption"],
+  ["NIST AI RMF","AI risk governance","Govern, map, measure, manage"],
+  ["SLSA","Supply chain integrity","Provenance levels for build artifacts"],
+  ["DORA metrics","Delivery outcomes","Deployment frequency, lead time, change failure rate, recovery time"],
+  ["Walking skeleton","De-risking delivery","Thinnest end-to-end slice, deployed early"]
+];
+const NUMBERS = [
+  ["Weights memory","parameters x bytes per parameter (BF16 2, FP8 1, 4-bit about 0.5)"],
+  ["KV cache per token","2 x layers x KV heads x head dim x bytes"],
+  ["70B-class KV at BF16","about 320 KiB per token; about 2.7 GB per 8K-token sequence"],
+  ["8B-class KV at BF16","about 128 KiB per token; about 1 GB per 8K-token sequence"],
+  ["End-to-end latency","TTFT + (output tokens - 1) x TPOT"],
+  ["Little's law","in flight = arrival rate x time in system"],
+  ["Error budget, 99.9% / 30 days","43.2 minutes"],
+  ["Error budget, 99.5% / 30 days","3.6 hours"],
+  ["Error budget, 99% / 30 days","7.2 hours"],
+  ["Burn-rate pages","14.4x over 1h (2% of budget), 6x over 6h (5%)"],
+  ["Burn-rate ticket","1x over 3 days (10%)"],
+  ["GPU memory","L4 24 GB, L40S 48 GB, A100 40 or 80 GB, H100 80 GB, H200 141 GB"],
+  ["MIG","up to 7 isolated instances per A100 or H100"]
+];
+const GLOSS = [
+  ["Continuous batching","Adding and removing sequences from the running batch at every decode step."],
+  ["Coordinated omission","A load test flaw where slow responses reduce the request rate, hiding latency."],
+  ["Decode","The token-by-token generation phase; memory-bandwidth-bound."],
+  ["DRA","Dynamic Resource Allocation: Kubernetes API for claiming devices like GPUs with rich selection."],
+  ["Error budget","The allowed amount of unreliability: 1 minus the SLO."],
+  ["Gang scheduling","Placing all pods of a job at once or none of them."],
+  ["Golden path","The opinionated, supported, easiest way to do a common job on the platform."],
+  ["Goodput","Throughput of requests that met the SLO."],
+  ["GQA","Grouped-query attention: several query heads share one KV head, shrinking the KV cache."],
+  ["KV cache","Stored attention keys and values for every token in active sequences."],
+  ["MIG","Multi-Instance GPU: hardware partitioning of one GPU into isolated instances."],
+  ["PagedAttention","Storing the KV cache in fixed-size blocks to avoid wasted memory."],
+  ["Prefill","Processing the whole prompt in one pass to produce the first token; compute-bound."],
+  ["Prefix caching","Reusing KV cache for prompts that share a prefix."],
+  ["Prompt injection","Input that makes a model ignore its instructions; direct or via retrieved content."],
+  ["Speculative decoding","Drafting tokens with a small model and verifying them with the large one."],
+  ["SLI","Service level indicator: a ratio of good events to valid events."],
+  ["Tensor parallelism","Splitting each layer's weights across GPUs, usually within one node."],
+  ["TPOT","Time per output token, also called inter-token latency."],
+  ["TTFT","Time to first token: queueing plus prefill."],
+  ["Walking skeleton","The thinnest end-to-end slice of a system deployed early."]
+];
+const READING = [
+  ["Chip Huyen","AI Engineering"],["Chip Huyen","Designing Machine Learning Systems"],["Camille Fournier and Ian Nowland","Platform Engineering"],["Matthew Skelton and Manuel Pais","Team Topologies"],["Betsy Beyer et al.","Site Reliability Engineering"],["Betsy Beyer et al.","The Site Reliability Workbook"],["Alex Hidalgo","Implementing Service Level Objectives"],["Brendan Gregg","Systems Performance"],["Heather Adkins et al.","Building Secure and Reliable Systems"],["Bilgin Ibryam and Roland Huß","Kubernetes Patterns"],["Nicole Forsgren, Jez Humble, Gene Kim","Accelerate"]
+];
+const LINKS = [["vLLM documentation","https://docs.vllm.ai"],["Efficient Memory Management for LLM Serving with PagedAttention","https://arxiv.org/abs/2309.06180"],["KServe","https://kserve.github.io/website/"],["Gateway API Inference Extension","https://gateway-api-inference-extension.sigs.k8s.io"],["llm-d","https://llm-d.ai"],["NVIDIA GPU Operator","https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/"],["Kueue","https://kueue.sigs.k8s.io"],["Google SRE books (incl. alerting on SLOs)","https://sre.google/books/"],["OpenTelemetry GenAI semantic conventions","https://opentelemetry.io/docs/specs/semconv/gen-ai/"],["OWASP GenAI Security Project","https://genai.owasp.org"],["NIST AI Risk Management Framework","https://www.nist.gov/itl/ai-risk-management-framework"],["SLSA","https://slsa.dev"],["DORA research","https://dora.dev"]];
+
+/* ======== calculators ======== */
+const GPUS = [["L4",24],["L40S",48],["A100 40GB",40],["A100 80GB",80],["H100 80GB",80],["H200 141GB",141]];
+const SHAPES = {
+  "8b":{n:"8B-class (Llama 3.1 8B shape)",p:8.0,l:32,kv:8,hd:128},
+  "32b":{n:"32B-class (64 layers, 8 KV heads)",p:32.5,l:64,kv:8,hd:128},
+  "70b":{n:"70B-class (Llama 3.1 70B shape)",p:70.6,l:80,kv:8,hd:128}
+};
+const PREC = [["BF16 / FP16",2],["FP8 / INT8",1],["4-bit",0.5]];
+const KVPREC = [["BF16 / FP16",2],["FP8",1]];
+const MEMUTIL = 0.9, OVERHEAD = 2; // GB per GPU for activations, graphs and runtime
+function kvCalc(st){
+  const m = SHAPES[st.model], mem = GPUS[st.gpu][1], tp = st.tp;
+  const weights = m.p * PREC[st.wp][1];
+  const usable = tp*mem*MEMUTIL;
+  const budget = usable - weights - tp*OVERHEAD;
+  const kvTok = 2*m.l*m.kv*m.hd*KVPREC[st.kp][1];
+  const tokens = budget>0 ? budget*1e9/kvTok : 0;
+  const seqs = Math.floor(tokens/Math.max(1,st.ctx));
+  return {m, mem, weights, usable, budget, kvTok, tokens, seqs, perSeq: kvTok*st.ctx/1e9};
+}
+const f1 = x => (Math.round(x*10)/10).toLocaleString("en-US");
+const usd = x => "$" + x.toLocaleString("en-US",{minimumFractionDigits:2, maximumFractionDigits:2});
+function capCalc(c){
+  const inflight = c.peak*c.lat;
+  const eff = c.conc*(1-c.head/100);
+  const replicas = Math.max(1, Math.ceil(inflight/Math.max(0.01,eff)));
+  const gpus = replicas*c.gpr;
+  const hourly = gpus*c.price;
+  const tokHr = c.avg*c.out*3600;
+  const perM = tokHr>0 ? hourly/(tokHr/1e6) : Infinity;
+  const utilAvg = (c.avg*c.lat)/(replicas*c.conc);
+  const utilPeak = inflight/(replicas*c.conc);
+  return {inflight, replicas, gpus, hourly, monthly:hourly*730, tokHr, perM, utilAvg, utilPeak};
+}
+const SLOS = [99, 99.5, 99.9, 99.95];
+const BURNS = [[14.4,"1 hour","5 minutes",2,"Page"],[6,"6 hours","30 minutes",5,"Page"],[1,"3 days","6 hours",10,"Ticket"]];
+function sloCalc(s){
+  const slo = SLOS[s.slo]/100, b = 1-slo;
+  const total = s.rpd*s.days, budgetReq = b*total, budgetMin = b*s.days*1440;
+  const seen = s.rpd*Math.max(0.01,s.elapsed);
+  const rate = s.bad/Math.max(1,seen), burn = rate/b;
+  const used = s.bad/Math.max(1,budgetReq);
+  const projected = used*s.days/Math.max(0.01,s.elapsed);
+  return {slo, b, budgetReq, budgetMin, rate, burn, used, projected};
+}
+
+/* ======== state ======== */
+const KEY = "aipe-progress-v1";
+let S = {read:{},quiz:{},lab:{},proj:{},cap:{},build:{},comp:{},kv:{},capc:{},slo:{}};
+try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(S, JSON.parse(r)); } catch(e){}
+const persist = () => { try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} };
+function save(){ persist(); updateMeter(); renderTabs(); }
+const projN = m => (S.proj[m.id]||[]).length;
+function modDone(m){ return !!(S.read[m.id] && S.lab[m.id] && (S.quiz[m.id]||0)>=4 && projN(m)>=m.project.rubric.length); }
+function pct(){ let t=0,g=0; MODULES.forEach(m=>{ t+=3+m.project.rubric.length; g+=(S.read[m.id]?1:0)+(S.lab[m.id]?1:0)+((S.quiz[m.id]||0)>=4?1:0)+projN(m); }); CAPSTONES.forEach(c=>{ t+=c.rubric.length; g+=(S.cap[c.id]||[]).length; }); return Math.round(g/t*100); }
+function updateMeter(){ document.getElementById("meter").textContent = pct()+"% complete"; }
+function toast(t){ const el=document.getElementById("toast"); el.textContent=t; el.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>el.hidden=true,1800); }
+function copyText(txt, el){ try{ navigator.clipboard.writeText(txt).then(()=>toast("Copied"),()=>{ selectEl(el); toast("Press Ctrl/⌘ + C to copy"); }); }catch(e){ selectEl(el); toast("Press Ctrl/⌘ + C to copy"); } }
+function selectEl(el){ if(!el) return; if (el.select) el.select(); else { const r=document.createRange(); r.selectNodeContents(el); const s=getSelection(); s.removeAllRanges(); s.addRange(r); } }
+
+/* ======== mermaid ======== */
+const mmdReady = typeof mermaid !== "undefined";
+if (mmdReady) mermaid.initialize({startOnLoad:false, securityLevel:"strict", theme:"base", fontFamily:"IBM Plex Sans, system-ui, sans-serif",
+  flowchart:{htmlLabels:true, curve:"basis", padding:12},
+  themeVariables:{background:"#FCFCFD", primaryColor:"#FFFFFF", primaryTextColor:"#121A26", primaryBorderColor:"#17624F", lineColor:"#586374", secondaryColor:"#DCEEE6", tertiaryColor:"#F2F4F6", textColor:"#121A26", clusterBkg:"#F2F4F6", clusterBorder:"#AAB4C1", edgeLabelBackground:"#FCFCFD", titleColor:"#121A26", fontSize:"14px"}});
+let mmdN = 0;
+async function draw(el, code){
+  if (!mmdReady){ el.innerHTML = `<div class="err">The diagram renderer did not load.</div>`; return false; }
+  const id = "mm"+(++mmdN);
+  try { await mermaid.parse(code); const {svg} = await mermaid.render(id, code); el.innerHTML = svg; return true; }
+  catch(e){ document.getElementById(id)?.remove(); document.getElementById("d"+id)?.remove(); el.innerHTML = `<div class="err">${esc(String(e&&e.message||e).split("\n").slice(0,6).join("\n"))}</div>`; return false; }
+}
+
+/* ======== components ======== */
+const LVL = {f:["Foundation","f"],p:["Practitioner","p"],e:["Leader","e"]};
+const pill = k => `<span class="lvl ${LVL[k][1]}">${LVL[k][0]}</span>`;
+function example(ex){
+  if (ex.kind === "diagram"){ const i = reg(ex.code);
+    return `<div class="fig"><div class="figcap"><h4>${esc(ex.title)}</h4><button class="btn ghost" data-src>Source</button></div>
+    <div class="canvas" data-mmd="${i}"><span class="loading">Rendering…</span></div>
+    <p class="muted">${esc(ex.caption)}</p>
+    <div class="notice"><b>What to notice</b><ul>${ex.notice.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div>
+    <div class="srcbox" hidden>${pre(ex.code)}</div></div>`; }
+  return `<div class="fig"><h4>${esc(ex.title)}</h4><div class="ba">
+    <div class="before"><span class="eyebrow">Before</span><div class="txt">${esc(ex.before)}</div></div>
+    <div class="after"><span class="eyebrow">After</span><div class="txt">${esc(ex.after)}</div></div></div>
+    <div class="notice"><b>What to notice</b><ul>${ex.notice.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div></div>`;
+}
+function checklist(items, prefix, saved){ return `<ul class="reqs">${items.map((r,i)=>`<li><label><input type="checkbox" id="${prefix}-${i}" data-ck="${prefix}" data-i="${i}" ${saved&&saved.includes(i)?"checked":""}>${esc(r)}</label></li>`).join("")}</ul>`; }
+const opts = (arr, sel, lab=x=>x[0]) => arr.map((x,i)=>`<option value="${i}" ${+sel===i?"selected":""}>${esc(lab(x))}</option>`).join("");
+const numField = (id,label,val,attrs="") => `<label class="field"><span>${label}</span><input class="cell wide" type="number" id="${id}" value="${val}" ${attrs}></label>`;
+
+function labHTML(m){
+  const L = m.lab;
+  const head = `<p style="max-width:68ch">${esc(L.brief)}</p>`;
+  if (L.type==="sort"){
+    return head + `<div data-sort>${L.items.map((it,i)=>`<div class="sortrow" data-row="${i}"><span>${esc(it[0])}</span><select class="sel" id="so-${m.id}-${i}" aria-label="Classify"><option value="">Choose…</option>${L.buckets.map(b=>`<option>${b}</option>`).join("")}</select><div class="fb" hidden></div></div>`).join("")}</div>
+      <div class="btns" style="align-items:center"><button class="btn primary" data-sortcheck>Check</button><span class="score" data-sortscore></span></div>`;
+  }
+  if (L.type==="builder"){
+    const v = S.build[m.id] || {};
+    return head + `<div class="grid2"><div class="stack" style="gap:.7rem" data-build>${L.fields.map(f=>`<div class="field"><label for="b-${m.id}-${f[0]}">${esc(f[1])}</label><textarea id="b-${m.id}-${f[0]}" data-f="${f[0]}" rows="2" placeholder="${esc(f[2])}">${esc(v[f[0]]||"")}</textarea></div>`).join("")}
+      <div class="btns"><button class="btn" data-example>Fill with Northbank example</button><button class="btn" data-clear>Clear</button></div></div>
+      <div class="stack" style="gap:.5rem;min-width:0"><div class="edhead"><span class="eyebrow">Preview</span><button class="btn ghost" data-copyprev>Copy</button></div><div class="preview" data-prev></div>
+      <span class="eyebrow" style="margin-top:.5rem">Self-check</span>${checklist(L.check, m.id+"-chk")}</div></div>`;
+  }
+  if (L.type==="scenario"){
+    return head + L.scen.map((sc,si)=>`<div class="scen" data-scen="${si}"><span class="eyebrow">Situation ${si+1}</span><p><b>${esc(sc.s)}</b></p>
+      ${sc.o.map((o,oi)=>`<label class="opt" data-o="${oi}"><input type="radio" name="sc${si}" id="sc-${si}-${oi}" value="${oi}">${esc(o[0])}</label>`).join("")}<div class="why" hidden></div></div>`).join("") +
+      `<div class="btns" style="align-items:center"><button class="btn primary" data-sccheck>See feedback</button><span class="score" data-scscore></span></div>`;
+  }
+  if (L.type==="kv"){
+    const st = S.kv[m.id] || {model:"70b", wp:0, kp:0, gpu:4, tp:2, ctx:8192, conc:32};
+    return head + `<div class="calc" data-kv>
+      <label class="field"><span>Model shape</span><select class="sel" id="kv-model">${Object.entries(SHAPES).map(([k,v])=>`<option value="${k}" ${st.model===k?"selected":""}>${esc(v.n)}</option>`).join("")}</select></label>
+      <label class="field"><span>Weight precision</span><select class="sel" id="kv-wp">${opts(PREC,st.wp)}</select></label>
+      <label class="field"><span>KV cache precision</span><select class="sel" id="kv-kp">${opts(KVPREC,st.kp)}</select></label>
+      <label class="field"><span>GPU</span><select class="sel" id="kv-gpu">${opts(GPUS,st.gpu)}</select></label>
+      <label class="field"><span>GPUs per replica (tensor parallel)</span><select class="sel" id="kv-tp">${[1,2,4,8].map(n=>`<option ${st.tp===n?"selected":""}>${n}</option>`).join("")}</select></label>
+      ${numField("kv-ctx","Tokens per sequence (prompt + output)",st.ctx,'min="256" step="256"')}
+      ${numField("kv-conc","Target concurrent sequences",st.conc,'min="1" step="1"')}
+      </div>
+      <div class="preview" data-kvout style="white-space:normal"></div>
+      <p class="muted" style="font-size:.85rem">Estimates assume ${MEMUTIL*100}% of GPU memory is available to the engine and ${OVERHEAD} GB per GPU for activations and runtime. Real engines vary: confirm with the engine's startup log and a load test.</p>`;
+  }
+  if (L.type==="cap"){
+    const c = S.capc[m.id] || {peak:20, avg:8, out:600, lat:12, conc:32, gpr:2, head:30, price:4};
+    return head + `<div class="calc" data-cap>
+      ${numField("cp-peak","Peak arrival (requests/s)",c.peak,'min="0.1" step="0.1"')}
+      ${numField("cp-avg","Average arrival (requests/s)",c.avg,'min="0.1" step="0.1"')}
+      ${numField("cp-out","Average output tokens",c.out,'min="1" step="10"')}
+      ${numField("cp-lat","Mean time per request at SLO (s)",c.lat,'min="0.1" step="0.1"')}
+      ${numField("cp-conc","Per-replica concurrency at SLO (from load test)",c.conc,'min="1" step="1"')}
+      ${numField("cp-gpr","GPUs per replica",c.gpr,'min="1" step="1"')}
+      ${numField("cp-head","Headroom %",c.head,'min="0" max="80" step="5"')}
+      ${numField("cp-price","Cost per GPU-hour ($)",c.price,'min="0.1" step="0.1"')}
+      </div>
+      <div class="preview" data-capout style="white-space:normal"></div>
+      <div class="btns"><button class="btn" data-capreset>Reset to example</button></div>`;
+  }
+  if (L.type==="slo"){
+    const s = S.slo[m.id] || {slo:2, days:30, rpd:2000000, bad:30000, elapsed:10};
+    return head + `<div class="calc" data-slo>
+      <label class="field"><span>Availability SLO</span><select class="sel" id="sl-slo">${SLOS.map((x,i)=>`<option value="${i}" ${s.slo===i?"selected":""}>${x}%</option>`).join("")}</select></label>
+      ${numField("sl-days","Window (days)",s.days,'min="1" max="90" step="1"')}
+      ${numField("sl-rpd","Requests per day",s.rpd,'min="1" step="1000"')}
+      ${numField("sl-elapsed","Days elapsed in window",s.elapsed,'min="0.1" step="0.5"')}
+      ${numField("sl-bad","Bad requests so far",s.bad,'min="0" step="1"')}
+      </div>
+      <div class="preview" data-sloout style="white-space:normal"></div>
+      <div class="tbl"><table><thead><tr><th>Burn rate</th><th>Long window</th><th>Short window</th><th>Error rate threshold</th><th>Budget spent</th><th>Action</th></tr></thead><tbody data-burns></tbody></table></div>
+      <div class="scen"><span class="eyebrow">Check</span><p><b>For the SLO selected above, what error rate (in %) sustained over one hour should page someone?</b></p>
+        <div class="btns" style="align-items:center"><input class="cell wide" type="number" step="any" id="sl-ans" aria-label="Error rate percent"><span>%</span><button class="btn primary" data-slocheck>Check</button></div><div class="why" data-slofb hidden></div></div>`;
+  }
+  return "";
+}
+
+/* ======== views ======== */
+const VIEWS = ["home", ...MODULES.map(m=>m.id), "capstones", "reference"];
+let current = "home";
+function renderTabs(){
+  const b=(id,l,d)=>`<button data-go="${id}" aria-current="${current===id}">${d!==undefined?`<span class="dot ${d?"ok":""}"></span>`:""}${l}</button>`;
+  document.getElementById("tabs").innerHTML = b("home","Overview")+`<span class="sep"></span>`+MODULES.map((m,i)=>b(m.id,`${i+1}. ${m.title}`,modDone(m))).join("")+`<span class="sep"></span>`+b("capstones","Capstones")+b("reference","Reference");
+}
+function go(id, top){
+  if (!VIEWS.includes(id)) id="home";
+  current=id; renderTabs(); CODE.length=0;
+  const v=document.getElementById("view");
+  v.innerHTML = id==="home"?viewHome(): id==="capstones"?viewCaps(): id==="reference"?viewRef(): viewModule(MODULES.find(m=>m.id===id));
+  bind(v,id);
+  v.querySelectorAll("[data-mmd]").forEach(el=>draw(el, CODE[+el.dataset.mmd]));
+  try{ if(location.hash.slice(1)!==id) history.replaceState(null,"","#"+id); }catch(e){}
+  if (top!==false) window.scrollTo({top:0});
+  document.querySelector(`nav.tabs [data-go="${id}"]`)?.scrollIntoView({block:"nearest",inline:"center"});
+}
+const nextMod = () => (MODULES.find(m=>!modDone(m))||{id:"capstones"}).id;
+
+function viewHome(){
+  const stages=[["f","Foundation","How AI foundation services are run as a product, and how LLM inference actually uses a GPU."],["p","Practitioner","GPU platforms, gateways and guardrails, performance, reliability, security, golden paths, and getting from requirements to production."],["e","Leader","Leading the adoption of AI-assisted engineering across teams, with standards and evidence."]].map(([k,n,d])=>[k,n,d,MODULES.map((m,i)=>m.lvl===k?i:-1).filter(i=>i>=0)]);
+  return `<section class="sheet"><div class="hero">
+    <div class="stack" style="gap:.5rem"><span class="eyebrow">Self-paced practicum · ${MODULES.length} modules · ${MODULES.length} section projects · ${CAPSTONES.length} capstones</span>
+      <h1>Build and run the AI platform other teams depend on</h1>
+      <p class="lede">For platform and software engineers who build shared AI infrastructure: model serving on GPUs, Kubernetes and OpenShift platforms, model gateways and guardrails, performance and capacity, SLOs and incident response, secure-by-design delivery, golden paths, and leading AI-assisted engineering. The running case: you are a senior engineer on Northbank's AI platform team, building foundation services that dozens of application teams rely on. Each module has worked examples, a quiz, an interactive lab, "explain it out loud" prompts, and a project you apply to real work.</p>
+      <div class="btns" style="margin-top:.8rem"><button class="btn primary" data-go="${nextMod()}">${pct()?"Continue":"Start module 1"}</button><button class="btn" data-go="reference">Numbers, templates and flashcards</button></div></div>
+    <div class="los"><span class="eyebrow">The AI platform stack · tap each layer</span>
+      <div class="chain" role="group" aria-label="AI platform stack">${LOS.map((l,i)=>`<button data-los="${i}" aria-pressed="${i===0}"><small>${String(i+1).padStart(2,"0")}</small>${l.k}</button>`).join("")}</div>
+      <div class="loscard" id="loscard"></div></div>
+  </div></section>
+
+  <section class="section" style="margin-top:2rem"><div class="sec-head"><h2>Learning path</h2></div>
+    <div class="path">${stages.map(([k,n,d,idx])=>{ const done=idx.filter(i=>modDone(MODULES[i])).length;
+      return `<div class="stage">${pill(k)}<p>${d}</p><ol start="${idx[0]+1}">${idx.map(i=>`<li><button class="link" data-go="${MODULES[i].id}">${MODULES[i].title}</button></li>`).join("")}</ol><div class="meterline"><div class="bar"><i style="width:${done/idx.length*100}%"></i></div>${done}/${idx.length}</div></div>`;}).join("")}</div></section>
+
+  <section class="section"><div class="sec-head"><h2>Progress register</h2><span class="muted">Saved in this browser.</span></div>
+    <div class="tbl"><table><thead><tr><th>Brief</th><th>Module</th><th>Stage</th><th>Read</th><th>Quiz</th><th>Lab</th><th>Project</th></tr></thead><tbody>
+    ${MODULES.map(m=>`<tr><td class="num">${m.no}</td><td><button class="link" data-go="${m.id}">${m.title}</button><div class="muted" style="font-size:.8rem">${m.time}</div></td><td>${pill(m.lvl)}</td>
+      <td class="chk ${S.read[m.id]?"ok":"no"}">${S.read[m.id]?"✓":"–"}</td><td class="num">${S.quiz[m.id]!==undefined?S.quiz[m.id]+"/5":"–"}</td><td class="chk ${S.lab[m.id]?"ok":"no"}">${S.lab[m.id]?"✓":"–"}</td><td class="num">${projN(m)}/${m.project.rubric.length}</td></tr>`).join("")}
+    ${CAPSTONES.map(c=>`<tr><td class="num">${c.code}</td><td><button class="link" data-go="capstones">${c.title}</button></td><td>${pill("e")}</td><td colspan="4" class="num">${(S.cap[c.id]||[]).length}/${c.rubric.length} rubric items</td></tr>`).join("")}
+    </tbody></table></div>
+    <p class="muted" style="font-size:.88rem">A module is complete when you have read it, scored 4/5 or better, finished the lab, and met every item in its project rubric.</p></section>
+
+  <section class="section"><div class="sec-head"><h2>How to work through it</h2></div><div class="prose"><ol>
+    <li>Take the self-assessment in Reference first, and start with your two lowest areas if you are short of time.</li>
+    <li>Do one module a week. The labs take minutes; the projects take longer and are where the skill sticks.</li>
+    <li>Use the "explain it out loud" prompts: answer each in about two minutes, then compare with the key points. Being able to explain a design clearly is part of knowing it.</li>
+    <li>A homelab or a single GPU node is enough for most projects. Small models on CPU work for practising the platform patterns.</li>
+    <li>Capstones 1 and 2 build on each other; 3 and 4 can run in parallel with work you already do.</li>
+    <li>For building applications on top of these services, see the companion <a href="${COMPANION}">Agentic Systems</a> practicum.</li></ol></div></section>`;
+}
+
+function viewModule(m){
+  const i=MODULES.indexOf(m), prev=MODULES[i-1], next=MODULES[i+1];
+  const status = modDone(m)?"Complete":(S.read[m.id]||S.quiz[m.id]!==undefined||S.lab[m.id]||projN(m))?"In progress":"Not started";
+  return `<article class="sheet">
+    <span class="eyebrow">Module ${i+1} of ${MODULES.length}</span>
+    <h1 style="margin-top:.3rem">${m.title}</h1>
+    <p class="lede" style="margin-top:.6rem">${m.summary}</p>
+    <div class="memo"><div><span class="k">Brief</span><span class="v">${m.no}</span></div><div><span class="k">Stage</span><span class="v">${LVL[m.lvl][0]}</span></div><div><span class="k">Time</span><span class="v">${m.time} + project</span></div><div><span class="k">Status</span><span class="v">${status}</span></div></div>
+
+    <div class="section" style="margin-top:1.8rem"><div class="sec-head"><span class="tag">Objectives</span></div>
+      <ul class="reqs">${m.objectives.map(o=>`<li>→ ${o}</li>`).join("")}</ul>
+      <div class="toc"><a href="#learn">Learn</a><a href="#ex">Examples</a><a href="#quiz">Quiz</a><a href="#lab">Lab</a><a href="#talk">Explain it</a><a href="#proj">Section project</a></div></div>
+
+    <div class="section" id="learn"><div class="sec-head"><span class="tag">Learn</span></div><div class="prose">${m.learn}</div>
+      <div><button class="btn ${S.read[m.id]?"done":""}" data-read>${S.read[m.id]?"✓ Marked as read":"Mark as read"}</button></div></div>
+
+    <div class="section" id="ex"><div class="sec-head"><span class="tag">Worked example</span></div><div class="stack" style="gap:2rem">${m.examples.map(example).join("")}</div></div>
+
+    <div class="section" id="quiz"><div class="sec-head"><span class="tag">Quiz</span>${S.quiz[m.id]!==undefined?`<span class="muted">Best: ${S.quiz[m.id]}/5</span>`:""}</div>
+      <form class="stack" data-quiz>${m.quiz.map((q,qi)=>`<fieldset class="q"><span class="qn">QUESTION ${qi+1}</span><legend>${esc(q.q)}</legend>${q.o.map((o,oi)=>`<label class="opt"><input type="radio" id="${m.id}-q${qi}-${oi}" name="q${qi}" value="${oi}">${esc(o)}</label>`).join("")}<div class="why" hidden></div></fieldset>`).join("")}
+      <div class="btns" style="align-items:center"><button class="btn primary" type="submit">Check answers</button><button class="btn" type="button" data-qreset>Reset</button><span class="score" data-qscore></span></div></form></div>
+
+    <div class="section" id="lab"><div class="sec-head"><span class="tag">Interactive lab</span><h3 style="margin:0">${m.lab.title}</h3></div>${labHTML(m)}
+      <div><button class="btn ${S.lab[m.id]?"done":""}" data-labdone>${S.lab[m.id]?"✓ Lab complete":"Mark lab complete"}</button></div></div>
+
+    <div class="section" id="talk"><div class="sec-head"><span class="tag">Explain it out loud</span></div>
+      <p class="muted" style="max-width:68ch">Answer each prompt aloud or in writing in about two minutes, then open it to compare with the key points.</p>
+      <div class="stack" style="gap:.6rem">${m.talk.map(t=>`<details class="reveal"><summary>${esc(t[0])}</summary><div class="notice"><b>Key points</b><p style="margin-top:.25rem">${esc(t[1])}</p></div></details>`).join("")}</div></div>
+
+    <div class="section" id="proj"><div class="sec-head"><span class="tag">Section project</span><h3 style="margin:0">${m.project.title}</h3></div>
+      <p><b>Deliverable.</b> ${esc(m.project.deliver)} Apply it to your real work.</p>
+      <div class="grid2"><div class="stack" style="gap:.5rem"><span class="eyebrow">Steps</span><ol class="steps">${m.project.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol></div>
+      <div class="stack" style="gap:.5rem"><span class="eyebrow">Rubric · tick when true</span>${checklist(m.project.rubric, "pj-"+m.id, S.proj[m.id])}
+      <div class="meterline" data-pjmeter><div class="bar"><i style="width:${projN(m)/m.project.rubric.length*100}%"></i></div>${projN(m)}/${m.project.rubric.length}</div></div></div></div>
+  </article>
+  <nav class="pager">${prev?`<button class="btn" data-go="${prev.id}">← ${prev.title}</button>`:"<span></span>"}${next?`<button class="btn primary" data-go="${next.id}">${next.title} →</button>`:`<button class="btn primary" data-go="capstones">Capstones →</button>`}</nav>`;
+}
+
+function viewCaps(){
+  return `<section class="sheet stack" style="gap:.6rem"><span class="eyebrow">Bring it together</span><h1>Capstone projects</h1>
+    <p class="lede">Four capstones, each built from the section projects you have already done. CP-1 and CP-2 build a serving stack and turn it into a golden path; CP-3 proves it is ready for production; CP-4 is about leading other engineers. Templates for every deliverable are in Reference.</p></section>
+  <div class="stack" style="gap:1.25rem;margin-top:1.25rem">${CAPSTONES.map(c=>{ const got=S.cap[c.id]||[];
+    return `<article class="cap"><div class="cap-head"><div class="stack" style="gap:.3rem"><span class="domain">${c.code} · ${c.domain}</span><h2>${c.title}</h2></div>
+      <div class="meterline" style="min-width:180px" data-capmeter="${c.id}"><div class="bar"><i style="width:${got.length/c.rubric.length*100}%"></i></div>${got.length}/${c.rubric.length}</div></div>
+      <p style="max-width:68ch">${esc(c.brief)}</p>
+      <div class="grid2"><div class="stack" style="gap:.5rem"><span class="eyebrow">Deliverables</span><ol class="steps">${c.deliver.map(d=>`<li>${esc(d)}</li>`).join("")}</ol></div>
+      <div class="stack" style="gap:.5rem"><span class="eyebrow">Rubric</span>${checklist(c.rubric, "cap-"+c.id, got)}</div></div>
+      <div class="notice"><b>Stretch.</b> ${esc(c.stretch)}</div></article>`;}).join("")}</div>`;
+}
+
+function viewRef(){
+  return `<section class="sheet stack"><span class="eyebrow">Keep this open while you work</span><h1>Reference</h1>
+    <div class="toc"><a href="#r-self">Self-assessment</a><a href="#r-num">Numbers to know</a><a href="#r-cards">Flashcards</a><a href="#r-tpl">Templates</a><a href="#r-fw">Frameworks</a><a href="#r-q">Questions to ask</a><a href="#r-gloss">Glossary</a><a href="#r-read">Reading</a></div>
+
+    <div class="section" id="r-self"><div class="sec-head"><span class="tag">Self-assessment</span><h2>Where are you today?</h2></div>
+      <p class="muted" style="max-width:68ch">Rate each area from 1 (emerging) to 4 (leading). The description shows what level 4 looks like. Ratings save in this browser.</p>
+      <div data-comp>${COMP.map((c,i)=>`<div class="comp"><div><b>${c[0]}</b><div class="muted" style="font-size:.85rem">Level 4: ${c[1]}</div></div><div class="lv" role="group" aria-label="${c[0]}">${[1,2,3,4].map(l=>`<button data-c="${i}" data-l="${l}" aria-pressed="${S.comp[i]===l}">${l}</button>`).join("")}</div></div>`).join("")}</div>
+      <div class="preview" data-compout style="white-space:normal"></div></div>
+
+    <div class="section" id="r-num"><div class="sec-head"><span class="tag">Numbers to know</span><h2>Formulas and figures worth memorising</h2></div>
+      <div class="tbl"><table><tbody>${NUMBERS.map(n=>`<tr><td><b>${esc(n[0])}</b></td><td>${esc(n[1])}</td></tr>`).join("")}</tbody></table></div></div>
+
+    <div class="section" id="r-cards"><div class="sec-head"><span class="tag">Flashcards</span><h2>Drill the vocabulary</h2></div>
+      <div class="flash" data-flash tabindex="0" role="button" aria-label="Flashcard: press to flip"><span class="eyebrow" data-fcount></span><div class="fterm" data-fterm></div><div class="fdef" data-fdef hidden></div><span class="muted" style="font-size:.8rem" data-fhint>Tap to reveal</span></div>
+      <div class="btns"><button class="btn" data-fprev>← Previous</button><button class="btn primary" data-fnext>Next →</button><button class="btn" data-fshuf>Shuffle</button></div></div>
+
+    <div class="section" id="r-tpl"><div class="sec-head"><span class="tag">Templates</span><h2>Copy-ready templates</h2></div>
+      <div class="stack" style="gap:.6rem">${TEMPLATES.map((t,i)=>`<details class="reveal"><summary>${esc(t[0])}</summary><div class="stack" style="gap:.5rem">${pre(t[1])}<div><button class="btn" data-copytpl="${i}">Copy template</button></div></div></details>`).join("")}</div></div>
+
+    <div class="section" id="r-fw"><div class="sec-head"><span class="tag">Frameworks</span><h2>Mental models and frameworks</h2></div>
+      <div class="tbl"><table><thead><tr><th>Framework</th><th>Use it for</th><th>Core idea</th></tr></thead><tbody>${FRAMEWORKS.map(f=>`<tr><td><b>${f[0]}</b></td><td>${f[1]}</td><td>${f[2]}</td></tr>`).join("")}</tbody></table></div></div>
+
+    <div class="section" id="r-q"><div class="sec-head"><span class="tag">Field guide</span><h2>Questions that do the work</h2></div>
+      <div class="grid2">
+        <div class="stack" style="gap:.4rem"><h4>With an application team</h4><ul class="reqs"><li>→ Who uses it, how many, and when is the peak?</li><li>→ What latency will users tolerate before they give up?</li><li>→ What data goes in, and what is its classification?</li><li>→ What happens if it is wrong, or down for an hour?</li><li>→ Who supports it at 2 a.m.?</li></ul></div>
+        <div class="stack" style="gap:.4rem"><h4>With security and risk</h4><ul class="reqs"><li>→ Which data classes may reach which models?</li><li>→ What may be logged, and for how long?</li><li>→ What evidence do audits need from the platform?</li><li>→ Which actions by an AI need human approval?</li></ul></div>
+        <div class="stack" style="gap:.4rem"><h4>With finance and capacity owners</h4><ul class="reqs"><li>→ Is cost reported per tenant, and per million tokens?</li><li>→ What utilisation do we assume, and what headroom?</li><li>→ When does self-hosting beat a managed API for this volume?</li></ul></div>
+        <div class="stack" style="gap:.4rem"><h4>In a design review</h4><ul class="reqs"><li>→ What happens when the model is slow, or the cache is full?</li><li>→ What if the provider is down, or one tenant sends 10× traffic?</li><li>→ How will we know it is working, from the user's side?</li><li>→ What did we choose not to build, and why?</li></ul></div>
+      </div></div>
+
+    <div class="section" id="r-gloss"><div class="sec-head"><span class="tag">Glossary</span></div><dl class="gloss">${GLOSS.map(g=>`<dt>${g[0]}</dt><dd>${g[1]}</dd>`).join("")}</dl></div>
+
+    <div class="section" id="r-read"><div class="sec-head"><span class="tag">Reading</span><h2>Books and links</h2></div>
+      <div class="grid2"><ul class="reqs">${READING.map(r=>`<li>→ <i>${r[1]}</i> <span class="muted">· ${r[0]}</span></li>`).join("")}</ul>
+      <ul class="reqs">${LINKS.map(l=>`<li>→ <a href="${l[1]}" target="_blank" rel="noopener">${l[0]}</a></li>`).join("")}</ul></div></div>
+  </section>`;
+}
+
+/* ======== binding ======== */
+let FC = GLOSS.map((g,i)=>i), fci = 0;
+function bind(v,id){
+  v.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+  v.querySelectorAll(".toc a").forEach(a=>a.addEventListener("click",e=>{ e.preventDefault(); document.getElementById(a.getAttribute("href").slice(1))?.scrollIntoView({behavior:"smooth"}); }));
+  v.querySelectorAll("[data-src]").forEach(b=>b.addEventListener("click",()=>{ const x=b.closest(".fig").querySelector(".srcbox"); x.hidden=!x.hidden; b.textContent=x.hidden?"Source":"Hide source"; }));
+
+  if (id==="home"){
+    const card=v.querySelector("#loscard");
+    const set=i=>{ const l=LOS[i]; v.querySelectorAll("[data-los]").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.los===i));
+      card.innerHTML=`<span class="eyebrow">Northbank example</span><div class="big">${esc(l.ex)}</div><div class="kv"><div><span class="k">Usually owned by</span>${esc(l.own)}</div><div><span class="k">Artifacts</span>${esc(l.art)}</div><div style="grid-column:1/-1"><span class="k">What the work is</span>${esc(l.you)}</div></div>`; };
+    v.querySelectorAll("[data-los]").forEach(b=>b.addEventListener("click",()=>set(+b.dataset.los))); set(0);
+  }
+
+  if (id==="capstones"){
+    v.querySelectorAll("[data-ck]").forEach(cb=>cb.addEventListener("change",()=>{ const cid=cb.dataset.ck.slice(4), c=CAPSTONES.find(x=>x.id===cid);
+      const set=new Set(S.cap[cid]||[]); cb.checked?set.add(+cb.dataset.i):set.delete(+cb.dataset.i); S.cap[cid]=[...set]; save();
+      v.querySelector(`[data-capmeter="${cid}"]`).innerHTML=`<div class="bar"><i style="width:${set.size/c.rubric.length*100}%"></i></div>${set.size}/${c.rubric.length}`; }));
+  }
+
+  if (id==="reference"){
+    const out=v.querySelector("[data-compout]");
+    const render=()=>{ const vals=COMP.map((c,i)=>S.comp[i]); const n=vals.filter(Boolean).length;
+      if(!n){ out.innerHTML=`<span class="muted">Rate at least one area to see your profile.</span>`; return; }
+      const low=COMP.map((c,i)=>[c[0],vals[i]]).filter(x=>x[1]).sort((a,b)=>a[1]-b[1]).slice(0,2);
+      out.innerHTML=`<div class="stack" style="gap:.4rem">${COMP.map((c,i)=>`<div style="display:grid;grid-template-columns:minmax(0,13rem) minmax(0,1fr) 1.5rem;gap:.6rem;align-items:center;font-size:.85rem"><span>${c[0]}</span><div class="bar" style="height:10px"><i style="width:${(vals[i]||0)*25}%"></i></div><span class="num">${vals[i]||"–"}</span></div>`).join("")}
+      <p style="margin-top:.5rem"><b>Focus next:</b> ${low.map(x=>`${x[0]} (${COMPMAP[x[0]]})`).join(" and ")}.</p></div>`; };
+    v.querySelectorAll("[data-c]").forEach(b=>b.addEventListener("click",()=>{ const i=+b.dataset.c, l=+b.dataset.l; S.comp[i]=l; persist();
+      v.querySelectorAll(`[data-c="${i}"]`).forEach(x=>x.setAttribute("aria-pressed",+x.dataset.l===l)); render(); }));
+    render();
+    v.querySelectorAll("[data-copytpl]").forEach(b=>b.addEventListener("click",()=>copyText(TEMPLATES[+b.dataset.copytpl][1], b.closest("details").querySelector("pre"))));
+    const card=v.querySelector("[data-flash]"), term=v.querySelector("[data-fterm]"), def=v.querySelector("[data-fdef]"), hint=v.querySelector("[data-fhint]"), cnt=v.querySelector("[data-fcount]");
+    const show=()=>{ const g=GLOSS[FC[fci]]; term.textContent=g[0]; def.textContent=g[1]; def.hidden=true; hint.hidden=false; cnt.textContent=`Card ${fci+1} of ${FC.length}`; };
+    const flip=()=>{ def.hidden=!def.hidden; hint.hidden=!def.hidden; };
+    card.addEventListener("click",flip); card.addEventListener("keydown",e=>{ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); flip(); } });
+    v.querySelector("[data-fnext]").addEventListener("click",()=>{ fci=(fci+1)%FC.length; show(); });
+    v.querySelector("[data-fprev]").addEventListener("click",()=>{ fci=(fci-1+FC.length)%FC.length; show(); });
+    v.querySelector("[data-fshuf]").addEventListener("click",()=>{ for(let i=FC.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [FC[i],FC[j]]=[FC[j],FC[i]]; } fci=0; show(); toast("Shuffled"); });
+    show();
+  }
+
+  const m=MODULES.find(x=>x.id===id); if(!m) return;
+  v.querySelector("[data-read]").addEventListener("click",e=>{ S.read[m.id]=!S.read[m.id]; save(); e.target.classList.toggle("done",!!S.read[m.id]); e.target.textContent=S.read[m.id]?"✓ Marked as read":"Mark as read"; });
+  const lb=v.querySelector("[data-labdone]");
+  const markLab=(on)=>{ S.lab[m.id]=on; save(); lb.classList.toggle("done",on); lb.textContent=on?"✓ Lab complete":"Mark lab complete"; };
+  lb.addEventListener("click",()=>{ markLab(!S.lab[m.id]); if(S.lab[m.id]) toast("Lab recorded"); });
+
+  const form=v.querySelector("[data-quiz]");
+  form.addEventListener("submit",e=>{ e.preventDefault(); let sc=0;
+    m.quiz.forEach((q,qi)=>{ const fs=form.querySelectorAll("fieldset")[qi], sel=form.querySelector(`input[name="q${qi}"]:checked`);
+      fs.querySelectorAll(".opt").forEach((o,oi)=>{ o.classList.remove("right","wrong"); if(oi===q.a) o.classList.add("right"); else if(sel&&+sel.value===oi) o.classList.add("wrong"); });
+      const ok=sel&&+sel.value===q.a; if(ok) sc++; const w=fs.querySelector(".why"); w.hidden=false; w.innerHTML=`<b>${ok?"Correct.":sel?"Not quite.":"No answer."}</b> ${esc(q.why)}`; });
+    form.querySelector("[data-qscore]").textContent=`${sc} / 5`; S.quiz[m.id]=Math.max(S.quiz[m.id]||0,sc); save(); if(sc>=4) toast("Quiz passed"); });
+  form.querySelector("[data-qreset]").addEventListener("click",()=>{ form.reset(); form.querySelectorAll(".opt").forEach(o=>o.classList.remove("right","wrong")); form.querySelectorAll(".why").forEach(w=>w.hidden=true); form.querySelector("[data-qscore]").textContent=""; });
+
+  v.querySelectorAll(`[data-ck="pj-${m.id}"]`).forEach(cb=>cb.addEventListener("change",()=>{ const set=new Set(S.proj[m.id]||[]); cb.checked?set.add(+cb.dataset.i):set.delete(+cb.dataset.i); S.proj[m.id]=[...set]; save();
+    v.querySelector("[data-pjmeter]").innerHTML=`<div class="bar"><i style="width:${set.size/m.project.rubric.length*100}%"></i></div>${set.size}/${m.project.rubric.length}`; }));
+
+  const L=m.lab;
+  if (L.type==="sort"){
+    v.querySelector("[data-sortcheck]").addEventListener("click",()=>{ let sc=0;
+      L.items.forEach((it,i)=>{ const row=v.querySelector(`[data-row="${i}"]`), val=row.querySelector("select").value, fb=row.querySelector(".fb");
+        row.classList.remove("right","wrong"); const ok=val===it[1]; if(ok) sc++; row.classList.add(ok?"right":"wrong"); fb.hidden=false; fb.textContent=(ok?"Correct. ":`Answer: ${it[1]}. `)+it[2]; });
+      v.querySelector("[data-sortscore]").textContent=`${sc} / ${L.items.length}`; if(sc>=L.items.length-2){ markLab(true); toast("Lab recorded"); } });
+  }
+  if (L.type==="builder"){
+    const prev=v.querySelector("[data-prev]");
+    const vals=()=>{ const o={}; v.querySelectorAll("[data-build] [data-f]").forEach(t=>o[t.dataset.f]=t.value.trim()); return o; };
+    const upd=()=>{ const o=vals(); S.build[m.id]=o; persist(); prev.textContent=L.template(o); };
+    v.querySelectorAll("[data-build] [data-f]").forEach(t=>t.addEventListener("input",upd));
+    v.querySelector("[data-example]").addEventListener("click",()=>{ L.fields.forEach(f=>v.querySelector(`[data-f="${f[0]}"]`).value=f[2]); upd(); });
+    v.querySelector("[data-clear]").addEventListener("click",()=>{ v.querySelectorAll("[data-build] [data-f]").forEach(t=>t.value=""); upd(); });
+    v.querySelector("[data-copyprev]").addEventListener("click",()=>copyText(prev.textContent, prev));
+    upd();
+  }
+  if (L.type==="scenario"){
+    v.querySelector("[data-sccheck]").addEventListener("click",()=>{ let strong=0;
+      L.scen.forEach((sc,si)=>{ const box=v.querySelector(`[data-scen="${si}"]`), sel=box.querySelector("input:checked"), why=box.querySelector(".why");
+        box.querySelectorAll(".opt").forEach((o,oi)=>{ o.classList.remove("strong","ok","weak"); if(sel&&+sel.value===oi) o.classList.add(sc.o[oi][1]); else if(sc.o[oi][1]==="strong") o.classList.add("strong"); });
+        why.hidden=false; if(!sel){ why.innerHTML=`<b>No answer.</b> Strongest: ${esc(sc.o.find(o=>o[1]==="strong")[0])}`; return; }
+        const o=sc.o[+sel.value]; if(o[1]==="strong") strong++; why.innerHTML=`<b>${o[1]==="strong"?"Strong.":o[1]==="ok"?"Workable, with costs.":"Weak."}</b> ${esc(o[2])}`; });
+      v.querySelector("[data-scscore]").textContent=`${strong} / ${L.scen.length} strong`; if(strong>=L.scen.length-1){ markLab(true); toast("Lab recorded"); } });
+  }
+  if (L.type==="kv"){
+    const out=v.querySelector("[data-kvout]"), C=L.challenge;
+    const upd=()=>{ const st={model:v.querySelector("#kv-model").value, wp:+v.querySelector("#kv-wp").value, kp:+v.querySelector("#kv-kp").value, gpu:+v.querySelector("#kv-gpu").value, tp:+v.querySelector("#kv-tp").value, ctx:Math.max(256,+v.querySelector("#kv-ctx").value||256), conc:Math.max(1,+v.querySelector("#kv-conc").value||1)};
+      S.kv[m.id]=st; persist(); const r=kvCalc(st);
+      const fitsW = r.weights/st.tp < r.mem*MEMUTIL - OVERHEAD;
+      const ok = fitsW && r.seqs>=st.conc;
+      const verdict = !fitsW ? `<span class="flag hi">Does not fit</span> The weights alone (${f1(r.weights/st.tp)} GB per GPU) exceed usable memory. Use more GPUs, a bigger GPU, or lower weight precision.`
+        : r.seqs<1 ? `<span class="flag hi">No room for KV cache</span> Weights fit, but there is no memory left for even one sequence of this length.`
+        : ok ? `<span class="flag ok">Fits</span> The KV cache holds about <b>${r.seqs}</b> sequences of ${st.ctx.toLocaleString("en-US")} tokens: enough for your target of ${st.conc}.`
+        : `<span class="flag lo">Short</span> The KV cache holds about <b>${r.seqs}</b> sequences of ${st.ctx.toLocaleString("en-US")} tokens, below your target of ${st.conc}. Requests beyond that queue or are preempted.`;
+      out.innerHTML=`<div class="kvgrid">
+        <div><span class="k">Weights</span><b>${f1(r.weights)} GB</b><small>${f1(r.weights/st.tp)} GB per GPU</small></div>
+        <div><span class="k">Usable memory</span><b>${f1(r.usable)} GB</b><small>${st.tp} × ${esc(GPUS[st.gpu][0])} at ${MEMUTIL*100}%</small></div>
+        <div><span class="k">KV cache budget</span><b>${f1(Math.max(0,r.budget))} GB</b><small>after weights and ${f1(st.tp*OVERHEAD)} GB overhead</small></div>
+        <div><span class="k">KV per token</span><b>${f1(r.kvTok/1024)} KiB</b><small>2 × ${r.m.l} layers × ${r.m.kv} KV heads × ${r.m.hd} × ${KVPREC[st.kp][1]} B</small></div>
+        <div><span class="k">KV per sequence</span><b>${f1(r.perSeq)} GB</b><small>at ${st.ctx.toLocaleString("en-US")} tokens</small></div>
+        <div><span class="k">Tokens in cache</span><b>${Math.floor(r.tokens).toLocaleString("en-US")}</b><small>across all sequences</small></div></div>
+        <p style="margin-top:.7rem">${verdict}</p>
+        ${st.wp>0||st.kp>0?`<p class="muted" style="margin-top:.35rem;font-size:.85rem">Lower precision changes quality. Run your evaluation set before production.</p>`:""}`;
+      if(st.model===C.model && st.tp<=C.maxGpus && st.ctx>=C.ctx && st.conc>=C.conc && ok && !S.lab[m.id]){ markLab(true); toast("Challenge met · lab recorded"); } };
+    v.querySelectorAll("[data-kv] select, [data-kv] input").forEach(i=>i.addEventListener("input",upd)); upd();
+  }
+  if (L.type==="cap"){
+    const out=v.querySelector("[data-capout]");
+    const ids=["peak","avg","out","lat","conc","gpr","head","price"];
+    const upd=()=>{ const c={}; ids.forEach(k=>c[k]=Math.max(0,+v.querySelector(`#cp-${k}`).value||0)); c.head=Math.min(80,c.head); c.conc=Math.max(1,c.conc); c.gpr=Math.max(1,Math.round(c.gpr));
+      S.capc[m.id]=c; persist(); const r=capCalc(c);
+      const pass = r.perM<=L.target && c.head>=L.minHead;
+      out.innerHTML=`<div class="kvgrid">
+        <div><span class="k">In flight at peak</span><b>${f1(r.inflight)}</b><small>${c.peak} req/s × ${c.lat} s</small></div>
+        <div><span class="k">Replicas</span><b>${r.replicas}</b><small>at ${c.conc} per replica, ${c.head}% headroom</small></div>
+        <div><span class="k">GPUs</span><b>${r.gpus}</b><small>${c.gpr} per replica</small></div>
+        <div><span class="k">Cost</span><b>${usd(r.hourly)}/h</b><small>about $${Math.round(r.monthly).toLocaleString("en-US")} per month</small></div>
+        <div><span class="k">Utilisation</span><b>${Math.round(r.utilAvg*100)}% avg</b><small>${Math.round(r.utilPeak*100)}% at peak</small></div>
+        <div><span class="k">Cost per 1M output tokens</span><b>${isFinite(r.perM)?usd(r.perM):"–"}</b><small>at average traffic</small></div></div>
+        <p style="margin-top:.7rem">${pass?`<span class="flag ok">Challenge met</span> Under ${usd(L.target)} with ${c.head}% headroom.`:`<span class="flag lo">Challenge</span> Target ${usd(L.target)} per million output tokens with at least ${L.minHead}% headroom.`}</p>
+        <p class="muted" style="margin-top:.35rem;font-size:.85rem">Average utilisation is what you pay for idle capacity. Levers that raise per-replica concurrency at the same latency (batching, FP8, prefix caching) or cut GPUs per replica move cost the most. Check every change against a load test.</p>`;
+      if(pass && !S.lab[m.id]){ markLab(true); toast("Challenge met · lab recorded"); } };
+    v.querySelectorAll("[data-cap] input").forEach(i=>i.addEventListener("input",upd));
+    v.querySelector("[data-capreset]").addEventListener("click",()=>{ delete S.capc[m.id]; persist(); go(m.id,false); document.getElementById("lab")?.scrollIntoView(); });
+    upd();
+  }
+  if (L.type==="slo"){
+    const out=v.querySelector("[data-sloout]"), tb=v.querySelector("[data-burns]");
+    const read=()=>({slo:+v.querySelector("#sl-slo").value, days:Math.max(1,+v.querySelector("#sl-days").value||30), rpd:Math.max(1,+v.querySelector("#sl-rpd").value||1), elapsed:Math.max(0.1,+v.querySelector("#sl-elapsed").value||0.1), bad:Math.max(0,+v.querySelector("#sl-bad").value||0)});
+    const upd=()=>{ const s=read(); S.slo[m.id]=s; persist(); const r=sloCalc(s);
+      const pctUsed=Math.round(r.used*100), proj=Math.round(r.projected*100);
+      const status = r.used>=1?["hi","Budget exhausted"]:r.projected>1?["lo","On track to overspend"]:["ok","Within budget"];
+      out.innerHTML=`<div class="kvgrid">
+        <div><span class="k">Error budget</span><b>${(r.b*100).toFixed(2)}%</b><small>of requests over ${s.days} days</small></div>
+        <div><span class="k">As full-outage time</span><b>${r.budgetMin>=120?f1(r.budgetMin/60)+" h":f1(r.budgetMin)+" min"}</b><small>(1 − SLO) × window</small></div>
+        <div><span class="k">As requests</span><b>${Math.round(r.budgetReq).toLocaleString("en-US")}</b><small>bad requests allowed</small></div>
+        <div><span class="k">Spent so far</span><b>${pctUsed}%</b><small>after ${s.elapsed} of ${s.days} days</small></div>
+        <div><span class="k">Average burn rate</span><b>${r.burn.toFixed(2)}×</b><small>error rate ${(r.rate*100).toFixed(3)}%</small></div>
+        <div><span class="k">Projected at window end</span><b>${proj}%</b><small>if the current rate continues</small></div></div>
+        <p style="margin-top:.7rem"><span class="flag ${status[0]}">${status[1]}</span> ${r.used>=0.75?"Your error budget policy should now be in force: freeze risky changes and prioritise reliability work.":r.projected>1?"Find the main source of bad requests before the budget runs out.":"Room to ship changes; keep watching the burn rate."}</p>`;
+      tb.innerHTML=BURNS.map(bn=>`<tr><td class="num">${bn[0]}×</td><td>${bn[1]}</td><td>${bn[2]}</td><td class="num">${(Math.round(bn[0]*r.b*1e6)/1e4).toFixed(Math.round(bn[0]*r.b*1e6)/1e4<0.1?3:2)}%</td><td class="num">${bn[3]}%</td><td>${bn[4]}</td></tr>`).join(""); };
+    v.querySelectorAll("[data-slo] select, [data-slo] input").forEach(i=>i.addEventListener("input",upd));
+    v.querySelector("[data-slocheck]").addEventListener("click",()=>{ const r=sloCalc(read()), want=14.4*r.b*100, got=+v.querySelector("#sl-ans").value, fb=v.querySelector("[data-slofb]");
+      const ok = got>0 && Math.abs(got-want)/want<=0.03; fb.hidden=false;
+      fb.innerHTML = ok?`<b>Correct.</b> 14.4 × ${(r.b*100).toFixed(2)}% = ${want.toFixed(3)}%. Sustained for an hour, that spends 2% of a 30-day budget.`:`<b>Not quite.</b> Multiply the fast-burn rate (14.4) by the error budget rate (1 − SLO). Try again.`;
+      if(ok){ markLab(true); toast("Lab recorded"); } });
+    upd();
+  }
+}
+
+document.getElementById("tabs").addEventListener("click",e=>{ const b=e.target.closest("[data-go]"); if(b) go(b.dataset.go); });
+updateMeter();
+go((location.hash||"#home").slice(1), false);
+</script>
+</body></html>
